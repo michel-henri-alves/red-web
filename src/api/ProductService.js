@@ -1,8 +1,10 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3001/products';
+const API = axios.create({
+    baseURL: import.meta.env.VITE_API_BASE_URL + '/products',
+  });
 
-export const getAllProducts = () => axios.get(API_URL);
-export const createProduct = (data) => axios.post(API_URL, data);
-export const updateProduct = (id, data) => axios.put(`${API_URL}/${id}`, data);
-export const deleteProduct = (id) => axios.delete(`${API_URL}/${id}`);
+  export const getAllProducts = () => API.get('/');
+  export const createProduct = (data) => API.post('/', data);
+  export const updateProduct = (id, data) => API.put(`/${id}`, data);
+  export const deleteProduct = (id) => API.delete(`/${id}`);
