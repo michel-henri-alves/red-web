@@ -1,11 +1,30 @@
 import React from 'react';
 import { useState } from "react";
 // import { AnimatePresence, motion } from "motion/react"
-import { useProducts } from '../hooks/useProducts'
+import { listAllProducts, removeOneProduct } from '../hooks/useProducts'
 import SearchBar from './SearchBar'
+import DeleteConfirmationModal from './DeleteConfirmationModal';
+import Modal from "./Modal";
 
 
 export default function ProductList() {
+
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+
+  // const openModal = (productName) => {
+  //   if (confirm("Você tem certeza que deseja excluir o produto /n ?")) {
+  //     // setProducts((prev) => prev.filter((p) => p.smart_code !== smartCode));
+  //     console.log(productName)
+  //   }
+  //   // console.log(isModalOpen)
+  //   // setIsModalOpen(true);
+  //   // console.log(isModalOpen)
+  // }
+  // const closeModal = () => setIsModalOpen(false);
+
+  const { mutate: remove } = removeOneProduct();
+
 
   // const [searchTerm, setSearchTerm] = useState("");
   // const handleSearch = (term) => {
@@ -13,7 +32,7 @@ export default function ProductList() {
   // };
 
 
-  const { data: products, isLoading, error } = useProducts();
+  const { data: products, isLoading, error } = listAllProducts();
   const [expandedProduct, setExpandedProduct] = useState(null);
 
   // const filteredProducts = products.filter((product) =>
@@ -69,10 +88,15 @@ export default function ProductList() {
                 <p><strong>Price:</strong> ${product.price}</p>
                 <p><strong>Responsible:</strong> {product.responsible}</p>
                 <div className="mt-2">
-                  <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-300">
+                  <button
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-300"
+                    onClick={() => setProductToDelete(product)}
+                  >
                     Excluir
                   </button>
-                  <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-300">
+                  <button
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-300"
+                  >
                     Alterar
                   </button>
                 </div>
@@ -83,6 +107,31 @@ export default function ProductList() {
           </div>
         );
       })}
+
+      {productToDelete && (
+        <Modal onClose={() => setProductToDelete(null)}>
+          <p>Are you sure you want to delete <strong>{productToDelete.product_name}</strong>?</p>
+          <div className="mt-4 flex justify-end space-x-2">
+            <button
+              onClick={() => setProductToDelete(null)}
+              className="px-4 py-2 bg-gray-200 rounded"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={() => {
+                setProducts((prev) =>
+                  prev.filter((p) => p.smart_code !== productToDelete.smart_code)
+                );
+                setProductToDelete(null);
+              }}
+              className="px-4 py-2 bg-red-500 text-white rounded"
+            >
+              Confirmar
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

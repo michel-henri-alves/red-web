@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { createProduct } from '../api/ProductService';
+import { save } from '../hooks/useProducts'
+import { toast } from 'react-toastify';
 
-export default function ProductForm( {onClose} ) {
+export default function ProductForm({ onClose }) {
+
+    const { mutate: create } = save();
 
     const [form, setForm] = useState({
-        product_name: '', 
+        product_name: '',
         price: '',
         responsible: ''
     });
@@ -21,9 +23,9 @@ export default function ProductForm( {onClose} ) {
     };
 
     const handleChange = (e) => {
-        e.preventDefault();
+        //e.preventDefault();
         setForm({ ...form, [e.target.name]: e.target.value });
-        if (onClose) onClose(); // fecha o modal se função passada
+        //if (onClose) onClose(); // fecha o modal se função passada
     };
 
     const handleSubmit = async (e) => {
@@ -36,13 +38,11 @@ export default function ProductForm( {onClose} ) {
 
         try {
             console.log("dados para o post: ", form)
-            await createProduct(form); // ajuste para sua rota real
-            setStatus('success'); 
-            setForm({ 
-                name: '', 
-                price: ''
-            });
+            create(form);
             setErrors({});
+            toast.success('Produto salvo com sucesso!');
+            if (onClose) onClose();
+
         } catch (error) {
             console.error(error);
             setStatus('error');
@@ -52,18 +52,62 @@ export default function ProductForm( {onClose} ) {
     return (
         <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-md">
             <div>
-                <label className="block text-sm font-medium text-gray-700">Product Name</label>
+                <label className="block text-sm font-medium text-gray-700">Código de barras</label>
                 <input
-                    name="product_name"
-                    value={form.name}
+                    name="smart_code"
+                    value={form.smart_code}
                     onChange={handleChange}
                     className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
-                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                {errors.name && <p className="text-red-500 text-sm">{errors.smart_code}</p>}
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700">Price</label>
+                <label className="block text-sm font-medium text-gray-700">Nome do produto</label>
+                <input
+                    name="product_name"
+                    value={form.product_name}
+                    onChange={handleChange}
+                    className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.name && <p className="text-red-500 text-sm">{errors.product_name}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Fabricante</label>
+                <input
+                    name="manufacturer"
+                    value={form.manufacturer}
+                    onChange={handleChange}
+                    className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.name && <p className="text-red-500 text-sm">{errors.manufacturer}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Fornecedor</label>
+                <input
+                    name="supplier"
+                    value={form.supplier}
+                    onChange={handleChange}
+                    className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.name && <p className="text-red-500 text-sm">{errors.supplier}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Categoria</label>
+                <input
+                    name="category"
+                    value={form.category}
+                    onChange={handleChange}
+                    className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.name && <p className="text-red-500 text-sm">{errors.category}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Preço</label>
                 <input
                     name="price"
                     type="number"
@@ -75,14 +119,38 @@ export default function ProductForm( {onClose} ) {
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <label className="block text-sm font-medium text-gray-700">Quantidade máxima</label>
+                <input
+                    name="max_quantity"
+                    type="number"
+                    value={form.max_quantity}
+                    onChange={handleChange}
+                    className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.price && <p className="text-red-500 text-sm">{errors.max_quantity}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Quantidade minima</label>
+                <input
+                    name="min_quantity"
+                    type="number"
+                    value={form.min_quantity}
+                    onChange={handleChange}
+                    className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.price && <p className="text-red-500 text-sm">{errors.min_quantity}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Responsável</label>
                 <input
                     name="responsible"
                     value={form.responsible}
                     onChange={handleChange}
                     className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
-                {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
+                {errors.name && <p className="text-red-500 text-sm">{errors.responsible}</p>}
             </div>
 
             <button
