@@ -40,7 +40,7 @@ export default function ProductForm({ onClose }) {
             console.log("dados para o post: ", form)
             create(form);
             setErrors({});
-            toast.success('Produto salvo com sucesso!');
+            toast.success("Produto "+form.product_name+" salvo com sucesso!");
             if (onClose) onClose();
 
         } catch (error) {

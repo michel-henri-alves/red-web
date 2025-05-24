@@ -9,6 +9,17 @@ import Modal from "./Modal";
 
 export default function ProductList() {
 
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const openDeleteModal = (product) => {
+    setProductToDelete(product)
+    openModal()
+  }
+
   // const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
 
@@ -90,7 +101,7 @@ export default function ProductList() {
                 <div className="mt-2">
                   <button
                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-300"
-                    onClick={() => setProductToDelete(product)}
+                    onClick={() => openDeleteModal(product)}
                   >
                     Excluir
                   </button>
@@ -108,8 +119,8 @@ export default function ProductList() {
         );
       })}
 
-      {productToDelete && (
-        <Modal onClose={() => setProductToDelete(null)}>
+      {/* {productToDelete && (
+        <Modal isOpen={true} onClose={closeModal}>
           <p>Are you sure you want to delete <strong>{productToDelete.product_name}</strong>?</p>
           <div className="mt-4 flex justify-end space-x-2">
             <button
@@ -131,7 +142,11 @@ export default function ProductList() {
             </button>
           </div>
         </Modal>
-      )}
+      )} */}
+
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <DeleteConfirmationModal  onClose={closeModal} productToDelete={productToDelete}/>
+      </Modal>
     </div>
   );
 }
