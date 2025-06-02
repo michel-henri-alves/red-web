@@ -3,13 +3,22 @@ import {
     getAllProducts,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getAllProductsRegexByName,
+    getPaginatedProducts,
 } from '../api/ProductService';
 
 export const listAllProducts = () =>
     useQuery({
         queryKey: ['products'],
         queryFn: async () => (await getAllProducts()).data,
+    });
+
+export const listAllProductsPaginated = (page, limit = 5) =>
+    useQuery({
+        queryKey: ['products', page, limit],
+        queryFn: async () => (await getPaginatedProducts(page, limit)).data,
+        keepPreviousData: true,
     });
 
 export const save = () => {
@@ -23,9 +32,8 @@ export const save = () => {
     });
 }
 
-export const update = () => {
+export const updateProductById = () => {
     const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: ({ id, data }) => updateProduct(id, data),
         onSuccess: () => {
@@ -44,3 +52,9 @@ export const removeOneProduct = () => {
         },
     });
 };
+
+export const searchProductsRegexByName = () =>
+    useQuery({
+        queryKey: ['products'],
+        queryFn: async () => (await getAllProductsRegexByName()).data,
+    });

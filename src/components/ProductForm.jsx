@@ -1,16 +1,31 @@
 import React, { useState } from 'react';
 import { save } from '../hooks/useProducts'
+import { updateProductById } from '../hooks/useProducts'
 import { toast } from 'react-toastify';
 
-export default function ProductForm({ onClose }) {
+export default function ProductForm({ onClose, product }) {
+
+
 
     const { mutate: create } = save();
+    const { mutateAsync: updating } = updateProductById();
 
-    const [form, setForm] = useState({
-        product_name: '',
-        price: '',
-        responsible: ''
-    });
+
+    const [form, setForm] = useState(product);
+    // const [form, setForm] = useState({
+    //     product_name: '',
+    //     price: '',
+    //     responsible: ''
+    // });
+    const [forCreate, isForCreate] = useState(() => {
+        if (Object.keys(product).length === 0) {
+            alert(true)
+            return true;
+        } else {
+            alert(false)
+            return false;
+        }
+    })
     const [errors, setErrors] = useState({});
     const [status, setStatus] = useState(null);
 
@@ -37,10 +52,23 @@ export default function ProductForm({ onClose }) {
         }
 
         try {
-            console.log("dados para o post: ", form)
-            create(form);
-            setErrors({});
-            toast.success("Produto "+form.product_name+" salvo com sucesso!");
+            alert(forCreate)
+            if (forCreate) {
+                alert("dados para o post: ", form)
+                create(form);
+                setErrors({});
+                toast.success("Produto " + form.product_name + " salvo com sucesso!");
+            } else {
+                alert("dados para o put: " + JSON.stringify(form))
+                JSON.stringify(form)
+                await updating({
+                    id: form._id,
+                    data: form
+                });
+                setErrors({});
+                toast.success("Produto " + form.product_name + " atualizado com sucesso!");
+
+            }
             if (onClose) onClose();
 
         } catch (error) {

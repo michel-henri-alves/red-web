@@ -1,13 +1,28 @@
 import React from 'react';
 import { useState } from "react";
 // import { AnimatePresence, motion } from "motion/react"
-import { listAllProducts, removeOneProduct } from '../hooks/useProducts'
+import {
+  listAllProducts,
+  removeOneProduct,
+  searchProductsRegexByName,
+  listAllProductsPaginated
+} from '../hooks/useProducts'
 import SearchBar from './SearchBar'
+import FilterBar from './FilterBar'
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import Modal from "./Modal";
+import ProductForm from './ProductForm';
+import FloatingActionButton from "./FloatingActionButton";
 
 
 export default function ProductList() {
+
+
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [productToUpdate, setProductToUpdate] = useState(null);
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,13 +30,28 @@ export default function ProductList() {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  // const openDeleteModal = () => setDeleteModalOpen(true);
+  const closeDeleteModal = () => setDeleteModalOpen(false);
+
   const openDeleteModal = (product) => {
     setProductToDelete(product)
-    openModal()
+    setDeleteModalOpen(true);
+  }
+
+  const openUpdateModal = (product) => {
+    setProductToUpdate(product)
+    setIsModalOpen(true);
+  }
+
+  const openCreationModal = () => {
+    setProductToUpdate({})
+    setIsModalOpen(true);
   }
 
   // const [isModalOpen, setIsModalOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState(null);
 
   // const openModal = (productName) => {
   //   if (confirm("Você tem certeza que deseja excluir o produto /n ?")) {
@@ -40,13 +70,16 @@ export default function ProductList() {
   // const [searchTerm, setSearchTerm] = useState("");
   // const handleSearch = (term) => {
   //   setSearchTerm(term);
+  //   // setProducts(searchProductsRegexByName(term))
   // };
 
 
-  const { data: products, isLoading, error } = listAllProducts();
+  // const { data: products, isLoading, error } = listAllProductsPaginated(page);
+  const { data: products, isLoading, error } = listAllProductsPaginated(page);
+  // const [products, setProducts] = useState([]);
   const [expandedProduct, setExpandedProduct] = useState(null);
 
-  // const filteredProducts = products.filter((product) =>
+  // const filteredProducts = products.data.filter((product) =>
   //   product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
   // );
 
@@ -58,19 +91,16 @@ export default function ProductList() {
   };
 
   return (
+
+
     <div className="space-y-4">
       <SearchBar
-      // onSearch={handleSearch} 
+        // onSearch={handleSearch}
       />
-      {/* <div>
-        <ul>
-          {filteredProducts.map((product) => (
-            <li key={product.smart_code}>{product.product_name}</li>
-          ))}
-        </ul>
-      </div> */}
 
-      {products.map((product) => {
+
+      {/* {products.data.map((product) => { */}
+      {products.data.map((product) => {
         const isExpanded = expandedProduct === product.smart_code;
         return (
           <div
@@ -95,7 +125,7 @@ export default function ProductList() {
                 // transition={{ duration: 0.3 }}
                 className="overflow-hidden px-4 pb-4 text-sm text-gray-700"
               >
-                <p><strong>Description:</strong> {product.description}</p>
+                <p><strong>Description:</strong> {product.category}</p>
                 <p><strong>Price:</strong> ${product.price}</p>
                 <p><strong>Responsible:</strong> {product.responsible}</p>
                 <div className="mt-2">
@@ -107,6 +137,7 @@ export default function ProductList() {
                   </button>
                   <button
                     className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-300"
+                    onClick={() => openUpdateModal(product)}
                   >
                     Alterar
                   </button>
@@ -144,8 +175,26 @@ export default function ProductList() {
         </Modal>
       )} */}
 
+      <div className="flex justify-between mt-4">
+        <button onClick={() => setPage((product) => Math.max(product - 1, 1))} disabled={page === 1}>
+          Previous
+        </button>
+        <span>Page {page}</span>
+        <button onClick={() => setPage((product) => product + 1)}>
+          Next
+        </button>
+      </div>
+      <h1>Total de registros: {products.total}</h1>
+
+
+      <FloatingActionButton onClick={openCreationModal} />
+
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <DeleteConfirmationModal  onClose={closeModal} productToDelete={productToDelete}/>
+        <ProductForm onClose={closeModal} product={productToUpdate} />
+      </Modal>
+
+      <Modal isOpen={isDeleteModalOpen} onClose={closeDeleteModal}>
+        <DeleteConfirmationModal onClose={closeDeleteModal} productToDelete={productToDelete} />
       </Modal>
     </div>
   );
