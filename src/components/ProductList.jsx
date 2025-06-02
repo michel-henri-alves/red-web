@@ -5,7 +5,8 @@ import {
   listAllProducts,
   removeOneProduct,
   searchProductsRegexByName,
-  listAllProductsPaginated
+  listAllProductsPaginated,
+  listProductsByName
 } from '../hooks/useProducts'
 import SearchBar from './SearchBar'
 import FilterBar from './FilterBar'
@@ -17,6 +18,7 @@ import FloatingActionButton from "./FloatingActionButton";
 
 export default function ProductList() {
 
+  const [filter, setFilter] = useState('');
 
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -75,7 +77,10 @@ export default function ProductList() {
 
 
   // const { data: products, isLoading, error } = listAllProductsPaginated(page);
-  const { data: products, isLoading, error } = listAllProductsPaginated(page);
+  const { data: products, isLoading, error } = filter ?
+    listProductsByName(filter) :
+    listAllProductsPaginated(page).data;
+
   // const [products, setProducts] = useState([]);
   const [expandedProduct, setExpandedProduct] = useState(null);
 
@@ -94,13 +99,10 @@ export default function ProductList() {
 
 
     <div className="space-y-4">
-      <SearchBar
-        // onSearch={handleSearch}
-      />
-
+      <FilterBar filter={filter} onFilterChange={setFilter} />
 
       {/* {products.data.map((product) => { */}
-      {products.data.map((product) => {
+      {products.map((product) => {
         const isExpanded = expandedProduct === product.smart_code;
         return (
           <div

@@ -58,3 +58,11 @@ export const searchProductsRegexByName = () =>
         queryKey: ['products'],
         queryFn: async () => (await getAllProductsRegexByName()).data,
     });
+
+    export const listProductsByName = (input) =>
+        useQuery({
+          queryKey: ['products', 'filter', input],
+          queryFn: async () => (await getAllProductsRegexByName(input)).data,
+          enabled: !!input, // only run when input is non-empty
+        });
+      
