@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 export default function FilterBar({ filter, onFilterChange }) {
+
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   return (
     <div className="mb-4">
       <input
+        ref={inputRef}
         type="text"
         placeholder="Filter by name"
         value={filter}

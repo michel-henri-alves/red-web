@@ -8,6 +8,7 @@ import {
   listAllProductsPaginated,
   listProductsByName
 } from '../hooks/useProducts'
+import useDebounce from '../hooks/useDebounce'
 import SearchBar from './SearchBar'
 import FilterBar from './FilterBar'
 import DeleteConfirmationModal from './DeleteConfirmationModal';
@@ -19,6 +20,8 @@ import FloatingActionButton from "./FloatingActionButton";
 export default function ProductList() {
 
   const [filter, setFilter] = useState('');
+  const debouncedFilter = useDebounce(filter, 500); // 500ms debounce
+
 
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -77,9 +80,7 @@ export default function ProductList() {
 
 
   // const { data: products, isLoading, error } = listAllProductsPaginated(page);
-  const { data: products, isLoading, error } = filter ?
-    listProductsByName(filter) :
-    listAllProductsPaginated(page).data;
+  const { data: products, isLoading, error } = listAllProductsPaginated(debouncedFilter, page);
 
   // const [products, setProducts] = useState([]);
   const [expandedProduct, setExpandedProduct] = useState(null);
@@ -102,7 +103,7 @@ export default function ProductList() {
       <FilterBar filter={filter} onFilterChange={setFilter} />
 
       {/* {products.data.map((product) => { */}
-      {products.map((product) => {
+      {products.data.map((product) => {
         const isExpanded = expandedProduct === product.smart_code;
         return (
           <div

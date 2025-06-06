@@ -14,10 +14,10 @@ export const listAllProducts = () =>
         queryFn: async () => (await getAllProducts()).data,
     });
 
-export const listAllProductsPaginated = (page, limit = 5) =>
+export const listAllProductsPaginated = (filter, page, limit = 5) =>
     useQuery({
-        queryKey: ['products', page, limit],
-        queryFn: async () => (await getPaginatedProducts(page, limit)).data,
+        queryKey: ['products', filter, page, limit],
+        queryFn: async () => (await getPaginatedProducts(filter, page, limit)).data,
         keepPreviousData: true,
     });
 
@@ -59,10 +59,10 @@ export const searchProductsRegexByName = () =>
         queryFn: async () => (await getAllProductsRegexByName()).data,
     });
 
-    export const listProductsByName = (input) =>
-        useQuery({
-          queryKey: ['products', 'filter', input],
-          queryFn: async () => (await getAllProductsRegexByName(input)).data,
-          enabled: !!input, // only run when input is non-empty
-        });
-      
+export const listProductsByName = (input) =>
+    useQuery({
+        queryKey: ['products', 'filter', input],
+        queryFn: async () => (await getAllProductsRegexByName(input)).data,
+        enabled: !!input, // only run when input is non-empty
+    });
+

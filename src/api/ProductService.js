@@ -10,4 +10,4 @@ export const getAllProductsRegexByName = (input) => API.get(`/search/${input}`);
 export const createProduct = (data) => API.post('/', data);
 export const updateProduct = (id, data) => API.put(`/${id}`, data);
 export const deleteProduct = (id) => API.delete(`/${id}`);
-export const getPaginatedProducts = (page, limit = 10) => API.get(`?page=${page}&limit=${limit}`);
+export const getPaginatedProducts = (filter, page, limit = 10) => API.get(`/search?name=${filter}&page=${page}&limit=${limit}`);
