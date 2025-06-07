@@ -5,6 +5,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import ProductPage from './pages/ProductPage';
+import CameraTest from './pages/CameraTest';
+
 import Sidebar from './components/Sidebar';
 
 const queryClient = new QueryClient();
@@ -29,6 +31,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<div>Bem-vindo!</div>} />
                 <Route path="/products" element={<ProductPage />} />
+                <Route path="/camera" element={<CameraTest />} />
                 <Route path="/configuracoes" element={<div>Configurações</div>} />
               </Routes>
             </main>

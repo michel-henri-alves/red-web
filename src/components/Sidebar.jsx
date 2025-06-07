@@ -22,7 +22,11 @@ export default function Sidebar() {
                     <span>📦</span>
                     {isSidebarOpen && <span>Produtos</span>}
                 </Link>
-                <Link to="/products" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
+                <Link to="/camera" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
+                    <span>📷</span>
+                    {isSidebarOpen && <span>Camera</span>}
+                </Link>
+                <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
                     <span>𝄃𝄃𝄂𝄂𝄀𝄁𝄃𝄂𝄂𝄃</span>
                     {isSidebarOpen && <span>Código de barras</span>}
                 </Link>
