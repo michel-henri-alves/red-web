@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { save } from '../hooks/useProducts'
-import { updateProductById } from '../hooks/useProducts'
+import { save } from 'red-shared'
+import { updateProductById } from 'red-shared'
 import { toast } from 'react-toastify';
 
 export default function ProductForm({ onClose, product }) {

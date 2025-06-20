@@ -1,14 +1,14 @@
 import React from 'react';
 import { useState } from "react";
 // import { AnimatePresence, motion } from "motion/react"
+import { useDebounce } from 'red-shared'
 import {
   listAllProducts,
   removeOneProduct,
   searchProductsRegexByName,
   listAllProductsPaginated,
   listProductsByName
-} from '../hooks/useProducts'
-import useDebounce from '../hooks/useDebounce'
+} from 'red-shared'
 import SearchBar from './SearchBar'
 import FilterBar from './FilterBar'
 import DeleteConfirmationModal from './DeleteConfirmationModal';

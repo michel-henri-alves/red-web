@@ -1,5 +1,5 @@
 import React from 'react';
-import { removeOneProduct } from '../hooks/useProducts'
+import { removeOneProduct } from 'red-shared'
 import { toast } from 'react-toastify';
 
 
