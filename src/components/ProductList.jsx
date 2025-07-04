@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState } from "react";
+import { useTranslation } from 'react-i18next'
 // import { AnimatePresence, motion } from "motion/react"
 import { useDebounce } from 'red-shared'
 import {
@@ -18,6 +19,10 @@ import FloatingActionButton from "./FloatingActionButton";
 
 
 export default function ProductList() {
+
+  const { t } = useTranslation();
+
+  const domain = t('product')
 
   const [filter, setFilter] = useState('');
   const debouncedFilter = useDebounce(filter, 500); // 500ms debounce

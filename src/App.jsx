@@ -4,6 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import i18next from 'i18next';
+import { initReactI18next } from 'react-i18next';
+
 import ProductPage from './pages/ProductPage';
 import CameraTest from './pages/CameraTest';
 
