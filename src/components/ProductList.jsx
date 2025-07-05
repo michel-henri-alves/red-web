@@ -1,114 +1,80 @@
-import React from 'react';
-import { useState } from "react";
-import { useTranslation } from 'react-i18next'
-// import { AnimatePresence, motion } from "motion/react"
-import { useDebounce } from 'red-shared'
+import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useDebounce } from "red-shared";
 import {
-  listAllProducts,
-  removeOneProduct,
-  searchProductsRegexByName,
-  listAllProductsPaginated,
-  listProductsByName
-} from 'red-shared'
-import SearchBar from './SearchBar'
-import FilterBar from './FilterBar'
-import DeleteConfirmationModal from './DeleteConfirmationModal';
+  useInfiniteProducts,
+  removeOneProduct
+} from "red-shared";
+
+import FilterBar from "./FilterBar";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import Modal from "./Modal";
-import ProductForm from './ProductForm';
+import ProductForm from "./ProductForm";
 import FloatingActionButton from "./FloatingActionButton";
 
-
 export default function ProductList() {
-
   const { t } = useTranslation();
+  const domain = t("product");
 
-  const domain = t('product')
-
-  const [filter, setFilter] = useState('');
-  const debouncedFilter = useDebounce(filter, 500); // 500ms debounce
-
-
-  const [page, setPage] = useState(1);
-  const limit = 10;
-
+  const [filter, setFilter] = useState("");
+  const debouncedFilter = useDebounce(filter, 500);
   const [productToDelete, setProductToDelete] = useState(null);
   const [productToUpdate, setProductToUpdate] = useState(null);
-
-
+  const [expandedProduct, setExpandedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  // const openDeleteModal = () => setDeleteModalOpen(true);
-  const closeDeleteModal = () => setDeleteModalOpen(false);
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteProducts(debouncedFilter, 10);
+  const allProducts = data?.pages.flatMap((page) => page.data) ?? [];
 
-  const openDeleteModal = (product) => {
-    setProductToDelete(product)
-    setDeleteModalOpen(true);
-  }
+  const loaderRef = useRef(null);
 
-  const openUpdateModal = (product) => {
-    setProductToUpdate(product)
-    setIsModalOpen(true);
-  }
+  useEffect(() => {
+    if (!loaderRef.current || !hasNextPage) return;
 
-  const openCreationModal = () => {
-    setProductToUpdate({})
-    setIsModalOpen(true);
-  }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasNextPage) {
+        fetchNextPage();
+      }
+    });
 
-  // const [isModalOpen, setIsModalOpen] = useState(false);
+    observer.observe(loaderRef.current);
 
-  // const openModal = (productName) => {
-  //   if (confirm("Você tem certeza que deseja excluir o produto /n ?")) {
-  //     // setProducts((prev) => prev.filter((p) => p.smart_code !== smartCode));
-  //     console.log(productName)
-  //   }
-  //   // console.log(isModalOpen)
-  //   // setIsModalOpen(true);
-  //   // console.log(isModalOpen)
-  // }
-  // const closeModal = () => setIsModalOpen(false);
-
-  const { mutate: remove } = removeOneProduct();
-
-
-  // const [searchTerm, setSearchTerm] = useState("");
-  // const handleSearch = (term) => {
-  //   setSearchTerm(term);
-  //   // setProducts(searchProductsRegexByName(term))
-  // };
-
-
-  // const { data: products, isLoading, error } = listAllProductsPaginated(page);
-  const { data: products, isLoading, error } = listAllProductsPaginated(debouncedFilter, page);
-
-  // const [products, setProducts] = useState([]);
-  const [expandedProduct, setExpandedProduct] = useState(null);
-
-  // const filteredProducts = products.data.filter((product) =>
-  //   product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading products</p>;
+    return () => {
+      if (loaderRef.current) observer.unobserve(loaderRef.current);
+    };
+  }, [fetchNextPage, hasNextPage]);
 
   const toggleExpand = (code) => {
     setExpandedProduct(expandedProduct === code ? null : code);
   };
 
+
+  const openDeleteModal = (product) => {
+    setProductToDelete(product);
+    setDeleteModalOpen(true);
+  };
+  const closeDeleteModal = () => setDeleteModalOpen(false);
+
+  const openUpdateModal = (product) => {
+    setProductToUpdate(product);
+    setIsModalOpen(true);
+  };
+  const closeModal = () => setIsModalOpen(false);
+
+  const openCreationModal = () => {
+    setProductToUpdate({});
+    setIsModalOpen(true);
+  };
+
+  if (isLoading) return <p>{t("loading.waiting")}</p>;
+  if (error) return <p>{t("loading.error")}</p>;
+
   return (
-
-
     <div className="space-y-4">
-      <FilterBar filter={filter} onFilterChange={setFilter} />
+      <FilterBar filter={filter} onFilterChange={setFilter} tooltipParam={t("product.name")} />
 
-      {/* {products.data.map((product) => { */}
-      {products.data.map((product) => {
+      {allProducts.map((product) => {
         const isExpanded = expandedProduct === product.smart_code;
         return (
           <div
@@ -117,92 +83,61 @@ export default function ProductList() {
           >
             <button
               onClick={() => toggleExpand(product.smart_code)}
-              className="w-full text-left p-4 flex justify-between items-center"
+              className="w-full text-left p-4 flex justify-between items-center cursor-pointer"
             >
               <span className="font-semibold">{product.product_name}</span>
               <span>{isExpanded ? "▲" : "▼"}</span>
             </button>
 
-            {/* <AnimatePresence> */}
-
             {isExpanded && (
-              <div
-                // initial={{ height: 0, opacity: 0 }}
-                // animate={{ height: "auto", opacity: 1 }}
-                // exit={{ height: 0, opacity: 0 }}
-                // transition={{ duration: 0.3 }}
-                className="overflow-hidden px-4 pb-4 text-sm text-gray-700"
-              >
-                <p><strong>Description:</strong> {product.category}</p>
-                <p><strong>Price:</strong> ${product.price}</p>
-                <p><strong>Responsible:</strong> {product.responsible}</p>
-                <div className="mt-2">
+              <div className="overflow-hidden px-4 pb-4 text-sm text-gray-700">
+                <p>
+                  <strong>{t("product.category")}:</strong> {product.category}
+                </p>
+                <p>
+                  <strong>{t("product.price")}:</strong> ${product.price}
+                </p>
+                <p>
+                  <strong>{t("product.responsible")}:</strong>{" "}
+                  {product.responsible}
+                </p>
+                <div className="mt-4 flex justify-end space-x-2">
                   <button
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-300"
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-300 cursor-pointer"
                     onClick={() => openDeleteModal(product)}
                   >
-                    Excluir
+                    🗑&nbsp;{t("button.delete")}
                   </button>
                   <button
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-300"
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-300 cursor-pointer"
                     onClick={() => openUpdateModal(product)}
                   >
-                    Alterar
+                    📝&nbsp;{t("button.update")}
                   </button>
                 </div>
               </div>
             )}
-            {/* </AnimatePresence> */}
-
           </div>
         );
       })}
 
-      {/* {productToDelete && (
-        <Modal isOpen={true} onClose={closeModal}>
-          <p>Are you sure you want to delete <strong>{productToDelete.product_name}</strong>?</p>
-          <div className="mt-4 flex justify-end space-x-2">
-            <button
-              onClick={() => setProductToDelete(null)}
-              className="px-4 py-2 bg-gray-200 rounded"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={() => {
-                setProducts((prev) =>
-                  prev.filter((p) => p.smart_code !== productToDelete.smart_code)
-                );
-                setProductToDelete(null);
-              }}
-              className="px-4 py-2 bg-red-500 text-white rounded"
-            >
-              Confirmar
-            </button>
-          </div>
-        </Modal>
-      )} */}
+      <div ref={loaderRef} className="h-10" />
+      {isFetchingNextPage && <p className="text-center">{t("loading.waiting")}</p>}
 
-      <div className="flex justify-between mt-4">
-        <button onClick={() => setPage((product) => Math.max(product - 1, 1))} disabled={page === 1}>
-          Previous
-        </button>
-        <span>Page {page}</span>
-        <button onClick={() => setPage((product) => product + 1)}>
-          Next
-        </button>
-      </div>
-      <h1>Total de registros: {products.total}</h1>
-
-
-      <FloatingActionButton onClick={openCreationModal} />
+      <FloatingActionButton onClick={openCreationModal} domain={domain} />
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <ProductForm onClose={closeModal} product={productToUpdate} />
       </Modal>
 
       <Modal isOpen={isDeleteModalOpen} onClose={closeDeleteModal}>
-        <DeleteConfirmationModal onClose={closeDeleteModal} productToDelete={productToDelete} />
+        {productToDelete && (
+          <DeleteConfirmationModal
+            onClose={closeDeleteModal}
+            deleteMethod={removeOneProduct}
+            deleteId={productToDelete._id}
+            description={productToDelete.product_name} />
+        )}
       </Modal>
     </div>
   );

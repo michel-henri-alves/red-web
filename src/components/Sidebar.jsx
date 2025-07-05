@@ -1,41 +1,50 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 
 export default function Sidebar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const { t } = useTranslation();
 
     return (
         <aside className={`h-screen bg-blue-700 text-white p-4 flex flex-col transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-16"}`}>
-            <button
+
+            <button 
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="mb-6 text-white"
+                className="bg-blue-500 text-white px-2 py-2 rounded cursor-pointer"
+                title={isSidebarOpen ? t("button.tooltip.reduce") : t("button.tooltip.expand")}
             >
-                {isSidebarOpen ? "«" : "»"}
+                {isSidebarOpen ? "«" : "☰"}
             </button>
 
             <nav className="flex flex-col space-y-2">
+
                 <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
                     <span>🏠</span>
-                    {isSidebarOpen && <span>Home</span>}
+                    {isSidebarOpen && <span>{t("sidebar.home")}</span>}
                 </Link>
+
                 <Link to="/products" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
                     <span>📦</span>
-                    {isSidebarOpen && <span>Produtos</span>}
+                    {isSidebarOpen && <span>{t("sidebar.products")}</span>}
                 </Link>
-                <Link to="/camera" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
+
+                {/* <Link to="/camera" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
                     <span>📷</span>
                     {isSidebarOpen && <span>Camera</span>}
-                </Link>
+                </Link> */}
+
                 <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
                     <span>𝄃𝄃𝄂𝄂𝄀𝄁𝄃𝄂𝄂𝄃</span>
-                    {isSidebarOpen && <span>Código de barras</span>}
+                    {isSidebarOpen && <span>{t("sidebar.read.barcode")}</span>}
                 </Link>
-                <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
+
+                {/* <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
                     <span>⚙️</span>
                     {isSidebarOpen && <span>Configurações</span>}
-                </Link>
+                </Link> */}
+
             </nav>
         </aside>
-
     );
 }

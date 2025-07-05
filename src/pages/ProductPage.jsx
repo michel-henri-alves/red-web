@@ -6,7 +6,6 @@ import ProductList from '../components/ProductList';
 export default function ProductPage() {
 
   const { t } = useTranslation();
-  const domain = t('product')
 
   return (
     <div className="p-4">

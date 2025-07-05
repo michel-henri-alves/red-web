@@ -1,41 +1,34 @@
 import React from 'react';
-import { removeOneProduct } from 'red-shared'
 import { toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
 
 
-export default function DeleteConfirmationModal({ onClose, productToDelete }) {
-
-    const { mutate: remove } = removeOneProduct();
+export default function DeleteConfirmationModal({ onClose, deleteMethod, deleteId, description }) {
+    const { t } = useTranslation();
+    const { mutate: remove } = deleteMethod();
 
     const handleDelete = () => {
-        remove(productToDelete._id)
-        onClose()
-        toast.success("Produto " 
-            + productToDelete.product_name + " excluído com sucesso!");
-        
+        remove(deleteId);
+        onClose();
+        toast.success(t("toast.delete.success", { description: description }))
     }
 
 
     return (
         <div>
-            <p>Are you sure you want to delete <strong>{productToDelete.product_name}</strong>?</p>
+            <p><strong>{t("delete.confirmation.message", { description: description })}</strong></p>
             <div className="mt-4 flex justify-end space-x-2">
                 <button
                     onClick={() => { onClose() }}
-                    className="px-4 py-2 bg-gray-200 rounded"
+                    className="px-4 py-2 text-white bg-red-500 hover:bg-red-300 rounded cursor-pointer"
                 >
-                    Cancelar
+                    ✖ &nbsp;{t("button.cancel")}
                 </button>
                 <button
-                    onClick={() => { handleDelete() }
-                        // setProducts((prev) =>
-                        //     prev.filter((p) => p.smart_code !== productToDelete.smart_code)
-                        // );
-                        // setProductToDelete(null);
-                    }
-                    className="px-4 py-2 bg-red-500 text-white rounded"
+                    onClick={() => { handleDelete() }}
+                    className="px-4 py-2 text-white bg-green-500 hover:bg-green-300 text-white rounded cursor-pointer"
                 >
-                    Confirmar
+                    ✔ &nbsp;{t("button.confirm")}
                 </button>
             </div>
         </div>
