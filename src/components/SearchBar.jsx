@@ -5,9 +5,8 @@ export default function SearchBar({ onSearch }) {
 
   const handleChange = (e) => {
     const value = e.target.value;
-    // alert(value+"1111")
     setQuery(value);
-    onSearch(value); // envia o texto para o componente pai
+    onSearch(value);
   };
 
   return (

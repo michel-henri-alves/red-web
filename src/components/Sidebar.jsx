@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 
 export default function Sidebar() {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { t } = useTranslation();
 
     return (
@@ -19,12 +19,12 @@ export default function Sidebar() {
 
             <nav className="flex flex-col space-y-2">
 
-                <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
+                <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2" title={t("sidebar.home")}>
                     <span>🏠</span>
                     {isSidebarOpen && <span>{t("sidebar.home")}</span>}
                 </Link>
 
-                <Link to="/products" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
+                <Link to="/products" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2" title={t("sidebar.products")}>
                     <span>📦</span>
                     {isSidebarOpen && <span>{t("sidebar.products")}</span>}
                 </Link>
@@ -34,9 +34,14 @@ export default function Sidebar() {
                     {isSidebarOpen && <span>Camera</span>}
                 </Link> */}
 
-                <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
-                    <span>𝄃𝄃𝄂𝄂𝄀𝄁𝄃𝄂𝄂𝄃</span>
+                <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2" title={t("sidebar.read.barcode")}>
+                    <span>𝄃𝄃𝄂𝄀𝄁𝄃</span>
                     {isSidebarOpen && <span>{t("sidebar.read.barcode")}</span>}
+                </Link>
+
+                <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2" title={t("sidebar.read.barcode")}>
+                    <span>👨🏻‍💼</span>
+                    {isSidebarOpen && <span>Michel Alves</span>}
                 </Link>
 
                 {/* <Link to="#" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">

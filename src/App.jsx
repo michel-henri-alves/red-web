@@ -17,13 +17,13 @@ export default function App() {
   const { t } = useTranslation();
 
   return (
-
+    
     <QueryClientProvider client={queryClient}>
       <Router>
         <div className="bg-gray-200	h-screen flex flex-col">
 
-          <header className="h-16 bg-blue-700 text-white flex items-center px-6 shadow">
-            <h1 className="text-xl font-bold italic">{t("header.system.name")}</h1>
+          <header className="h-16 bg-blue-700 text-white flex items-center justify-center px-6 shadow">
+            <img src="/m4_white.png" alt="M4" className="h-15 w-auto" />
           </header>
 
           <div className="flex flex-1 overflow-hidden">
