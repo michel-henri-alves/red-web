@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from "react-i18next";
-import { save, updateProductById } from 'red-shared'
+import { saveProduct, updateProductById } from 'red-shared'
 import { toast } from 'react-toastify';
 import UnitOfMeasurementEnum from '../enums/unitOfMeasurementEnum';
 
@@ -14,7 +14,7 @@ export default function ProductForm({ onClose, product }) {
         isError: isErrorCreation,
         error: errorCreation,
         reset: resetCreation,
-    } = save();
+    } = saveProduct();
     const { mutateAsync: updating } = updateProductById();
     const [form, setForm] = useState(product);
     const [isOwnManufacture, setOwnManufacture] = useState(form.ownManufacture);
@@ -66,9 +66,7 @@ export default function ProductForm({ onClose, product }) {
                     toast.success(t("toast.creation.success", { description: form.name }));
                 },
                 onError: (error) => {
-                    console.log(form);
                     console.error(error);
-                    console.error(error.response.data.error);
                     toast.error(t("toast.creation.error", { description: form.name, errorCause: error.response.data.error }));
                 },
             });
@@ -83,9 +81,7 @@ export default function ProductForm({ onClose, product }) {
                     toast.success(t("toast.update.success", { description: form.name }));
                 },
                 onError: (error) => {
-                    console.log(form);
                     console.error(error);
-                    console.error(error.response.data.error);
                     toast.error(t("toast.update.error", { description: form.name, errorCause: error.response.data.error }));
                 },
             });
@@ -210,7 +206,7 @@ export default function ProductForm({ onClose, product }) {
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700">{t("product.actualQuantity")}</label>
+                <label className="block text-sm font-medium text-gray-700">{t("product.qty.actual")}</label>
                 <input
                     name="actualQuantity"
                     type="number"

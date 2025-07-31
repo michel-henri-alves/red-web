@@ -3,31 +3,31 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDebounce } from "red-shared";
 import {
-  useInfiniteProducts,
-  removeOneProduct
+  useInfiniteSectors,
+  removeOneSector
 } from "red-shared";
 
 import FormattedDate from 'red-shared/components/FormattedDate';
 import FilterBar from "./FilterBar";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import Modal from "./Modal";
-import ProductForm from "./ProductForm";
+import SectorForm from "./SectorForm";
 import FloatingActionButton from "./FloatingActionButton";
 
-export default function ProductList() {
+export default function SectorList() {
   const { t } = useTranslation();
-  const domain = t("product");
+  const domain = t("sector");
 
   const [filter, setFilter] = useState("");
   const debouncedFilter = useDebounce(filter, 500);
-  const [productToDelete, setProductToDelete] = useState(null);
-  const [productToUpdate, setProductToUpdate] = useState(null);
-  const [expandedProduct, setExpandedProduct] = useState(null);
+  const [sectorToDelete, setSectorToDelete] = useState(null);
+  const [sectorToUpdate, setSectorToUpdate] = useState(null);
+  const [expandedSector, setExpandedSector] = useState(null);
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteProducts(debouncedFilter, 10);
-  const allProducts = data?.pages.flatMap((page) => page.data) ?? [];
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteSectors(debouncedFilter, 10);
+  const allSectors = data?.pages.flatMap((page) => page.data) ?? [];
 
   const loaderRef = useRef(null);
 
@@ -48,22 +48,22 @@ export default function ProductList() {
   }, [fetchNextPage, hasNextPage]);
 
   const toggleExpand = (code) => {
-    setExpandedProduct(expandedProduct === code ? null : code);
+    setExpandedSector(expandedSector === code ? null : code);
   };
 
 
-  const openDeleteModal = (product) => {
-    setProductToDelete(product);
+  const openDeleteModal = (sector) => {
+    setSectorToDelete(sector);
     setDeleteModalOpen(true);
   };
   const closeDeleteModal = () => setDeleteModalOpen(false);
 
-  const openUpdateModal = (product) => {
-    setProductToUpdate(product);
+  const openUpdateModal = (sector) => {
+    setSectorToUpdate(sector);
     setFormModalOpen(true);
   };
   const openCreationModal = () => {
-    setProductToUpdate({});
+    setSectorToUpdate({});
     setFormModalOpen(true);
   };
   const closeFormModal = () => setFormModalOpen(false);
@@ -86,20 +86,20 @@ export default function ProductList() {
 
   return (
     <div className="space-y-4">
-      <FilterBar filter={filter} onFilterChange={setFilter} tooltipParam={t("product.name")} />
+      <FilterBar filter={filter} onFilterChange={setFilter} tooltipParam={t("sector.name")} />
 
-      {allProducts.map((product) => {
-        const isExpanded = expandedProduct === product._id;
+      {allSectors.map((sector) => {
+        const isExpanded = expandedSector === sector._id;
         return (
           <div
-            key={product._id}
+            key={sector._id}
             className="bg-white rounded shadow border hover:shadow-lg transition"
           >
             <button
-              onClick={() => toggleExpand(product._id)}
+              onClick={() => toggleExpand(sector._id)}
               className="w-full text-left p-4 flex justify-between items-center cursor-pointer"
             >
-              <span className="font-semibold">{product.name}</span>
+              <span className="font-semibold">{sector.name}</span>
               <span>{isExpanded ? "▲" : "▼"}</span>
             </button>
 
@@ -112,55 +112,25 @@ export default function ProductList() {
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden px-4 pb-4 text-sm text-gray-700">
                   <p>
-                    <strong>{t("product.category")}:</strong> {product.category}
+                    <strong>{t("created.by")}:</strong> {sector.createdBy} <FormattedDate iso={sector.createdAt} />
                   </p>
                   <p>
-                    <strong>{t("manufacturer")}:</strong> {product.manufacturer}
+                    <strong>{t("updated.by")}:</strong> {sector.updatedBy} <FormattedDate iso={sector.updatedAt} />
                   </p>
                   <br />
                   <p>
-                    <strong>{t("supplier")}:</strong> {product.supplier}
-                  </p>
-                  <p>
-                    <strong>{t("product.purchasePrice")}:</strong> ${product.purchasePrice}
-                  </p>
-                  <br />
-                  <p>
-                    <strong>{t("created.by")}:</strong> {product.createdBy} <FormattedDate iso={product.createdAt} />
-                  </p>
-                  <p>
-                    <strong>{t("updated.by")}:</strong> {product.updatedBy} <FormattedDate iso={product.updatedAt} />
-                  </p>
-                  <br />
-                  <p>
-                    <strong>{t("product.barcode")}:</strong> {product.smartCode}
-                  </p>
-                  <p>
-                    <strong>{t("product.minQuantity")}:</strong> {product.minQuantity}
-                  </p>
-                  <p>
-                    <strong>{t("product.maxQuantity")}:</strong> {product.maxQuantity}
-                  </p>
-                  <p>
-                    <strong>{t("product.qty.actual")}:</strong> {product.actualQuantity}
-                  </p>
-                  <br />
-                  <p>
-                    <strong>{t("product.priceForSale")}:</strong>
-                  </p>
-                  <p className="text-red-500 text-3xl">
-                    {t("product.priceByUnit", { price: product.priceForSale, unit: t(product.unitOfMeasurement) })}
+                    <strong>{t("sector.barcode")}:</strong> {sector.smartCode}
                   </p>
                   <div className="mt-4 flex justify-end space-x-2">
                     <button
                       className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-300 cursor-pointer"
-                      onClick={() => openDeleteModal(product)}
+                      onClick={() => openDeleteModal(sector)}
                     >
                       🗑&nbsp;{t("button.delete")}
                     </button>
                     <button
                       className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-300 cursor-pointer"
-                      onClick={() => openUpdateModal(product)}
+                      onClick={() => openUpdateModal(sector)}
                     >
                       📝&nbsp;{t("button.update")}
                     </button>
@@ -178,22 +148,22 @@ export default function ProductList() {
       <FloatingActionButton onClick={openCreationModal} domain={domain} />
 
       <Modal
-        title={t("modal.title", { "action": t("button.save"), "domain": t("product") })}
+        title={t("modal.title", { "action": t("button.save"), "domain": t("sector") })}
         isOpen={isFormModalOpen}
         onClose={closeFormModal}>
-        <ProductForm onClose={closeFormModal} product={productToUpdate} />
+        <SectorForm onClose={closeFormModal} sector={sectorToUpdate} />
       </Modal>
 
       <Modal
-        title={t("modal.title", { "action": t("button.delete"), "domain": t("product") })}
+        title={t("modal.title", { "action": t("button.delete"), "domain": t("sector") })}
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}>
-        {productToDelete && (
+        {sectorToDelete && (
           <DeleteConfirmationModal
             onClose={closeDeleteModal}
-            deleteMethod={removeOneProduct}
-            deleteId={productToDelete._id}
-            description={productToDelete.name} />
+            deleteMethod={removeOneSector}
+            deleteId={sectorToDelete._id}
+            description={sectorToDelete.name} />
         )}
       </Modal>
     </div>

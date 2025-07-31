@@ -29,6 +29,17 @@ export default function Sidebar() {
                     {isSidebarOpen && <span>{t("sidebar.products")}</span>}
                 </Link>
 
+                <Link to="/sectors" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2" title={t("sidebar.sectors")}>
+                    <span>🌍</span>
+                    {isSidebarOpen && <span>{t("sidebar.sectors")}</span>}
+                </Link>
+
+                <Link to="/sales" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2" title={t("sidebar.sales")}>
+                    <span>💵💳</span>
+                    {isSidebarOpen && <span>{t("sidebar.sales")}</span>}
+                </Link>
+
+
                 {/* <Link to="/camera" className="hover:bg-blue-600 p-2 rounded flex items-center space-x-2">
                     <span>📷</span>
                     {isSidebarOpen && <span>Camera</span>}

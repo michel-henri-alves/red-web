@@ -1,7 +1,9 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Modal({ isOpen, onClose, children }) {
+
+
+export default function Modal({ title, isOpen, onClose, children }) {
   if (!isOpen) return null;
 
   return (
@@ -24,6 +26,7 @@ export default function Modal({ isOpen, onClose, children }) {
           >
             ✖️
           </button>
+          <h1 className="text-2xl font-bold mb-4">{title}</h1>
           <div className="p-6 overflow-y-auto max-h-[80vh]">
             {children}
           </div>

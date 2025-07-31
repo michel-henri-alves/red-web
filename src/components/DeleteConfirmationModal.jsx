@@ -15,7 +15,7 @@ export default function DeleteConfirmationModal({ onClose, deleteMethod, deleteI
 
 
     return (
-        <div>
+        <div className="space-y-4 bg-white p-6 rounded-lg shadow-md">
             <p><strong>{t("delete.confirmation.message", { description: description })}</strong></p>
             <div className="mt-4 flex justify-end space-x-2">
                 <button
