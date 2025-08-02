@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { findProductBySmartCode } from "red-shared";
 import { useTranslation } from 'react-i18next'
-import ToggleSwitch from './ToggleSwitch';
+import DraggableDiv from './DraggableDiv';
 
 
 const BarcodeReader = ({ onScan, postToBackend = true }) => {
@@ -98,28 +98,43 @@ const BarcodeReader = ({ onScan, postToBackend = true }) => {
             className="relative  w-full h-full mx-auto p-4 rounded shadow"
             onClick={() => inputRef.current?.focus()}
         >
-
-            <div className="flex space-x-4">
-                <button className="cursor-pointer px-4 py-2 rounded bg-blue-700 hover:bg-blue-500 text-white">
-                    ✍️&nbsp;Adicionar manualmente
-                </button>
-
-                <button className="cursor-pointer px-4 py-2 rounded bg-purple-700 hover:bg-purple-500 text-white">
-                    🧹&nbsp;Limpar
-                </button>
-
-                <button className="cursor-pointer px-4 py-2 rounded bg-green-700 hover:bg-green-500 text-white">
-                    💰&nbsp;Finalizar venda
-                </button>
-
-                <div className="absolute top-3 right-1 bg-white shadow rounded px-4 py-2 text-green-600 font-bold text-xl font-mono border border-gray-200 z-50">
-                    💸&nbsp;R$ {bill.toFixed(2)}
+            <DraggableDiv children={
+                <div className="bg-white shadow rounded px-4 py-2 text-green-600 font-bold text-xl font-mono border border-gray-200 z-50">
+                    <div>
+                        {t("sales.bill.total")}&nbsp;💲{bill.toFixed(2)}
+                    </div>
                 </div>
-                
-                <ToggleSwitch enabled={isBeepEnabled} setEnabled={setBeepEnabled} />
+            } />
+
+            <div className="w-full bg-white dark:bg-gray-900 shadow-md p-4 flex justify-between items-center rounded-2xl">
+
+                <div className="flex gap-3">
+                    <button className="p-2 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition text-sm flex items-center gap-1 cursor-pointer">
+                        💰 <span>Finalizar compra</span>
+                    </button>
+                    <button className="p-2 px-4 rounded-xl bg-yellow-400 text-white hover:bg-yellow-500 transition text-sm flex items-center gap-1 cursor-pointer">
+                        ✍️ <span>Inserir manualmente</span>
+                    </button>
+                    <button className="p-2 px-4 rounded-xl bg-red-500 text-white hover:bg-red-600 transition text-sm flex items-center gap-1 cursor-pointer">
+                        🧹 <span>Limpar</span>
+                    </button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Som</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={isBeepEnabled}
+                            onChange={() => setBeepEnabled(!isBeepEnabled)}
+                            className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:bg-green-500 transition" />
+                        <span className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5" />
+                    </label>
+                    <span className="text-lg">{isBeepEnabled ? "🎶" : "🔇"}</span>
+                </div>
             </div>
-
-
 
             <input
                 ref={inputRef}
@@ -165,8 +180,6 @@ const BarcodeReader = ({ onScan, postToBackend = true }) => {
                     </tbody>
                 </table>
             </div>
-
-
 
         </div>
 
