@@ -1,0 +1,39 @@
+# ========================
+# Etapa 1 - Build do projeto
+# ========================
+FROM node:20 AS build
+WORKDIR /app
+
+# Copia os arquivos de dependências
+COPY package.json package-lock.json ./
+RUN chmod 644 package-lock.json
+
+# Instala npm na versão desejada e dependências
+# RUN npm install -g npm@10.6.0
+# RUN npm ci
+
+# # Copia todo o código fonte
+# COPY . .
+
+# # Faz o build do Vite (gera pasta dist)
+# RUN npm run build
+
+
+# # ========================
+# # Etapa 2 - Servir com Nginx
+# # ========================
+# FROM nginx:stable-alpine AS production
+# WORKDIR /usr/share/nginx/htmlbr
+
+# # Remove arquivos padrão do Nginx
+# RUN rm -rf ./*
+
+# # Copia o build da etapa anterior
+# COPY --from=build /app/dist ./
+
+# # Copia configuração customizada do Nginx
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# EXPOSE 80
+
+# CMD ["nginx", "-g", "daemon off;"]

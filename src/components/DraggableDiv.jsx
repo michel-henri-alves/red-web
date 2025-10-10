@@ -1,7 +1,7 @@
-    import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 export default function DraggableDiv({ children, width = 250, height = 160 }) {
-  const [position, setPosition] = useState({ x: 800, y: 100 });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const offset = useRef({ x: 0, y: 0 });
 

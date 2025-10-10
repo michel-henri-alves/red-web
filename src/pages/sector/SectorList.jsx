@@ -1,18 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDebounce } from "red-shared";
-import {
-  useInfiniteSectors,
-  removeOneSector
-} from "red-shared";
+import useDebounce from "../../shared/hooks/useDebounce";
+import { fetchAllSectorsPaginated } from "../../shared/hooks/useSectors";
+import { removeSector } from "../../shared/hooks/useSectors"
 
-import FormattedDate from 'red-shared/components/FormattedDate';
-import FilterBar from "./FilterBar";
-import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import Modal from "./Modal";
+import FormattedDate from '../../shared/utils/dateUtils';
+import FilterBar from "../../components/FilterBar";
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
+import Modal from "../../components/Modal";
 import SectorForm from "./SectorForm";
-import FloatingActionButton from "./FloatingActionButton";
+import FloatingActionButton from "../../components/FloatingActionButton";
 
 export default function SectorList() {
   const { t } = useTranslation();
@@ -26,7 +24,9 @@ export default function SectorList() {
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteSectors(debouncedFilter, 10);
+  const { data, isLoading, error, fetchNextPage,
+    hasNextPage, isFetchingNextPage } =
+    fetchAllSectorsPaginated(debouncedFilter, 10);
   const allSectors = data?.pages.flatMap((page) => page.data) ?? [];
 
   const loaderRef = useRef(null);
@@ -161,7 +161,7 @@ export default function SectorList() {
         {sectorToDelete && (
           <DeleteConfirmationModal
             onClose={closeDeleteModal}
-            deleteMethod={removeOneSector}
+            deleteMethod={removeSector}
             deleteId={sectorToDelete._id}
             description={sectorToDelete.name} />
         )}

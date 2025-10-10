@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './index.css' // Importa o CSS com Tailwind
-import 'red-shared/i18n';
+import './shared/i18n';
 
 const queryClient = new QueryClient();
 

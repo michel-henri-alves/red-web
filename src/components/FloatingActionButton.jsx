@@ -1,16 +1,16 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 
-export default function FloatingActionButton({ onClick, domain }) {
+export default function FloatingActionButton({ onClick, content, position, tooltip }) {
+  
   const { t } = useTranslation();
 
   return (
     <button
-      title={t("button.tooltip.form", {domain: domain})}
+      title={tooltip}
       onClick={onClick}
-      className="fixed bottom-20 right-6 bg-blue-600 hover:bg-blue-900 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl cursor-pointer"
+      className={`fixed ${position} right-6 bg-[rgba(228,88,88)] hover:bg-[rgba(255,50,50)] text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center cursor-pointer`}
     >
-      <h1>✚</h1>
+      {content}
     </button>
   );
 }

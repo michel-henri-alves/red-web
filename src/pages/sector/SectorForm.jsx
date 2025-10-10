@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from "react-i18next";
-import { saveSector, updateSectorById } from 'red-shared'
+import { createSector } from '../../shared/hooks/useSectors' 
+import { updateSector } from '../../shared/hooks/useSectors'
 import { toast } from 'react-toastify';
-import UnitOfMeasurementEnum from '../enums/unitOfMeasurementEnum';
 
 
 export default function SectorForm({ onClose, sector }) {
@@ -14,8 +14,8 @@ export default function SectorForm({ onClose, sector }) {
         isError: isErrorCreation,
         error: errorCreation,
         reset: resetCreation,
-    } = saveSector();
-    const { mutateAsync: updating } = updateSectorById();
+    } = createSector();
+    const { mutateAsync: updating } = updateSector();
     const [form, setForm] = useState(sector);
     const [isOwnManufacture, setOwnManufacture] = useState(form.ownManufacture);
     const [isForCreate, setForCreate] = useState(() => {

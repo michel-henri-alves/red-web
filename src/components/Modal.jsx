@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 
 
-export default function Modal({ title, isOpen, onClose, children }) {
+export default function Modal({ title, isOpen, onClose, closeButtonRef, children }) {
   if (!isOpen) return null;
 
   return (
@@ -18,11 +18,12 @@ export default function Modal({ title, isOpen, onClose, children }) {
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.8, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="bg-white p-6 rounded shadow-lg w-full max-w-md relative "
+          className="bg-white p-6 rounded shadow-lg w-full relative "
         >
           <button
             onClick={onClose}
             className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 cursor-pointer"
+            ref={closeButtonRef}
           >
             ✖️
           </button>
