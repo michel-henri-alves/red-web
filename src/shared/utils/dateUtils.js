@@ -1,8 +1,7 @@
 export default function formatDate(dataIso) {
-  if (!dataIso.iso) return '';
+  if (!dataIso) return '';
   
-  const data = new Date(dataIso.iso);
-  console.log(data)
+  const data = new Date(dataIso);
   return data.toLocaleDateString("pt-BR", {
     day: "2-digit",
     month: "2-digit",

@@ -4,16 +4,19 @@ import { useNavigate } from "react-router-dom";
 import {
     removeCustomer
 } from "../../shared/hooks/useCustomers";
-import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import Modal from "../../components/Modal";
 import CustomerForm from "./CustomerForm";
 
-export default function CustomerDeleteUpdate(inputCustomer) {
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
+import ActionButton from "../../components/ActionButton";
+
+
+export default function CustomerButtons(inputCustomer) {
 
     const { t } = useTranslation();
     const navigate = useNavigate();
 
-    const [customer, setCustomer] = useState(inputCustomer);
+    const [customer] = useState(inputCustomer);
     const [customerToDelete, setCustomerToDelete] = useState(inputCustomer);
     const [customerToUpdate, setCustomerToUpdate] = useState(inputCustomer);
 
@@ -35,30 +38,9 @@ export default function CustomerDeleteUpdate(inputCustomer) {
 
     return (
         <div className="mt-4 flex justify-end space-x-2">
-            <button
-                className="bg-red-500 text-white px-4 py-2 
-                           rounded hover:bg-red-700 cursor-pointer"
-                onClick={() => openDeleteModal(customer)}
-            >
-                🗑&nbsp;{t("button.delete")}
-            </button>
-            <button
-                className="bg-green-500 text-white px-4 py-2 
-                           rounded hover:bg-green-700 cursor-pointer"
-                onClick={() => openUpdateModal(customer)}
-            >
-                📝&nbsp;{t("button.update")}
-            </button>
-            <button
-                className="bg-orange-500 text-white px-4 py-2 
-                           rounded hover:bg-orange-700 cursor-pointer"
-                onClick={() => {
-                    navigate(`/booklet/${customer.customer._id}/${customer.customer.name}`)
-                }
-                }
-            >
-                📒&nbsp;{t("button.booklet")}
-            </button>
+            <ActionButton onClick={() => openDeleteModal(customer)} bgColor="red" text={t("button.delete")} icon="🗑" />
+            <ActionButton onClick={() => openUpdateModal(customer)} bgColor="blue" text={t("button.update")} icon="📝" />
+            <ActionButton onClick={() => navigate(`/booklet/${customer.customer._id}/${customer.customer.name}`)} bgColor="green" text={t("button.booklet")} icon="📒" />
 
             <Modal
                 title={t("modal.title", { "action": t("button.save"), "domain": t("customer") })}

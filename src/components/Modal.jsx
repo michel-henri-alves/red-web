@@ -1,14 +1,16 @@
-import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { useTranslation } from "react-i18next";
 
 
 export default function Modal({ title, isOpen, onClose, closeButtonRef, children }) {
+  const { t } = useTranslation();
+
   if (!isOpen) return null;
 
   return (
     <AnimatePresence>
       <motion.div
+        // onClick={onClose}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -25,7 +27,7 @@ export default function Modal({ title, isOpen, onClose, closeButtonRef, children
             className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 cursor-pointer"
             ref={closeButtonRef}
           >
-            ✖️
+            {t("close")} ✖️
           </button>
           <h1 className="text-2xl font-bold mb-4">{title}</h1>
           <div className="p-6 overflow-y-auto max-h-[80vh]">

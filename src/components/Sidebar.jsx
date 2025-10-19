@@ -1,50 +1,238 @@
-import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { useTranslation } from "react-i18next";
+import { useState, useEffect, useMemo } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Dialog } from "@headlessui/react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Menu,
+  X,
+  Home,
+  Box as Package,
+  LayoutDashboard,
+  ShoppingCart,
+  Users,
+  Sun,
+  Moon,
+  LogOut,
+  Settings,
+} from "lucide-react";
 
-export default function Sidebar() {
-    const { t } = useTranslation();
-    
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+/**
+ * Sidebar completo:
+ * - mobile drawer (Headless UI)
+ * - desktop collapsible (persistido em localStorage)
+ * - dark mode persistido (localStorage)
+ * - staggered animations (framer-motion)
+ * - role-based items (passar user.roles array como prop)
+ *
+ * Props:
+ *  - user: { name, initials, roles: ['admin', 'sales'] }  (opcional)
+ *  - onLogout: function (opcional)
+ */
+export default function Sidebar({ user = null, onLogout = () => {} }) {
+  const location = useLocation();
 
-    return (
-        <aside className={`h-screen bg-[rgba(98,70,234)] text-white p-4 flex flex-col transition-all duration-100 ${isSidebarOpen ? "w-64" : "w-20"}`}>
+  // mobile drawer state
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-            <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="bg-[rgba(59,89,152)] text-white text-2xl px-2 py-2 rounded cursor-pointer"
-                title={isSidebarOpen ? t("button.tooltip.reduce") : t("button.tooltip.expand")}
-            >
-                {isSidebarOpen ? "«" : "☰"}
-            </button>
+  // collapsed persisted
+  const [collapsed, setCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("sidebar-collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
 
-            <nav className="flex flex-col space-y-2">
+  // theme persisted
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem("theme") || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    } catch {
+      return "light";
+    }
+  });
 
-                <Link to="/" className="hover:bg-[rgba(59,89,152)] p-2 rounded flex items-center space-x-2" title={t("sidebar.home")}>
-                    <span className='text-2xl'>🏠</span>
-                    {isSidebarOpen && <span className='font-bold'>{t("sidebar.home")}</span>}
-                </Link>
+  // apply theme
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === "dark") root.classList.add("dark");
+    else root.classList.remove("dark");
+    try { localStorage.setItem("theme", theme); } catch {}
+  }, [theme]);
 
-                <Link to="/products" className="hover:bg-[rgba(59,89,152)] p-2 rounded flex items-center space-x-2" title={t("sidebar.products")}>
-                    <span className='text-2xl'>📦</span>
-                    {isSidebarOpen && <span className='font-bold'>{t("sidebar.products")}</span>}
-                </Link>
+  // persist collapsed
+  useEffect(() => {
+    try { localStorage.setItem("sidebar-collapsed", collapsed ? "true" : "false"); } catch {}
+  }, [collapsed]);
 
-                <Link to="/sectors" className="hover:bg-[rgba(59,89,152)] p-2 rounded flex items-center space-x-2" title={t("sidebar.sectors")}>
-                    <span className='text-2xl'>🏘️</span>
-                    {isSidebarOpen && <span className='font-bold'>{t("sidebar.sectors")}</span>}
-                </Link>
+  // close mobile drawer when route changes
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
 
-                <Link to="/sales" className="hover:bg-[rgba(59,89,152)] p-2 rounded flex items-center space-x-2" title={t("sidebar.sales")}>
-                    <span className='text-2xl'>💲</span>
-                    {isSidebarOpen && <span className='font-bold'>{t("sidebar.sales")}</span>}
-                </Link>
+  // NAV ITEMS with optional roles -> if roles is undefined show to all
+  const navItems = useMemo(() => ([
+    { name: "Home", icon: Home, path: "/", roles: undefined },
+    { name: "Produtos", icon: Package, path: "/products", roles: ["admin", "seller"] },
+    { name: "Setores", icon: LayoutDashboard, path: "/sectors", roles: ["admin"] },
+    { name: "Vendas", icon: ShoppingCart, path: "/sales", roles: ["admin", "seller", "cashier"] },
+    { name: "Clientes", icon: Users, path: "/customers", roles: ["admin", "seller"] },
+  ]), []);
 
-                <Link to="/customers" className="hover:bg-[rgba(59,89,152)] p-2 rounded flex items-center space-x-2" title={t("sidebar.sales")}>
-                    <span className='text-2xl'>🙋🏻</span>
-                    {isSidebarOpen && <span className='font-bold'>{t("sidebar.customers")}</span>}
-                </Link>
+  // Filter nav by user roles
+  const visibleNav = useMemo(() => {
+    if (!user || !user.roles) return navItems;
+    return navItems.filter(item => !item.roles || item.roles.some(r => user.roles.includes(r)));
+  }, [navItems, user]);
+
+  // framer-motion variants (stagger)
+  const listVariants = {
+    visible: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
+    hidden: {},
+  };
+  const itemVariants = {
+    hidden: { opacity: 0, x: -8 },
+    visible: { opacity: 1, x: 0 },
+  };
+
+  return (
+    <>
+      {/* Mobile Topbar */}
+      <header className="lg:hidden flex items-center justify-between p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow">
+        <button aria-label="Abrir menu" onClick={() => setMobileOpen(true)} className="p-2 rounded-md hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-white/30">
+          <Menu className="w-6 h-6" />
+        </button>
+        {/* <div className="flex items-center gap-3">
+          <div className="text-lg font-semibold tracking-wide">M4</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setTheme(s => s === "dark" ? "light" : "dark")} aria-label="Toggle theme" className="p-2 rounded-md hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-white/30">
+            {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+        </div> */}
+      </header>
+
+      {/* Desktop Sidebar */}
+      <AnimatePresence>
+        <motion.aside
+          initial={false}
+          animate={collapsed ? { width: 72 } : { width: 256 }}
+          transition={{ type: "spring", stiffness: 260, damping: 28 }}
+          className="hidden lg:flex lg:flex-col bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen shadow-2xl p-4"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-2">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">M4</div>
+              {!collapsed && <div className="text-xl font-bold">M4 Dashboard</div>}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button onClick={() => setCollapsed(c => !c)} title={collapsed ? "Expandir" : "Recolher"} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                <motion.span animate={{ rotate: collapsed ? 180 : 0 }}>
+                  <X className="w-4 h-4" />
+                </motion.span>
+              </button>
+              <button onClick={() => setTheme(s => s === "dark" ? "light" : "dark")} aria-label="Toggle theme" className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Nav */}
+          <nav className="mt-6 flex-1">
+            <motion.ul initial="hidden" animate="visible" variants={listVariants} className="space-y-1">
+              {visibleNav.map(item => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <motion.li key={item.path} variants={itemVariants}>
+                    <Link to={item.path} className={`group flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 ${isActive ? "bg-indigo-600 text-white" : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"}`}>
+                      <item.icon className="w-5 h-5" />
+                      {!collapsed && <span className="font-medium">{item.name}</span>}
+                    </Link>
+                  </motion.li>
+                );
+              })}
+            </motion.ul>
+          </nav>
+
+          {/* Footer (profile + actions) */}
+          <div className="mt-auto px-2 py-4 border-t border-slate-200/70 dark:border-slate-800/60">
+            <div className="flex items-center justify-between gap-2">
+              {!collapsed && (
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center text-white">{
+                    (user && user.initials) ? user.initials : "JS"
+                  }</div>
+                  <div>
+                    <div className="text-sm font-semibold">{(user && user.name) ? user.name : "Usuário"}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400">{(user && user.roleLabel) ? user.roleLabel : "Perfil"}</div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2">
+                <button title="Configurações" className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                  <Settings className="w-5 h-5" />
+                </button>
+                <button onClick={() => onLogout()} title="Sair" className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.aside>
+      </AnimatePresence>
+
+      {/* Mobile Drawer */}
+      <Dialog open={mobileOpen} onClose={() => setMobileOpen(false)} className="lg:hidden">
+        <div className="fixed inset-0 z-40 flex">
+          <AnimatePresence>
+            {mobileOpen && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40" />
+            )}
+          </AnimatePresence>
+
+          <Dialog.Panel className="relative z-50 w-3/4 max-w-xs bg-white dark:bg-slate-900 p-6 shadow-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">M4</div>
+                <div className="text-lg font-semibold">M4</div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button onClick={() => setTheme(s => s === "dark" ? "light" : "dark")} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                  {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
+
+                <button onClick={() => setMobileOpen(false)} className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            <nav className="mt-6">
+              <ul className="space-y-2">
+                {visibleNav.map(item => (
+                  <li key={item.path}>
+                    <Link to={item.path} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 p-3 rounded-lg transition-colors duration-150 ${location.pathname === item.path ? "bg-indigo-600 text-white" : "hover:bg-slate-100 dark:hover:bg-slate-800"}`}>
+                      <item.icon className="w-5 h-5" />
+                      <span className="font-medium">{item.name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </nav>
-        </aside>
-    );
+
+            <div className="mt-6 pt-4 border-t border-slate-200/70 dark:border-slate-800/60">
+              <button className="w-full flex items-center justify-center gap-2 p-3 rounded bg-indigo-600 text-white hover:opacity-95 transition" onClick={() => {/* perfil action */}}>
+                <Users className="w-5 h-5" />
+                <span>Perfil</span>
+              </button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+    </>
+  );
 }

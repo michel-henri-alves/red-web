@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 
 import FloatingCashierButton from "./components/FloatingCashierButton";
 import Sidebar from './components/Sidebar';
+import MenuResponsive from './components/MenuResponsive';
 import RouteConfig from './components/RoutesConfig';
 
 const queryClient = new QueryClient();
@@ -27,7 +28,7 @@ export default function App() {
 
           <div className="flex flex-1 overflow-hidden">
 
-            <Sidebar />
+            <MenuResponsive />
 
             <main className="bg-[rgba(255,255,254)] flex-1 p-6 overflow-y-auto">
               <RouteConfig /> 

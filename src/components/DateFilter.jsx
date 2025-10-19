@@ -1,8 +1,15 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import DatePicker from "react-datepicker";
+
+import ActionButton from "./ActionButton";
+
 import "react-datepicker/dist/react-datepicker.css";
 
+
 export default function DateFilter({ onFilter }) {
+  const { t } = useTranslation();
+
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -16,22 +23,37 @@ export default function DateFilter({ onFilter }) {
         selected={startDate}
         onChange={(date) => setStartDate(date)}
         dateFormat="dd/MM/yyyy"
-        placeholderText="Data inicial"
-        className="border px-2 py-1 rounded"
+        placeholderText={t("initial.date")}
+        className="px-3 py-2 w-full 
+                   bg-[rgba(209,209,233)]	focus:bg-white rounded
+                   focus:outline-none focus:ring-2 focus:ring-blue-500 
+                   focus:shadow-lg focus:shadow-blue-500/50
+                   focus:border-blue-500 px-4 py-2
+                   shadow-md hover:shadow-lg transition-shadow
+                   transition duration-300"
       />
+
       <DatePicker
         selected={endDate}
         onChange={(date) => setEndDate(date)}
         dateFormat="dd/MM/yyyy"
-        placeholderText="Data final"
-        className="border px-2 py-1 rounded"
+        placeholderText={t("end.date")}
+        className="px-3 py-2 w-full 
+                   bg-[rgba(209,209,233)]	focus:bg-white rounded
+                   focus:outline-none focus:ring-2 focus:ring-blue-500 
+                   focus:shadow-lg focus:shadow-blue-500/50
+                   focus:border-blue-500 px-4 py-2
+                   shadow-md hover:shadow-lg transition-shadow
+                   transition duration-300"
       />
-      <button
+
+      <ActionButton
+        type="submit"
         onClick={handleFilter}
-        className="bg-blue-500 text-white px-4 py-1 rounded"
-      >
-        Filtrar
-      </button>
+        bgColor="blue"
+        text={t("button.search")}
+        icon={"🔍︎"}
+      />
     </div>
   );
 }

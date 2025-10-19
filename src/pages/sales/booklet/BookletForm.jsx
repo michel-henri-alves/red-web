@@ -1,169 +1,113 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from "react-i18next";
-import { createCustomer, updateCustomer } from '../../../shared/hooks/useCustomers'
+import { createPendings, updatePendings } from '../../../shared/hooks/usePendings'
 import { toast } from 'react-toastify';
+import { useForm } from "../../../hooks/useForm";
+import PendingTypeEnum from "../../../shared/enums/pendingTypeEnum";
 import FormInput from '../../../components/FormInput';
+import ActionButton from "../../../components/ActionButton";
+import ProgressBar from "../../../components/ProgressBar";
 
-export default function CustomerForm({ onClose, customer }) {
+
+export default function BookletForm({ onClose, pending = {}, customerId }) {
+
+    console.log(pending);
+
     const { t } = useTranslation();
-    const {
-        mutate: creation,
-        isLoading: isLoadingCreation,
-        isSuccess: isSuccessCreation,
-        isError: isErrorCreation,
-        error: errorCreation,
-        reset: resetCreation,
-    } = createCustomer();
-    const { mutateAsync: updating } = updateCustomer();
-    const [form, setForm] = useState(customer || {});
-    useEffect(() => {
-        setForm(customer || {});
-    }, [customer]);
-
-    const [isForCreate, setForCreate] = useState(() => {
-        if (Object.keys(customer).length === 0) {
-            return true;
-        } else {
-            return false;
-        }
-    })
-    const [errors, setErrors] = useState({});
     const inputRef = useRef(null);
-    useEffect(() => {
-        if (onClose) {
-            setTimeout(() => {
-                inputRef.current?.focus();
-            }, 0);
-        }
-    }, [onClose]);
 
-    const validate = () => {
-        const errs = {};
-        if (!form.name) errs.name = t("required.field", { field: t("customer.name"), domain: t("customer") });
-        if (!form.phone) errs.phone = t("required.field", { field: t("customer.phone"), domain: t("customer") });
-        return errs;
-    };
+    const {
+        mutateAsync: creation,
+        isLoading: isCreating,
+    } = createPendings();
+    const { mutateAsync: updating } = updatePendings();
 
-    const handleChange = (e) => {
-        e.preventDefault();
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+    const fieldsConfig = [
+        { name: "amount", label: t("pending.amount"), type: "number", icon: "💵", required: true },
+    ];
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const { form, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useForm({
+        initialData: {
+            ...pending,
+            pendingType: pending?.pendingType || "DEBIT",
+            customerId: customerId.customerId
+        },
+        fieldsConfig,
+        onSubmit: async (data) => {
+            try {
+                if (!pending._id) {
+                    console.log("cadastro", JSON.stringify(data))
+                    await creation(data);
+                    toast.success(t("toast.creation.success", { description: t(data.pendingType) + " " + data.amount }));
+                } else {
+                    await updating({ id: pending._id, data });
+                    toast.success(t("toast.update.success", { description: t(data.pendingType) + " " + data.amount }));
+                }
+                onClose?.();
+            } catch (err) {
+                toast.error(t("toast.creation.error", {
+                    description: data.name,
+                    errorCause: err.response?.data?.error
+                }));
+            }
+        },
+    });
 
-        const validationErrors = validate();
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
-        }
-
-        if (isForCreate) {
-            creation(form, {
-                onSuccess: () => {
-                    setErrors({});
-                    if (onClose) onClose();
-                    toast.success(t("toast.creation.success", { description: form.name }));
-                },
-                onError: (error) => {
-                    console.error(error);
-                    toast.error(t("toast.creation.error", { description: form.name, errorCause: error.response.data.error }));
-                },
-            });
-        } else {
-            updating({
-                id: form._id,
-                data: form,
-            }, {
-                onSuccess: () => {
-                    setErrors({});
-                    if (onClose) onClose();
-                    toast.success(t("toast.update.success", { description: form.name }));
-                },
-                onError: (error) => {
-                    console.error(error);
-                    toast.error(t("toast.update.error", { description: form.name, errorCause: error.response.data.error }));
-                },
-            });
-        }
-    };
-
+    useEffect(() => inputRef.current?.focus(), []);
+    const requiredFields = ["amount"];
+    const fieldsFilled = Object.entries(form)
+        .filter(([key, value]) => requiredFields.includes(key) && Boolean(value))
+        .length;
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 flex flex-wrap gap-5 rounded-xl shadow-2xl shadow-[4px_0_6px_rgba(0,0,0,0.25),0_4px_6px_rgba(0,0,0,0.25)]">
-            <FormInput
-                name="smartCode"
-                value={form.smartCode || ''}
-                placeholder={t("customer.barcode")}
-                onChange={handleChange}
-                errors={errors.smartCode}
-                icon="𝄃𝄃𝄂𝄂𝄀𝄁"
-                inputRef={inputRef}
-                type="text" />
+        <form
+            onSubmit={handleSubmit}
+            className="space-y-4 bg-white p-6 flex flex-wrap gap-5 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300"
+        >
+            {fieldsConfig.map((field, idx) => (
+                <FormInput
+                    key={field.name}
+                    label={field.label}
+                    name={field.name}
+                    value={form[field.name] || ""}
+                    placeholder={field.label}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    errors={touched[field.name] && errors[field.name]}
+                    icon={field.icon}
+                    inputRef={idx === 0 ? inputRef : null}
+                    type={field.type}
+                    max={field.max}
+                />
+            ))}
 
-            <FormInput
-                name="name"
-                value={form.name}
-                placeholder={t("customer.name")}
-                onChange={handleChange}
-                errors={errors.name}
-                icon="👤"
-                type="text" />
-
-            <FormInput
-                name="nickname"
-                value={form.nickname}
-                placeholder={t("customer.nickname")}
-                onChange={handleChange}
-                errors={errors.nickname}
-                icon="👤"
-                type="text" />
-
-            <FormInput
-                name="phone"
-                value={form.phone}
-                placeholder={t("customer.phone")}
-                onChange={handleChange}
-                errors={errors.phone}
-                icon="📞"
-                type="text" />
-
-            <FormInput
-                name="address"
-                value={form.address}
-                placeholder={t("customer.address")}
-                onChange={handleChange}
-                errors={errors.address}
-                icon="🏠︎"
-                type="text" />
-
-            <FormInput
-                name="email"
-                value={form.email}
-                placeholder={t("customer.email")}
-                onChange={handleChange}
-                errors={errors.email}
-                icon="@"
-                type="email" />
-
-            <FormInput
-                name="birth"
-                value={form.birth}
-                placeholder={t("customer.birth")}
-                onChange={handleChange}
-                errors={errors.email}
-                icon="🗓️"
-                type="text" />
+            <div className="w-full">
+                <label className="text-2xl block font-medium text-gray-700">{t("pending")}</label>
+                <select
+                    className="w-full text-lg py-2 px-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-500 hover:shadow-md transition-all duration-300"
+                    name="pendingType"
+                    value={form.pendingType || ""}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                >
+                    {Object.entries(PendingTypeEnum).map(([key, value]) => (
+                        <option key={key} value={value}>
+                            {t(value)}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
 
-            <button
+            <ActionButton
                 type="submit"
-                disabled={isLoadingCreation}
-                className="text-2xl font-bold w-full bg-blue-600 text-white py-2 px-4 rounded 
-                hover:bg-blue-700 active:bg-blue-200 transition cursor-pointer"
-            >
-                💾 {t("button.save")}
-            </button>
+                bgColor="blue"
+                text={isSubmitting ? t("button.saving") : t("button.save")}
+                icon={isSubmitting ? "⏳" : "💾"}
+                disabled={isSubmitting}
+            />
+            <ProgressBar value={fieldsFilled || 0} max={requiredFields.length} />
+
 
         </form>
     );

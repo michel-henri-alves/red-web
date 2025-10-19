@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { removeProduct } from "../../shared/hooks/useProducts";
-
 import ProductForm from "./ProductForm";
-
 import Modal from "../../components/Modal";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import ActionButton from "../../components/ActionButton";
 
 
-export default function ProductDeleteUpdate(inputProduct) {
+export default function ProductButtons(inputProduct) {
     const { t } = useTranslation();
 
-    const [product, setProduct] = useState(inputProduct);
+    const [product] = useState(inputProduct);
     const [productToDelete, setProductToDelete] = useState(inputProduct);
     const [productToUpdate, setProductToUpdate] = useState(inputProduct);
 
@@ -34,8 +32,8 @@ export default function ProductDeleteUpdate(inputProduct) {
 
     return (
         <div className="mt-4 flex justify-end space-x-2">
-            <ActionButton onClick={() => openDeleteModal(product)} bgColor="rose" text={t("button.delete")} icon="🗑" />
-            <ActionButton onClick={() => openUpdateModal(product)} bgColor="indigo" text={t("button.update")} icon="📝" />
+            <ActionButton onClick={() => openDeleteModal(product)} bgColor="red" text={t("button.delete")} icon="🗑" />
+            <ActionButton onClick={() => openUpdateModal(product)} bgColor="blue" text={t("button.update")} icon="📝" />
 
             <Modal
                 title={t("modal.title", { "action": t("button.save"), "domain": t("product") })}

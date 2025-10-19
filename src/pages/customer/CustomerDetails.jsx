@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 
 import FormattedDate from '../../shared/utils/dateUtils';
-import CustomerDeleteUpdate from './CustomerDeleteUpdate';
+import CustomerButtons from './CustomerButtons';
 import InfoTag from '../../components/InfoTag';
 
 export default function CustomerDetails({ customer, isExpanded }) {
@@ -31,7 +31,7 @@ export default function CustomerDetails({ customer, isExpanded }) {
                             <InfoTag inputData={customer.updatedBy} label={t("updated.by")} />
                             <InfoTag inputData={<FormattedDate iso={customer.updatedAt} />} label={t("updated.at")} />
                         </div>
-                        <CustomerDeleteUpdate customer={customer} />
+                        <CustomerButtons customer={customer} />
                     </div>
 
 

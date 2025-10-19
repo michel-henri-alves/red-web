@@ -1,38 +1,61 @@
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-
+import { useEffect, useRef } from "react";
+import ActionButton from "./ActionButton";
 
 export default function DeleteConfirmationModal({ onClose, deleteMethod, deleteId, description }) {
-    const { t } = useTranslation();
-    const { mutate: remove } = deleteMethod();
+  const { t } = useTranslation();
+  const { mutate: remove, isLoading } = deleteMethod();
+  const cancelButtonRef = useRef(null);
 
-    const handleDelete = () => {
-        remove(deleteId);
+  useEffect(() => {
+    cancelButtonRef.current?.focus();
+  }, []);
+
+  const handleDelete = () => {
+    remove(deleteId, {
+      onSuccess: () => {
+        toast.success(t("toast.delete.success", { description }));
         onClose();
-        toast.success(t("toast.delete.success", { description: description }))
-    }
+      },
+      onError: () => {
+        toast.error(t("toast.delete.error", { description }));
+      }
+    });
+  };
 
+  return (
+    <div className="w-full max-w-xl sm:max-w-xl bg-white dark:bg-gray-900 p-5 sm:p-6 rounded-xl shadow-xl space-y-6 mx-auto text-center">
+      
+      {/* Título */}
+      <h1
+        id="delete-confirmation-title"
+        className="text-base sm:text-xl font-medium text-gray-800 dark:text-gray-200"
+      >
+        {t("delete.confirmation.message", { description })}
+      </h1>
 
-    return (
-        <div className="space-y-4 bg-white p-6 rounded-xl shadow-2xl shadow-[4px_0_6px_rgba(0,0,0,0.25),0_4px_6px_rgba(0,0,0,0.25)]">
-            <p><strong>{t("delete.confirmation.message", { description: description })}</strong></p>
-            <div className="mt-4 flex justify-end space-x-2">
-                <button
-                    onClick={() => { onClose() }}
-                    className="px-4 py-2 text-white bg-red-500 
-                               hover:bg-red-700 rounded cursor-pointer"
-                >
-                    ✖ &nbsp;{t("button.cancel")}
-                </button>
-                <button
-                    onClick={() => { handleDelete() }}
-                    className="px-4 py-2 text-white bg-green-500 
-                               hover:bg-green-700 text-white rounded cursor-pointer"
-                >
-                    ✔ &nbsp;{t("button.confirm")}
-                </button>
-            </div>
-        </div>
-    );
-};
-
+      {/* Botões */}
+      <div className="flex flex-col sm:flex-row sm:justify-center gap-3 pt-2">
+        <ActionButton
+          type="button"
+          bgColor="red"
+          onClick={onClose}
+          text={isLoading ? t("button.cancelling") : t("button.cancel")}
+          icon={isLoading ? "⏳" : "✖"}
+          disabled={isLoading}
+          ref={cancelButtonRef}
+        />
+        <ActionButton
+          type="button"
+          bgColor="blue"
+          onClick={handleDelete}
+          text={isLoading ? t("button.deleting") : t("button.confirm")}
+          icon={isLoading ? "⏳" : "✔"}
+          additionalStyle="w-full sm:w-auto transition-transform duration-200 hover:-translate-y-0.5"
+          disabled={isLoading}
+        />
+      </div>
+    </div>
+  );
+}

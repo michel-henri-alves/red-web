@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient, useMutation, useInfiniteQuery } from '@tanstack/react-query';
+import { useQueryClient, useMutation, useInfiniteQuery } from '@tanstack/react-query';
 import {
     create,
     update,
@@ -7,7 +7,18 @@ import {
 } from '../api/CustomerApi';
 
 
-export const fetchAllCustomersPaginatedAndFilteredByName = (filter, limit = 5) => {
+export const createCustomer = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: create,
+        onSuccess: () => {
+            queryClient.invalidateQueries(['customers']);
+        },
+    });
+}
+
+export const fetchAllCustomersPaginated = (filter, limit = 5) => {
     return useInfiniteQuery({
         queryKey: ['customers-infinite', filter],
         queryFn: async ({ pageParam = 1 }) => {
@@ -24,17 +35,6 @@ export const fetchAllCustomersPaginatedAndFilteredByName = (filter, limit = 5) =
         keepPreviousData: true,
     });
 };
-
-export const createCustomer = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: create,
-        onSuccess: () => {
-            queryClient.invalidateQueries(['customers']);
-        },
-    });
-}
 
 export const updateCustomer = () => {
     const queryClient = useQueryClient();
@@ -56,25 +56,3 @@ export const removeCustomer = () => {
         },
     });
 };
-
-export const findCustomerBySmartCode = () =>
-    useMutation({
-        mutationFn: async (smartCode) => {
-            const response = await getCustomerBySmartCode(smartCode);
-            return response.data;
-        },
-    });
-
-export const searchCustomersRegexByName = () =>
-    useQuery({
-        queryKey: ['customers'],
-        queryFn: async () => (await getAllCustomersRegexByName()).data,
-    });
-
-export const listCustomersByName = (input) =>
-    useQuery({
-        queryKey: ['customers', 'filter', input],
-        queryFn: async () => (await getAllCustomersRegexByName(input)).data,
-        enabled: !!input, // only run when input is non-empty
-    });
-

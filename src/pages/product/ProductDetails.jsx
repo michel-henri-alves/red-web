@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 
-import ProductDeleteUpdate from './ProductDeleteUpdate';
-import FormattedDate from '../../shared/utils/dateUtils';
+import ProductButtons from './ProductButtons';
+import formatDate from "../../shared/utils/dateUtils";
 import InfoTag from '../../components/InfoTag';
 
 export default function ProductDetails({ product, isExpanded }) {
@@ -24,15 +24,15 @@ export default function ProductDetails({ product, isExpanded }) {
                             <InfoTag inputData={product.supplier} label={t("supplier")} />
                             <InfoTag inputData={product.purchasePrice} label={t("product.purchasePrice")} />
                             <InfoTag inputData={product.createdBy} label={t("created.by")} />
-                            <InfoTag inputData={<FormattedDate iso={product.createdAt} />} label={t("created.at")} />
+                            <InfoTag inputData={formatDate(product.createdAt)} label={t("created.at")} />
                             <InfoTag inputData={product.updatedBy} label={t("updated.by")} />
-                            <InfoTag inputData={<FormattedDate iso={product.updatedAt} />} label={t("updated.at")} />
+                            <InfoTag inputData={formatDate(product.updatedAt)} label={t("updated.at")} />
                             <InfoTag inputData={product.barcode} label={t("product.barcode")} />
                             <InfoTag inputData={product.minQuantity} label={t("product.minQuantity")} />
                             <InfoTag inputData={product.maxQuantity} label={t("product.maxQuantity")} />
                             <InfoTag inputData={product.actualQuantity} label={t("product.qty.actual")} />
                         </div>
-                        <ProductDeleteUpdate product={product} />
+                        <ProductButtons product={product} />
                     </div>
                 </motion.div>
             )}

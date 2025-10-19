@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useTranslation } from 'react-i18next'
-import { createSale } from '../../../shared/hooks/useSales'
+import { useTranslation } from 'react-i18next';
+import { createSale } from '../../../shared/hooks/useSales';
 import { useKeyboardShortcut } from "../../../hooks/useKeyboardShortcut";
 import { useNavigate } from "react-router-dom";
 import FormInput from '../../../components/FormInput';
@@ -10,347 +10,303 @@ import CustomerList from '../../customer/CustomerList';
 import CustomerAddDue from './CustomerAddDue';
 
 export default function Payment({ total }) {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
 
-    const navigate = useNavigate();
-    const { t } = useTranslation();
+  // --- API hook (mutation) ---
+  const {
+    mutate: creation,
+    isLoading: isLoadingCreation,
+    // kept fields available if needed: isSuccess, isError, error, reset
+  } = createSale();
 
-    const {
-        mutate: creation,
-        isLoading: isLoadingCreation,
-        isSuccess: isSuccessCreation,
-        isError: isErrorCreation,
-        error: errorCreation,
-        reset: resetCreation,
-    } = createSale();
+  // --- states ---
+  const [payed, setPayed] = useState(0);
+  const [paying, setPaying] = useState(0);
+  const [due, setDue] = useState(total ?? 0);
+  const [change, setChange] = useState(0);
+  const [discount] = useState(0); // não usado na lógica atual, mantido
+  const [paymentMethod, setPaymentMethod] = useState([]);
+  const [amountPaid, setAmountPaid] = useState([]);
+  const [isOpenRegisterDue, setOpenRegisterDue] = useState(false);
 
-    const [errors, setErrors] = useState({});
-    const [payed, setPayed] = useState(0);
-    const [paying, setPaying] = useState(0);
-    const [due, setDue] = useState(total);
-    const [change, setChange] = useState(0);
-    const [discount, setDiscount] = useState(0);
-    const [paymentMethod, setPaymentMethod] = useState([]);
-    const [amountPaid, setAmountPaid] = useState([]);
-    const [isOpenRegisterDue, setOpenRegisterDue] = useState(false);
+  // --- refs (keyboard shortcuts) ---
+  // Criamos 6 refs e os atalhos F1..F6 disparam click nos elementos correspondentes.
+  const btnRefs = Array.from({ length: 6 }).map(() => useRef(null));
+  ["F1", "F2", "F3", "F4", "F5", "F6"].forEach((key, idx) =>
+    useKeyboardShortcut([key], () => btnRefs[idx]?.current?.click())
+  );
 
+  const inputRef = useRef(null);
 
-    const btn1Ref = useRef(null);
-    const btn2Ref = useRef(null);
-    const btn3Ref = useRef(null);
-    const btn4Ref = useRef(null);
-    const btn5Ref = useRef(null);
-    const btn6Ref = useRef(null);
+  // --- escolha de método ---
+  const [selected, setSelected] = useState("debit");
 
-    useKeyboardShortcut(["F1"], () => {
-        btn1Ref.current?.click();
-    });
+  const options = [
+    { label: t("debit"), value: "debit", colorClass: "bg-red-500", icon: "💳", ref: btnRefs[0] },
+    { label: t("credit"), value: "credit", colorClass: "bg-green-500", icon: "💳", ref: btnRefs[1] },
+    { label: t("money"), value: "money", colorClass: "bg-yellow-500", icon: "💵", ref: btnRefs[2] },
+    { label: t("pix"), value: "pix", colorClass: "bg-cyan-500", icon: "❖", ref: btnRefs[3] },
+    { label: t("pay.later"), value: "pay.later", colorClass: "bg-blue-500", icon: "📝", ref: btnRefs[4] },
+  ];
 
-    useKeyboardShortcut(["F2"], () => {
-        btn2Ref.current?.click();
-    });
+  // --- helper: format number to 2 decimals for display ---
+  const displayValue = (num) => {
+    if (typeof num !== 'number' || isNaN(num)) return "0.00";
+    return num.toFixed(2);
+  };
 
-    useKeyboardShortcut(["F3"], () => {
-        btn3Ref.current?.click();
-    });
+  // --- input change: recebe string, remove não dígitos e divide por 100 (mantém sua lógica original) ---
+  const handleChange = (e) => {
+    // aceitável receber "." e "," do usuário; normalizamos para apenas dígitos aqui
+    const raw = String(e.target.value);
+    const digits = raw.replace(/\D/g, "");
+    const value = digits ? parseFloat(digits) / 100 : 0;
+    setPaying(value);
+  };
 
-    useKeyboardShortcut(["F4"], () => {
-        btn4Ref.current?.click();
-    });
+  // mantemos comportamento de selecionar fim do input ao payed mudar
+  useEffect(() => {
+    const input = inputRef.current;
+    if (input) {
+      const length = String(input.value || "").length;
+      try {
+        input.setSelectionRange(length, length);
+      } catch (err) {
+        // alguns browsers input type=text podem não suportar setSelectionRange em todos os casos
+      }
+    }
+  }, [payed]);
 
-    useKeyboardShortcut(["F5"], () => {
-        btn5Ref.current?.click();
-    });
+  // --- funções principais ---
+  const setTotalValueForPay = () => {
+    setPaying(due);
+  };
 
-    useKeyboardShortcut(["F6"], () => {
-        btn6Ref.current?.click();
-    });
+  const handlePendingDebtRegister = () => {
+    setOpenRegisterDue(true);
+  };
 
+  const updateBill = () => {
+    // registra pagamento parcial/total
+    const newAmountPaid = [...amountPaid, paying];
+    const newPaymentMethod = [...paymentMethod, selected];
+    const result = +(due - paying).toFixed(2); // evitar imprecisão flutuante
 
+    setPayed(prev => +(prev + paying).toFixed(2));
+    setAmountPaid(newAmountPaid);
+    setPaymentMethod(newPaymentMethod);
 
-
-    const inputRef = useRef(null);
-
-    const handleChange = (e) => {
-        let val = e.target.value.replace(/\D/g, "");
-
-        if (!val) {
-            setPaying(0);
-            return;
+    if (result === 0) {
+      // pagamento finalizado
+      creation({
+        paymentMethod: newPaymentMethod,
+        amountPaid: newAmountPaid,
+        change,
+        realizedAt: Date.now(),
+      }, {
+        onSuccess: () => {
+          navigate("/pos");
+          toast.success(t("toast.sales.finished"));
+        },
+        onError: (error) => {
+          console.error(error);
+          toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
         }
-
-        const num = parseFloat(val) / 100;
-        setPaying(num);
-    };
-
-    useEffect(() => {
-        const input = inputRef.current;
-        if (input) {
-            const length = input.value.length;
-            input.setSelectionRange(length, length);
-        }
-    }, [payed]);
-
-    const setTotalValueForPay = () => {
-        setPaying(due);
+      });
+    } else if (result > 0) {
+      // ficou valor a receber (desconto/valor restante)
+      setDue(result);
+      toast.success(t("toast.discounted.value", { input: payed, due: result }));
+    } else {
+      // troco
+      setDue(0);
+      setChange(Math.abs(result));
+      toast.success(t("toast.change.value", { input: paying, change: Math.abs(result) }));
     }
 
-    const [selected, setSelected] = useState("debit");
+    // limpa campo de entrada
+    setPaying(0);
+  };
 
-    const options = [
-        { label: t("debit"), value: "debit", color: "bg-red-400 hover:bg-red-600", icon: "💳", ref: btn1Ref },
-        { label: t("credit"), value: "credit", color: "bg-green-400 hover:bg-green-600", icon: "💳", ref: btn2Ref },
-        { label: t("money"), value: "money", color: "bg-yellow-400 hover:bg-yellow-600", icon: "💵", ref: btn3Ref },
-        { label: t("pix"), value: "pix", color: "bg-cyan-400 hover:bg-cyan-600", icon: "❖", ref: btn4Ref },
-        { label: t("pay.later"), value: "pay.later", color: "bg-blue-400 hover:bg-blue-600", icon: "📝", ref: btn6Ref },
-    ];
-
-    const handlePendingDebtRegister = () => {
-        console.log("aaa")
-        setOpenRegisterDue(true)
+  const handleSale = () => {
+    if (selected === "pay.later") {
+      handlePendingDebtRegister();
+    } else {
+      updateBill();
     }
+  };
 
-    const updateBill = () => {
+  const changePayed = () => {
+    // confirma venda quando há troco exibido
+    creation({
+      paymentMethod,
+      amountPaid,
+      change,
+      realizedAt: Date.now(),
+    }, {
+      onSuccess: () => {
+        navigate("/pos");
+        toast.success(t("toast.sales.finished"));
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
+      }
+    });
+  };
 
-        setPayed(payed + paying);
-        var result = due - paying;
+  const closeRegisterDue = () => {
+    setOpenRegisterDue(false);
+    // opcional: focar input novamente
+    inputRef.current?.focus();
+  };
 
-        var newAmountPaid = [...amountPaid, paying];
-        var newPaymentMethod = [...paymentMethod, selected];
+  // --- renderização (mobile-first) ---
+  return (
+    <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+      {/* CARD: totais */}
+      <section
+        aria-labelledby="totals-heading"
+        className="p-4 bg-white rounded-xl shadow-sm"
+      >
+        <h2 id="totals-heading" className="text-lg font-semibold text-gray-800 text-center">
+          {t("sales.final.bill")}
+        </h2>
 
-        setAmountPaid(newAmountPaid);
-        setPaymentMethod(newPaymentMethod);
+        <div className="mt-3 space-y-2 text-center">
+          <div className="text-base sm:text-lg font-bold text-red-600">
+            {t("sales.bill.total")}: {t("currency")} {displayValue(total)}
+          </div>
+          <div className="text-base sm:text-lg font-bold text-green-600">
+            {t("payed")}: {t("currency")} {displayValue(payed)}
+          </div>
+          <div className="text-base sm:text-lg font-bold text-yellow-600">
+            {t("discount")}: {t("currency")} {displayValue(discount)}
+          </div>
 
-        console.log("teste ", selected)
-
-
-        if (result === 0) {
-            creation(
-                {
-                    paymentMethod: newPaymentMethod,
-                    amountPaid: newAmountPaid,
-                    change: change,
-                    realizedAt: Date.now(),
-                }, {
-                onSuccess: () => {
-                    //msg de sucesso, fecha o modal e limpa a tela de venda
-                    navigate("/pos");
-                    toast.success(t("toast.sales.finished"));
-                },
-                onError: (error) => {
-                    navigate("/pos");
-                    console.error(error);
-                    toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error.response.data.error }));
-                },
-            });
-
-        } else if (result > 0) {
-            setDue(result);
-            toast.success(t("toast.discounted.value", { input: payed, due: result }));
-            // msg de continuar com pagamento
-
-        } else if (result < 0) {
-            //mostra o troco
-            setDue(0);
-            setChange(-result);
-            toast.success(t("toast.change.value", { input: paying, change: -result }));
-        }
-
-        setPaying(0.00);
-    }
-
-
-    const handleSale = () => {
-
-
-        if (selected === "pay.later") {
-
-            handlePendingDebtRegister()
-            // return
-        } else {
-            updateBill()
-        }
-
-        // setPayed(payed + paying);
-        // var result = due - paying;
-
-        // var newAmountPaid = [...amountPaid, paying];
-        // var newPaymentMethod = [...paymentMethod, selected];
-
-        // setAmountPaid(newAmountPaid);
-        // setPaymentMethod(newPaymentMethod);
-
-        // console.log("teste ", selected)
-
-
-
-        // if (result === 0) {
-        //     creation(
-        //         {
-        //             paymentMethod: newPaymentMethod,
-        //             amountPaid: newAmountPaid,
-        //             change: change,
-        //             realizedAt: Date.now(),
-        //         }, {
-        //         onSuccess: () => {
-        //             //msg de sucesso, fecha o modal e limpa a tela de venda
-        //             navigate("/sales");
-        //             toast.success(t("toast.sales.finished"));
-        //         },
-        //         onError: (error) => {
-        //             navigate("/sales");
-        //             console.error(error);
-        //             toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error.response.data.error }));
-        //         },
-        //     });
-
-        // } else if (result > 0) {
-        //     setDue(result);
-        //     toast.success(t("toast.discounted.value", { input: payed, due: result }));
-        //     // msg de continuar com pagamento
-
-        // } else if (result < 0) {
-        //     //mostra o troco
-        //     setDue(0);
-        //     setChange(-result);
-        //     toast.success(t("toast.change.value", { input: paying, change: -result }));
-        // }
-
-        // setPaying(0.00);
-    }
-
-    const changePayed = () => {
-        //salva no banco
-        creation(
-            {
-                paymentMethod: paymentMethod,
-                amountPaid: amountPaid,
-                change: change,
-                realizedAt: Date.now(),
-            }, {
-            onSuccess: () => {
-                //msg de sucesso, fecha o modal e limpa a tela de venda
-                navigate("/pos");
-                toast.success(t("toast.sales.finished"));
-            },
-            onError: (error) => {
-                navigate("/pos");
-                console.error(error);
-                toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error.response.data.error }));
-            },
-        });
-
-    }
-
-    const closeRegisterDue = () => {
-        setOpenRegisterDue(false);
-        // setFocusActive(true);
-        // inputRef.current?.focus();
-    }
-
-
-    return (
-        <div>
-            <div className="p-6 bg-gray-50 rounded-xl shadow-2xl shadow-[4px_0_6px_rgba(0,0,0,0.25),0_4px_6px_rgba(0,0,0,0.25)] mb-4">
-                <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">
-                    {t("sales.final.bill")}
-                </h1>
-                <h1 className="text-2xl font-bold text-center text-red-600">{t("sales.bill.total")}: {t("currency")} {total.toFixed(2)}</h1>
-                <h1 className="text-2xl font-bold text-center text-green-600">{t("payed")}: {t("currency")} {payed.toFixed(2)}</h1>
-                <h1 className="text-2xl font-bold text-center text-yellow-600">{t("discount")}: {t("currency")} {discount.toFixed(2)}</h1>
-
-                <div className="border-t pt-2">
-                    {change === 0
-                        ? <h1 className="text-2xl font-bold text-center text-blue-600">{t("due")}: {t("currency")} {due.toFixed(2)}</h1>
-                        : <button
-                            className="flex-1 px-4 py-2  rounded-xl bg-orange-500 text-white hover:bg-orange-600 transition-colors text-xl items-center cursor-pointer ml-4"
-                            onClick={changePayed}>
-                            {t("toast.change.value", { input: payed.toFixed(2), change: change.toFixed(2) })}
-                        </button>
-                    }
-                </div>
-
-            </div>
-
-            <div className="p-6 bg-gray-50 rounded-lg rounded-xl shadow-2xl shadow-[4px_0_6px_rgba(0,0,0,0.25),0_4px_6px_rgba(0,0,0,0.25)] mb-4">
-                <h1 className="text-xl font-bold text-gray-800 text-center mb-4">
-                    {t("sales.payment.options")}
-                </h1>
-
-                <div className="flex flex-wrap gap-4 justify-center">
-                    {options.map((option) => (
-                        <div
-                            key={option.value}
-                            onClick={() => setSelected(option.value)}
-                            ref={option.ref}
-                            className={`
-          flex items-center justify-center p-4 rounded-lg cursor-pointer transition-all 
-          ${option.color}
-          ${selected === option.value ? `ring-2 ring-offset-2 ring-blue-500 scale-150` : ""}`
-                            }
-                        >
-                            <input
-                                type="radio"
-                                name="payment"
-                                value={option.value}
-                                checked={selected === option.value}
-                                onChange={() => { }}
-                                className="hidden"
-                            />
-                            <span className="font-medium flex items-center gap-2">{option.icon} {option.label}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-
-            <div className="grid place-items-center p-6 bg-gray-50 rounded-xl shadow-2xl shadow-[4px_0_6px_rgba(0,0,0,0.25),0_4px_6px_rgba(0,0,0,0.25)]">
-                <div>
-                    <div>
-                        <FormInput
-                            label={t("sales.payed")}
-                            value={paying.toFixed(2)}
-                            onChange={handleChange}
-                            placeholder="0.00"
-                            icon="💲"
-                            type="number"
-                        />
-                    </div>
-                </div>
-                <div className="flex space-x-2 pt-2">
-                    <button type="button"
-                        onClick={setTotalValueForPay}
-                        disabled={change > 0}
-                        className={`flex-1 px-4 py-2 rounded-xl ml-4  text-xl items-center 
-                            ${change > 0 ? "bg-gray-400" : "bg-orange-500 text-white hover:bg-orange-600 transition-colors cursor-pointer"}`}>
-                        ➤ {t("autocomplete")}
-                    </button>
-                    <button
-                        disabled={paying === 0 || change > 0}
-                        className={`ml-2 px-4 py-2 rounded text-white 
-                        ${paying === 0 || change > 0 ? "bg-gray-400" : "flex-1 px-4 py-2  rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition-colors text-xl flex items-center gap-2 cursor-pointer"}`}
-                        onClick={handleSale}>
-                        🤝 {t("receive")}
-                    </button>
-                    <button
-                        disabled={paying === 0 || change > 0}
-                        className={`ml-2 px-4 py-2 rounded text-white 
-                        ${change > 0 ? "bg-gray-400" : "flex-1 px-4 py-2  rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition-colors text-xl flex items-center gap-2 cursor-pointer"}`}
-                        onClick={handleSale}>
-                        💸 {t("discount")}
-                    </button>
-                </div>
-            </div>
-
-            <Modal
-                title={t("sales.select.customer")}
-                isOpen={isOpenRegisterDue}
-                onClose={closeRegisterDue}
-            // closeButtonRef={btn7Ref}
-            >
-                <CustomerList
-                    renderExpandedDiv={(customer, isExpanded) => <CustomerAddDue updateBill={updateBill} onClose={closeRegisterDue} customer={customer} due={paying} isExpanded={isExpanded} />} />
-            </Modal>
-
+          <div className="mt-2">
+            {change === 0 ? (
+              <div className="text-base sm:text-lg font-bold text-blue-600">
+                {t("due")}: {t("currency")} {displayValue(due)}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={changePayed}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 rounded-lg bg-orange-500 text-white font-medium shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400"
+                aria-label={t("toast.change.value", { input: displayValue(payed), change: displayValue(change) })}
+              >
+                {t("toast.change.value", { input: displayValue(payed), change: displayValue(change) })}
+              </button>
+            )}
+          </div>
         </div>
-    );
+      </section>
+
+      {/* CARD: opções de pagamento */}
+      <section aria-labelledby="payment-options" className="p-4 bg-white rounded-xl shadow-sm">
+        <h3 id="payment-options" className="text-base font-semibold text-gray-800 text-center">
+          {t("sales.payment.options")}
+        </h3>
+
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+          {options.map((option, idx) => {
+            const isSelected = selected === option.value;
+            return (
+              <button
+                key={option.value}
+                ref={option.ref}
+                type="button"
+                onClick={() => setSelected(option.value)}
+                aria-pressed={isSelected}
+                aria-label={option.label}
+                className={`
+                  w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white font-medium transition-transform 
+                  ${option.colorClass} ${isSelected ? "ring-2 ring-offset-2 ring-blue-500 scale-105" : "hover:scale-102"}
+                `}
+              >
+                <span className="text-xl" aria-hidden>{option.icon}</span>
+                <span className="truncate">{option.label}</span>
+                <span className="sr-only">{isSelected ? t("selected") : ""}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* CARD: entrada de valor + ações */}
+      <section className="p-4 bg-white rounded-xl shadow-sm">
+        <div className="grid grid-cols-1 gap-3">
+          <label className="block">
+            <span className="text-sm font-medium text-gray-700">{t("sales.payed")}</span>
+            {/* Usamos input text para permitir máscara/local-format, mas o handleChange normaliza */}
+            <input
+              ref={inputRef}
+              value={displayValue(paying)}
+              onChange={handleChange}
+              inputMode="numeric"
+              aria-label={t("sales.payed")}
+              className="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-300 px-3 py-2 text-right"
+              placeholder="0.00"
+            />
+          </label>
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={setTotalValueForPay}
+              disabled={change > 0}
+              className={`w-full sm:w-1/3 inline-flex items-center justify-center px-4 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2
+                ${change > 0 ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-orange-500 text-white hover:bg-orange-600 focus:ring-orange-400"}`}
+              aria-disabled={change > 0}
+            >
+              ➤ {t("autocomplete")}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSale}
+              disabled={paying === 0 || change > 0}
+              className={`w-full sm:w-1/3 inline-flex items-center justify-center px-4 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2
+                ${paying === 0 || change > 0 ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400"}`}
+              aria-disabled={paying === 0 || change > 0}
+            >
+              🤝 {t("receive")}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSale}
+              disabled={paying === 0 || change > 0}
+              className={`w-full sm:w-1/3 inline-flex items-center justify-center px-4 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2
+                ${paying === 0 || change > 0 ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400"}`}
+              aria-disabled={paying === 0 || change > 0}
+            >
+              💸 {t("discount")}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* MODAL: registrar dívida */}
+      <Modal
+        title={t("sales.select.customer")}
+        isOpen={isOpenRegisterDue}
+        onClose={closeRegisterDue}
+      >
+        <CustomerList
+          renderExpandedDiv={(customer, isExpanded) => (
+            <CustomerAddDue
+              updateBill={updateBill}
+              onClose={closeRegisterDue}
+              customer={customer}
+              due={paying}
+              isExpanded={isExpanded}
+            />
+          )}
+        />
+      </Modal>
+    </div>
+  );
 }

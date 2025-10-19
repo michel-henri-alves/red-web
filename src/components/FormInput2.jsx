@@ -1,13 +1,9 @@
-import ProgressBar from "./ProgressBar";
-import InfoTooltip from "./InfoTooltip";
-
-export default function FormInput({ label, name, value, placeholder, onChange, onBlur, errors, icon, inputRef, type = "text", max }) {
+export default function FormInput({ label, name, value, placeholder, onChange, onBlur, errors, icon, inputRef, type = "text" }) {
   return (
     <div className="w-full relative">
       <label className="flex items-center space-x-2 text-lg font-medium text-gray-700 mb-1">
         <span>{icon}</span>
         <span>{label}</span>
-        <InfoTooltip text={`Informe o ${label} corretamente`} />
       </label>
 
       <input
@@ -27,8 +23,6 @@ export default function FormInput({ label, name, value, placeholder, onChange, o
         aria-invalid={!!errors}
         aria-describedby={`${name}-error`}
       />
-
-      {type === "number" && max && <ProgressBar value={value || 0} max={max} />}
 
       {errors && (
         <p id={`${name}-error`} className="text-red-500 text-sm mt-1 absolute left-0 animate-fade-in">

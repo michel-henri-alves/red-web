@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-export default function TotalBalanceCard({ value }) {
+export default function TotalBalanceCard({ amount }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -9,7 +9,7 @@ export default function TotalBalanceCard({ value }) {
     >
       <p className="text-sm opacity-80">Saldo Atual</p>
       <h2 className="text-4xl font-bold mt-2">
-        R$ {value.toFixed(2)}
+        R$ {amount.toFixed(2)}
       </h2>
     </motion.div>
   );

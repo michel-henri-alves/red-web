@@ -11,12 +11,15 @@ export const createProduct = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: create,
-        onSuccess: () => {
-            queryClient.invalidateQueries(['products']);
+        mutationFn: async (newProduct) => {
+            return await create(newProduct);
         },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries(['products']);
+        }
     });
-}
+};
+
 
 
 export const fetchAllProductsPaginated = (filter, limit = 5) => {
@@ -64,6 +67,7 @@ export const removeProduct = () => {
 export const fetchProductBySmartCode = () =>
     useMutation({
         mutationFn: async (smartCode) => {
+            console.log("dentro do :", smartCode)
             const response = await fetchBySmartCode(smartCode);
             return response.data;
         },

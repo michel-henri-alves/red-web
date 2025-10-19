@@ -10,9 +10,15 @@ export default function ProductPage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-3xl font-bold mb-4">📦 {t('product.title')}</h1>
+
+      <header className="flex items-center gap-3 mb-3">
+        <span className="text-4xl">📦</span>
+        <div>
+          <h1 className="text-xl font-bold">{t("product.title")}</h1>
+        </div>
+      </header>
       <ProductList
-        renderCreateButton={<ProductCreate/>}
+        renderCreateButton={<ProductCreate />}
         renderExpandedDiv={(product, isExpanded) => <ProductDetails product={product} isExpanded={isExpanded} />}
       />
     </div>

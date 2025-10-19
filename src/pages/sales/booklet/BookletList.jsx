@@ -2,17 +2,18 @@ import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import useDebounce from "../../../shared/hooks/useDebounce";
 import { fetchAllPendingsPaginatedByCustomerId } from "../../../shared/hooks/usePendings";
-import FilterBar from "../../../components/FilterBar";
+import formatDate from "../../../shared/utils/dateUtils";
 import MainCard from "../../../components/MainCard";
-
-import FormattedDate from '../../../shared/utils/dateUtils';
+import DateFilter from "../../../components/DateFilter";
+import ExpandableTable from "../../../components/ExpandableTable";
 
 
 export default function BookletList(
-    { id, customer, renderCreateButton }
+    { id, customer, renderCreateButton, renderExpandedDiv }
 
 ) {
     const { t } = useTranslation();
+
     const [filter, setFilter] = useState(id);
     const debouncedFilter = useDebounce(filter, 500);
     const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage }
@@ -21,6 +22,14 @@ export default function BookletList(
     const allRegisters = data?.pages.flatMap((page) => page.data) ?? [];
     const [expandedCustomer, setExpandedCustomer] = useState(null);
     const loaderRef = useRef(null);
+
+    const setRowTitle = (pending) => {
+        const type = t(pending.pendingType);
+        const realizedAt = formatDate(pending.createdAt);
+        const icon = pending.pendingType === "DEBIT" ? "🔴" : "🟢";
+        return icon + " " + type + " - " + t("currency") + pending.amount + " - " + realizedAt;
+    }
+
     useEffect(() => {
         if (!loaderRef.current || !hasNextPage) return;
 
@@ -42,32 +51,22 @@ export default function BookletList(
     if (error) return <p>{t("loading.error")}</p>;
 
     return (
-        <div className="space-y-4">
-            <MainCard value={balance} />
+        <div className="text-2xl space-y-4">
+            <MainCard amount={balance} />
 
-            {/* <FilterBar filter={filter} onFilterChange={setFilter} tooltipParam={t("customer.name")} /> */}
+            <DateFilter onFilter={(start, end) => {
+                setStartDate(start?.toISOString())
+                setEndDate(end?.toISOString())
+            }} />
+
             {allRegisters.map((pending) => {
                 return (
-                    <div
+                    <ExpandableTable
                         key={pending._id}
-                        className="bg-white rounded shadow border hover:shadow-lg transition"
-                    >
-                        <button
-                            onClick={() => toggleExpand(pending._id)}
-                            className="w-full text-left p-4 flex justify-between items-center cursor-pointer
-                            focus:outline-none focus:ring-2 focus:ring-blue-500 
-                            focus:shadow-lg focus:shadow-blue-500/50
-                            hover:outline-none hover:ring-2 hover:ring-blue-500 
-                            hover:shadow-lg hover:shadow-blue-500/50"
-                        >
-                            <span className="flex items-center gap-3">
-                                <p>{t(pending.pendingType)}</p> <p>{t("currency")}{pending.value}</p> <p><FormattedDate iso={pending.createdAt} /></p>
-                            </span>
-                            <span>
-                                {pending.pendingType === "DEBIT" ? "🔴" : "🟢"}
-                            </span>
-                        </button>
-                    </div>
+                        title={setRowTitle(pending)}
+                        item={pending}
+                        expandedDiv={renderExpandedDiv}
+                    />
                 );
             })}
 

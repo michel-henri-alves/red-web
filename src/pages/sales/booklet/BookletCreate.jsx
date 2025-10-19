@@ -1,32 +1,36 @@
 import { useState } from 'react';
-import FloatingActionButton from '../../../components/FloatingActionButton';
 import { useTranslation } from "react-i18next";
-import BookletForm from "./BookletForm";
+import FloatingActionButton from '../../../components/FloatingActionButton';
 import Modal from '../../../components/Modal';
+import BookletForm from "./BookletForm";
 
 
-export default function BookletCreate() {
+export default function BookletCreate(customerId) {
     const { t } = useTranslation();
 
-    const [productToUpdate, setProductToUpdate] = useState(null);
+    const [pendingToUpdate, setPendingToUpdate] = useState(null);
     const [isFormModalOpen, setFormModalOpen] = useState(false);
 
     const openCreationModal = () => {
-        setProductToUpdate({});
-        setFormModalOpen(true); 
+        setPendingToUpdate({});
+        setFormModalOpen(true);
     };
 
     const closeFormModal = () => setFormModalOpen(false);
 
     return (
         <div>
-            <FloatingActionButton onClick={openCreationModal} domain={t("booklet")} />
+            <FloatingActionButton
+                onClick={openCreationModal}
+                tooltip={t("button.tooltip.form", { domain: t("booklet") })}
+                content={<h1>✚</h1>}
+                position="bottom-40" />
 
             <Modal
                 title={t("modal.title", { "action": t("button.save"), "domain": t("booklet") })}
                 isOpen={isFormModalOpen}
                 onClose={closeFormModal}>
-                <BookletForm onClose={closeFormModal} product={productToUpdate} />
+                <BookletForm onClose={closeFormModal} pending={pendingToUpdate} customerId={customerId}  />
             </Modal>
         </div>
     );

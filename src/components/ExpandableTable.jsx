@@ -12,12 +12,10 @@ export default function ExpandableTable({ index, title, item, expandedDiv }) {
     return (
         <div
             key={index}
-            className="bg-white rounded-xl shadow 
-            border-b-2 border-l-2 border-t border-r 
-            border-b-gray-400 border-l-gray-400 
-            border-t-gray-200 border-r-gray-200 
-            shadow-md p-4 rounded
-            hover:shadow-lg transition"
+            className="bg-white p-4 rounded-xl
+                border-b-2 border-l-2 border-t border-r
+                border-b-gray-400 border-l-gray-400 border-t-gray-200 border-r-gray-200
+                shadow-md hover:shadow-lg transition-shadow"
         >
             <button
                 onClick={() => toggleExpand(index)}

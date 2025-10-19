@@ -5,15 +5,20 @@ import CustomerCreate from './CustomerCreate';
 import CustomerDetails from './CustomerDetails';
 
 export default function CustomerPage() {
-    const { t } = useTranslation();
-    
-      return (
-        <div className="p-4">
-          <h1 className="text-3xl font-bold mb-4">🙋🏻 {t('customer.title')}</h1>
-          <CustomerList
-            renderCreateButton={<CustomerCreate/>}
-            renderExpandedDiv={(customer, isExpanded) => <CustomerDetails customer={customer} isExpanded={isExpanded} />}
-          />
+  const { t } = useTranslation();
+
+  return (
+    <div className="p-4">
+      <header className="flex items-center gap-3 mb-3">
+        <span className="text-4xl">🙋🏻</span>
+        <div>
+          <h1 className="text-xl font-bold">{t("customer.title")}</h1>
         </div>
-      )
+      </header>
+      <CustomerList
+        renderCreateButton={<CustomerCreate />}
+        renderExpandedDiv={(customer, isExpanded) => <CustomerDetails customer={customer} isExpanded={isExpanded} />}
+      />
+    </div>
+  )
 }

@@ -11,10 +11,12 @@ export const createPendings = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: create,
-        onSuccess: () => {
-            queryClient.invalidateQueries(['pendings']);
+        mutationFn: async (newPending) => {
+            return await create(newPending);
         },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries(['products']);
+        }
     });
 }
 

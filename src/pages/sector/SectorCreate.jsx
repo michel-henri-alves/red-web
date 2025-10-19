@@ -1,18 +1,19 @@
 import { useState } from 'react';
-import FloatingActionButton from '../../components/FloatingActionButton';
 import { useTranslation } from "react-i18next";
-import CustomerForm from "./CustomerForm";
+
+import SectorForm from "./SectorForm";
+import FloatingActionButton from '../../components/FloatingActionButton';
 import Modal from '../../components/Modal';
 
 
-export default function CustomerCreate() {
+export default function SectorCreate() {
     const { t } = useTranslation();
 
-    const [customerToUpdate, setCustomerToUpdate] = useState(null);
+    const [sectorToUpdate, setSectorToUpdate] = useState(null);
     const [isFormModalOpen, setFormModalOpen] = useState(false);
 
     const openCreationModal = () => {
-        setCustomerToUpdate({});
+        setSectorToUpdate({});
         setFormModalOpen(true);
     };
 
@@ -22,15 +23,15 @@ export default function CustomerCreate() {
         <div>
             <FloatingActionButton
                 onClick={openCreationModal}
-                tooltip={t("button.tooltip.form", { domain: t("customer") })}
-                content={<h1>✚</h1>}
+                tooltip={t("button.tooltip.form", { domain: t("sector") })}
+                content={<h1>✚</h1>} 
                 position="bottom-40" />
 
             <Modal
-                title={t("modal.title", { "action": t("button.save"), "domain": t("customer") })}
+                title={t("modal.title", { "action": t("button.save"), "domain": t("sector") })}
                 isOpen={isFormModalOpen}
                 onClose={closeFormModal}>
-                <CustomerForm onClose={closeFormModal} customer={customerToUpdate} />
+                <SectorForm onClose={closeFormModal} sector={sectorToUpdate} />
             </Modal>
         </div>
     );

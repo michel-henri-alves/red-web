@@ -1,15 +1,12 @@
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next'
-import NewsTicker from './NewsTicket';
-import SalesChart from './SalesChart';
-
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import NewsTicker from "./NewsTicket";
+import SalesChart from "./SalesChart";
 
 export default function Dashboard() {
-
   const { t } = useTranslation();
   const [newsSelected, setNewsSelected] = useState("1");
   const [comingSoonSelected, setComingSoonSelected] = useState("1");
-
 
   const news = [
     { label: "Cadastro de Produtos", value: "1", icon: "📦" },
@@ -29,7 +26,7 @@ export default function Dashboard() {
     "🚀 Em breve, notificações sobre validade e quantidade",
     "🙏🏻 Obrigado por usar Typpo",
     "🎨 Em breve, customização de visual",
-    "💡 Para realizar vendas necessário ter produtos cadastrados"
+    "💡 Para realizar vendas necessário ter produtos cadastrados",
   ];
 
   const salesData = [
@@ -41,91 +38,84 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="grid grid-cols-3 grid-rows-4 gap-4 p-2">
+    <div className="grid grid-cols-1 gap-4 p-2 sm:grid-cols-2 lg:grid-cols-3">
 
-      <div className="flex flex-col bg-blue-100 p-4 rounded shadow items-center justify-center border-l-4 border-l-blue-500">
-        <h1 className="text-2xl font-bold text-gray-800 text-center">Bem-vindo ao TYPPO</h1>
-        <h4 className="text-center text-center">versão de degustação</h4>
+      {/* Bem vindo */}
+      <div className="flex flex-col bg-blue-100 p-4 rounded shadow border-l-4 border-l-blue-500 text-center">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Bem-vindo ao TYPPO</h1>
+        <p className="text-gray-600">versão de degustação</p>
       </div>
 
-
-      <div className="bg-purple-100 p-4 rounded shadow row-span-2 border-l-4 border-l-purple-500">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">🚨 Novidades</h1>
-        {news.map((option) => (
-          <div
-            key={option.value}
-            onMouseOver={() => setNewsSelected(option.value)}
-            className={`flex items-center p-4 border rounded-lg cursor-pointer transition-all text-white md:font-bold
-                            bg-purple-400 hover:bg-purple-600
-                            ${newsSelected === option.value ? "ring-2 ring-offset-2 ring-blue-500 scale-105" : ""}
-                        `}
-          >
-            <input
-              type="radio"
-              name="payment"
-              value={option.value}
-              checked={newsSelected === option.value}
-              onChange={() => { }}
-              className="hidden"
-            />
-            <span className="font-medium">{option.icon} {option.label}</span>
-          </div>
-        ))}
+      {/* Novidades */}
+      <div className="bg-purple-100 p-4 rounded shadow border-l-4 border-l-purple-500 lg:row-span-2">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">🚨 Novidades</h2>
+        <div className="space-y-3">
+          {news.map((option) => (
+            <div
+              key={option.value}
+              onClick={() => setNewsSelected(option.value)}
+              className={`flex items-center p-3 rounded cursor-pointer text-white bg-purple-400 hover:bg-purple-600 transition ${
+                newsSelected === option.value ? "ring-2 ring-offset-2 ring-blue-500 scale-[1.02]" : ""
+              }`}
+            >
+              {option.icon} <span className="ml-2">{option.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="bg-orange-100 p-4 rounded shadow row-span-2 border-l-4 border-l-orange-500">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">👀 Em Breve</h1>
-        {comingSoon.map((option) => (
-          <div
-            key={option.value}
-            onMouseOver={() => setComingSoonSelected(option.value)}
-            className={`flex items-center p-4 border rounded-lg cursor-pointer transition-all text-white md:font-bold
-                            bg-orange-400 hover:bg-orange-600
-                            ${comingSoonSelected === option.value ? "ring-2 ring-offset-2 ring-blue-500 scale-105" : ""}
-                        `}
-          >
-            <input
-              type="radio"
-              name="payment"
-              value={option.value}
-              checked={comingSoonSelected === option.value}
-              onChange={() => { }}
-              className="hidden"
-            />
-            <span className="font-medium">{option.icon} {option.label}</span>
-          </div>
-        ))}
+      {/* Coming Soon */}
+      <div className="bg-orange-100 p-4 rounded shadow border-l-4 border-l-orange-500 lg:row-span-2">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">👀 Em breve</h2>
+        <div className="space-y-3">
+          {comingSoon.map((option) => (
+            <div
+              key={option.value}
+              onClick={() => setComingSoonSelected(option.value)}
+              className={`flex items-center p-3 rounded cursor-pointer text-white bg-orange-400 hover:bg-orange-600 transition ${
+                comingSoonSelected === option.value ? "ring-2 ring-offset-2 ring-blue-500 scale-[1.02]" : ""
+              }`}
+            >
+              {option.icon} <span className="ml-2">{option.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="bg-green-100 p-4 rounded shadow  border-l-4 border-l-green-500">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Vendas do dia</h1>
-        <h4 className="text-6xl text-blue-500">R$ 5350.32</h4>
+      {/* Vendas do dia */}
+      <div className="bg-green-100 p-4 rounded shadow border-l-4 border-l-green-500 text-center">
+        <h2 className="text-xl font-bold text-gray-800 mb-2">Vendas do dia</h2>
+        <p className="text-5xl text-blue-500 font-bold">R$ 5.350,32</p>
       </div>
 
-      <div className="bg-purple-100 p-4 rounded shadow col-span-2 row-span-2 border-l-4 border-l-purple-500">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">💲 Vendas Últimos 5 Dias</h1>
+      {/* Gráfico */}
+      <div className="bg-purple-100 p-4 rounded shadow border-l-4 border-l-purple-500 sm:col-span-2 lg:col-span-2">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">💲 Vendas Últimos 5 Dias</h2>
         <SalesChart data={salesData} />
       </div>
 
-      <div className="bg-yellow-100 p-4 rounded shadow row-span-2 border-l-4 border-l-yellow-500">
-        <div className="mb-4">
-          <a href="#" className="text-6xl text-red-500">0</a>
-          <h1>produtos com validade vencida</h1>
-        </div>
-        <div className="mb-4">
-          <a href="#" className="text-6xl text-yellow-500">5</a>
-          <h1>produtos com vencimento próximo</h1>
-        </div>
-        <div className="mb-4">
-          <a href="#" className="text-6xl text-green-500">12</a>
-          <h1>produtos abaixo da quantidade mínima</h1>
+      {/* Estoque */}
+      <div className="bg-yellow-100 p-4 rounded shadow border-l-4 border-l-yellow-500">
+        <div className="space-y-4">
+          <div>
+            <p className="text-4xl text-red-500 font-bold">0</p>
+            <p>produtos com validade vencida</p>
+          </div>
+          <div>
+            <p className="text-4xl text-yellow-500 font-bold">5</p>
+            <p>produtos com vencimento próximo</p>
+          </div>
+          <div>
+            <p className="text-4xl text-green-500 font-bold">12</p>
+            <p>produtos abaixo da quantidade mínima</p>
+          </div>
         </div>
       </div>
 
-      <div className="p-4 rounded shadow col-span-3 border-l-4 border-l-cyan-500">
+      {/* Ticker */}
+      <div className="p-4 rounded shadow border-l-4 border-l-cyan-500 sm:col-span-2 lg:col-span-3">
         <NewsTicker messages={notifications} speed={20} />
       </div>
-
     </div>
   );
 }

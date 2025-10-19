@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { fetchAllProductsPaginated } from "../../shared/hooks/useProducts";
 import useDebounce from "../../shared/hooks/useDebounce";
-
 import FilterBar from "../../components/FilterBar";
 import ExpandableTable from "../../components/ExpandableTable";
 
@@ -16,9 +15,7 @@ export default function ProductList(
     const debouncedFilter = useDebounce(filter, 500);
     const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = fetchAllProductsPaginated(debouncedFilter, 10);
     const allProducts = data?.pages.flatMap((page) => page.data) ?? [];
-    const [expandedProduct, setExpandedProduct] = useState(null);
     const loaderRef = useRef(null);
-    const toggleExpand = (code) => setExpandedProduct(expandedProduct === code ? null : code);
 
     const setRowTitle = (product) => {
         return product.name +" "+t("product.priceByUnit", { price: product.priceForSale, unit: t(product.unitOfMeasurement) })
