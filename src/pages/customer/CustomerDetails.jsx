@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 
-import FormattedDate from '../../shared/utils/dateUtils';
+import formatDate from "../../shared/utils/dateUtils";
 import CustomerButtons from './CustomerButtons';
 import InfoTag from '../../components/InfoTag';
+
 
 export default function CustomerDetails({ customer, isExpanded }) {
     const { t } = useTranslation();
@@ -25,11 +26,11 @@ export default function CustomerDetails({ customer, isExpanded }) {
                             <InfoTag inputData={customer.phone} label={t("customer.phone")} />
                             <InfoTag inputData={customer.address} label={t("customer.address")} />
                             <InfoTag inputData={customer.email} label={t("customer.email")} />
-                            <InfoTag inputData={<FormattedDate iso={customer.birth} />} label={t("customer.birth")} />
+                            <InfoTag inputData={formatDate(customer.birth)} label={t("customer.birth")} />
                             <InfoTag inputData={customer.createdBy} label={t("created.by")} />
-                            <InfoTag inputData={<FormattedDate iso={customer.createdAt} />} label={t("created.at")} />
+                            <InfoTag inputData={formatDate(customer.createdAt)} label={t("customer.createdAt")} />
                             <InfoTag inputData={customer.updatedBy} label={t("updated.by")} />
-                            <InfoTag inputData={<FormattedDate iso={customer.updatedAt} />} label={t("updated.at")} />
+                            <InfoTag inputData={formatDate(customer.updatedAt)} label={t("customer.updatedAt")} />
                         </div>
                         <CustomerButtons customer={customer} />
                     </div>

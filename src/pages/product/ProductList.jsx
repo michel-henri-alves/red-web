@@ -18,7 +18,7 @@ export default function ProductList(
     const loaderRef = useRef(null);
 
     const setRowTitle = (product) => {
-        return product.name +" "+t("product.priceByUnit", { price: product.priceForSale, unit: t(product.unitOfMeasurement) })
+        return product.name + " " + t("product.priceByUnit", { price: product.priceForSale, unit: t(product.unitOfMeasurement) })
     }
 
     useEffect(() => {
@@ -42,16 +42,21 @@ export default function ProductList(
     return (
         <div className="text-2xl space-y-4">
             <FilterBar filter={filter} onFilterChange={setFilter} tooltipParam={t("product.name")} />
-
-            {allProducts.map((product) => {
-                return (
-                    <ExpandableTable
-                        key={product._id}
-                        title={setRowTitle(product)}
-                        item={product}
-                        expandedDiv={renderExpandedDiv} />
-                );
-            })}
+            {allProducts.length === 0 ? (
+                <tr>
+                    <td colSpan={4} className="py-6 px-4 text-center text-gray-500">{t("products.empty")}</td>
+                </tr>
+            ) : (
+                allProducts.map((product) => {
+                    return (
+                        <ExpandableTable
+                            key={product._id}
+                            title={setRowTitle(product)}
+                            item={product}
+                            expandedDiv={renderExpandedDiv} />
+                    );
+                }))
+            }
 
             <div ref={loaderRef} className="h-10" />
             {isFetchingNextPage && <p className="text-center">{t("loading.waiting")}</p>}

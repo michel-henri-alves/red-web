@@ -7,6 +7,10 @@ import SectorForm from "./SectorForm";
 import Modal from "../../components/Modal";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import ActionButton from "../../components/ActionButton";
+import {
+ Trash2,
+ NotebookPen,
+} from "lucide-react";
 
 
 export default function SectorButtons(inputSector) {
@@ -34,8 +38,8 @@ export default function SectorButtons(inputSector) {
 
     return (
         <div className="mt-4 flex justify-end space-x-2">
-            <ActionButton onClick={() => openDeleteModal(sector)} bgColor="red" text={t("button.delete")} icon="🗑" />
-            <ActionButton onClick={() => openUpdateModal(sector)} bgColor="blue" text={t("button.update")} icon="📝" />
+            <ActionButton onClick={() => openDeleteModal(sector)} bgColor="[rgba(98,70,234)]" text={t("button.delete")} icon={Trash2} />
+            <ActionButton onClick={() => openUpdateModal(sector)} bgColor="[rgba(98,70,234)]" text={t("button.update")} icon={NotebookPen} />
 
             <Modal
                 title={t("modal.title", { "action": t("button.save"), "domain": t("sector") })}

@@ -3,6 +3,12 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import WeightInput from "../../components/WeightInput";
 import FormInput from "../../components/FormInput";
+import ActionButton from "../../components/ActionButton";
+import {
+    ShoppingCart,
+    Box
+} from "lucide-react";
+
 
 export default function ProductAddToCart({ product, isExpanded, addToCartMethod }) {
 
@@ -46,9 +52,6 @@ export default function ProductAddToCart({ product, isExpanded, addToCartMethod 
                             <WeightInput setWeightParam={setWeight} label={t("sales.enter.weight")} />
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {t("label.value")}
-                                </label>
                                 <input
                                     type="text"
                                     tabIndex={-1}
@@ -57,15 +60,8 @@ export default function ProductAddToCart({ product, isExpanded, addToCartMethod 
                                     className="w-full text-red-500 text-3xl font-semibold bg-gray-100 rounded p-2"
                                 />
                             </div>
+                            <ActionButton type="button" bgColor="[rgba(98,70,234)]" text={t("button.add.to.cart")} onClick={() => handleAddToCart(weight)} icon={ShoppingCart} />
 
-                            <button
-                                type="button"
-                                onClick={() => handleAddToCart(weight)}
-                                className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium text-lg 
-                                    hover:bg-blue-700 active:bg-blue-800 transition focus:outline-none focus:ring-2 focus:ring-blue-300"
-                            >
-                                🛒 {t("button.add.to.cart")}
-                            </button>
                         </div>
                     )}
 
@@ -77,13 +73,10 @@ export default function ProductAddToCart({ product, isExpanded, addToCartMethod 
                                 value={qty}
                                 onChange={handleChange}
                                 type="number"
-                                icon="1️⃣"
+                                icon={Box}
                             />
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {t("label.value")}
-                                </label>
                                 <input
                                     type="text"
                                     tabIndex={-1}
@@ -92,15 +85,8 @@ export default function ProductAddToCart({ product, isExpanded, addToCartMethod 
                                     className="w-full text-red-500 text-2xl font-semibold bg-gray-100 rounded p-2"
                                 />
                             </div>
+                            <ActionButton type="button" bgColor="[rgba(98,70,234)]" text={t("button.add.to.cart")} onClick={() => handleAddToCart(qty)} icon={ShoppingCart} />
 
-                            <button
-                                type="button"
-                                onClick={() => handleAddToCart(qty)}
-                                className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium text-lg 
-                                    hover:bg-blue-700 active:bg-blue-800 transition focus:outline-none focus:ring-2 focus:ring-blue-300"
-                            >
-                                🛒 {t("button.add.to.cart")}
-                            </button>
                         </div>
                     )}
                 </motion.div>

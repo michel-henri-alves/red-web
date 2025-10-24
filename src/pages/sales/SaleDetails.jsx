@@ -26,7 +26,8 @@ export default function SaleDetails({ sale, isExpanded }) {
                                     ))}
                                 </ul>
                             } label={t("sales.payment.method.value")} />
-                            <InfoTag inputData={t("currency") +""+ sale.change} label={t("sales.change")}/>
+                            <InfoTag inputData={t("currency") + "" + sale.discount} label={t("sales.discount")} />
+                            <InfoTag inputData={t("currency") + "" + sale.change} label={t("sales.change")} />
                         </div>
                     </div>
                 </motion.div>

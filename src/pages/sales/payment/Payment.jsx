@@ -4,68 +4,89 @@ import { useTranslation } from 'react-i18next';
 import { createSale } from '../../../shared/hooks/useSales';
 import { useKeyboardShortcut } from "../../../hooks/useKeyboardShortcut";
 import { useNavigate } from "react-router-dom";
-import FormInput from '../../../components/FormInput';
-import Modal from '../../../components/Modal';
 import CustomerList from '../../customer/CustomerList';
 import CustomerAddDue from './CustomerAddDue';
+import AddDiscount from './AddDiscount';
+import Modal from '../../../components/Modal';
+import MoneyInput from '../../../components/MoneyInput';
+import ActionButton from '../../../components/ActionButton';
+import OptionsRange from '../../../components/OptionsRange';
+import {
+  CreditCard,
+  Banknote,
+  Notebook,
+  Smartphone,
+  HandCoins,
+  BadgeDollarSign,
+  BanknoteArrowDown
+} from "lucide-react";
 
 export default function Payment({ total }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  // --- API hook (mutation) ---
   const {
     mutate: creation,
     isLoading: isLoadingCreation,
-    // kept fields available if needed: isSuccess, isError, error, reset
   } = createSale();
 
-  // --- states ---
   const [payed, setPayed] = useState(0);
-  const [paying, setPaying] = useState(0);
+  const [paying, setPaying] = useState();
   const [due, setDue] = useState(total ?? 0);
   const [change, setChange] = useState(0);
-  const [discount] = useState(0); // não usado na lógica atual, mantido
+  const [discount, setDiscount] = useState();
   const [paymentMethod, setPaymentMethod] = useState([]);
   const [amountPaid, setAmountPaid] = useState([]);
   const [isOpenRegisterDue, setOpenRegisterDue] = useState(false);
+  const [isOpenDiscount, setOpenDiscount] = useState(false);
 
-  // --- refs (keyboard shortcuts) ---
-  // Criamos 6 refs e os atalhos F1..F6 disparam click nos elementos correspondentes.
-  const btnRefs = Array.from({ length: 6 }).map(() => useRef(null));
-  ["F1", "F2", "F3", "F4", "F5", "F6"].forEach((key, idx) =>
-    useKeyboardShortcut([key], () => btnRefs[idx]?.current?.click())
-  );
-
+  // const btnRefs = Array.from({ length: 9 }).map(() => useRef(null));
+  // ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9"].forEach((key, idx) =>
+  //   useKeyboardShortcut([key], () => btnRefs[idx]?.current?.click())
+  // );
   const inputRef = useRef(null);
 
-  // --- escolha de método ---
+  const btnRefs = {
+    f1: useRef(null),
+    f2: useRef(null),
+    f3: useRef(null),
+    f4: useRef(null),
+    f5: useRef(null),
+    f6: useRef(null),
+    f7: useRef(null),
+    f8: useRef(null),
+    f9: useRef(null),
+    Escape: useRef(null),
+  };
+
+  Object.entries(btnRefs).forEach(([key, ref]) => {
+    useKeyboardShortcut([key.toUpperCase()], () => {
+      // Se for input → focus
+      if (ref.current?.tagName === "INPUT") {
+        ref.current.focus();
+        return;
+      }
+
+      // Se for botão → click
+      ref.current?.click();
+    });
+  });
+
   const [selected, setSelected] = useState("debit");
 
   const options = [
-    { label: t("debit"), value: "debit", colorClass: "bg-red-500", icon: "💳", ref: btnRefs[0] },
-    { label: t("credit"), value: "credit", colorClass: "bg-green-500", icon: "💳", ref: btnRefs[1] },
-    { label: t("money"), value: "money", colorClass: "bg-yellow-500", icon: "💵", ref: btnRefs[2] },
-    { label: t("pix"), value: "pix", colorClass: "bg-cyan-500", icon: "❖", ref: btnRefs[3] },
-    { label: t("pay.later"), value: "pay.later", colorClass: "bg-blue-500", icon: "📝", ref: btnRefs[4] },
+    { label: t("debit") + " (F1)", value: "debit", colorClass: "bg-orange-500", icon: CreditCard, ref: btnRefs.f1 },
+    { label: t("credit") + " (F2)", value: "credit", colorClass: "bg-green-500", icon: CreditCard, ref: btnRefs.f2 },
+    { label: t("money") + " (F3)", value: "money", colorClass: "bg-yellow-500", icon: Banknote, ref: btnRefs.f3 },
+    { label: t("pix") + " (F4)", value: "pix", colorClass: "bg-cyan-500", icon: Smartphone, ref: btnRefs.f4 },
+    { label: t("pay.later") + " (F5)", value: "pay.later", colorClass: "bg-blue-500", icon: Notebook, ref: btnRefs.f5 },
   ];
 
-  // --- helper: format number to 2 decimals for display ---
   const displayValue = (num) => {
     if (typeof num !== 'number' || isNaN(num)) return "0.00";
     return num.toFixed(2);
   };
 
-  // --- input change: recebe string, remove não dígitos e divide por 100 (mantém sua lógica original) ---
-  const handleChange = (e) => {
-    // aceitável receber "." e "," do usuário; normalizamos para apenas dígitos aqui
-    const raw = String(e.target.value);
-    const digits = raw.replace(/\D/g, "");
-    const value = digits ? parseFloat(digits) / 100 : 0;
-    setPaying(value);
-  };
-
-  // mantemos comportamento de selecionar fim do input ao payed mudar
   useEffect(() => {
     const input = inputRef.current;
     if (input) {
@@ -78,9 +99,8 @@ export default function Payment({ total }) {
     }
   }, [payed]);
 
-  // --- funções principais ---
   const setTotalValueForPay = () => {
-    setPaying(due);
+    setPaying(due.toFixed(2));
   };
 
   const handlePendingDebtRegister = () => {
@@ -88,21 +108,23 @@ export default function Payment({ total }) {
   };
 
   const updateBill = () => {
-    // registra pagamento parcial/total
     const newAmountPaid = [...amountPaid, paying];
     const newPaymentMethod = [...paymentMethod, selected];
-    const result = +(due - paying).toFixed(2); // evitar imprecisão flutuante
+    const result = +(due - paying).toFixed(2);
 
-    setPayed(prev => +(prev + paying).toFixed(2));
+    setPayed(prev => {
+      const total = Number(prev) + Number(paying);
+      return +total.toFixed(2);
+    });
     setAmountPaid(newAmountPaid);
     setPaymentMethod(newPaymentMethod);
 
     if (result === 0) {
-      // pagamento finalizado
       creation({
         paymentMethod: newPaymentMethod,
         amountPaid: newAmountPaid,
         change,
+        discount,
         realizedAt: Date.now(),
       }, {
         onSuccess: () => {
@@ -115,18 +137,15 @@ export default function Payment({ total }) {
         }
       });
     } else if (result > 0) {
-      // ficou valor a receber (desconto/valor restante)
       setDue(result);
       toast.success(t("toast.discounted.value", { input: payed, due: result }));
     } else {
-      // troco
       setDue(0);
       setChange(Math.abs(result));
       toast.success(t("toast.change.value", { input: paying, change: Math.abs(result) }));
     }
 
-    // limpa campo de entrada
-    setPaying(0);
+    setPaying("");
   };
 
   const handleSale = () => {
@@ -138,7 +157,6 @@ export default function Payment({ total }) {
   };
 
   const changePayed = () => {
-    // confirma venda quando há troco exibido
     creation({
       paymentMethod,
       amountPaid,
@@ -158,142 +176,79 @@ export default function Payment({ total }) {
 
   const closeRegisterDue = () => {
     setOpenRegisterDue(false);
-    // opcional: focar input novamente
     inputRef.current?.focus();
   };
 
-  // --- renderização (mobile-first) ---
+  const updateBillWithDiscounts = () => {
+    setDue(total - discount)
+    setPaying("");
+    setOpenDiscount(false)
+  }
+
+  const paymentInput = (e) => {
+    setPaying(e.target.value)
+  }
+
+  const discountInput = (e) => {
+    setDiscount(e.target.value)
+  }
+
+
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-      {/* CARD: totais */}
       <section
         aria-labelledby="totals-heading"
-        className="p-4 bg-white rounded-xl shadow-sm"
+        className="p-5 bg-gray-200 rounded-xl shadow-xl"
       >
         <h2 id="totals-heading" className="text-lg font-semibold text-gray-800 text-center">
-          {t("sales.final.bill")}
+          {t("sales.summary")}
         </h2>
 
         <div className="mt-3 space-y-2 text-center">
           <div className="text-base sm:text-lg font-bold text-red-600">
-            {t("sales.bill.total")}: {t("currency")} {displayValue(total)}
+            {t("sales.final.bill")}: {t("currency")} {displayValue(total)}
           </div>
           <div className="text-base sm:text-lg font-bold text-green-600">
             {t("payed")}: {t("currency")} {displayValue(payed)}
           </div>
-          <div className="text-base sm:text-lg font-bold text-yellow-600">
-            {t("discount")}: {t("currency")} {displayValue(discount)}
-          </div>
-
+          {discount && <div className="text-base sm:text-lg font-bold text-yellow-600">
+            {t("discount")}: {t("currency")} {discount}
+          </div>}
           <div className="mt-2">
             {change === 0 ? (
               <div className="text-base sm:text-lg font-bold text-blue-600">
                 {t("due")}: {t("currency")} {displayValue(due)}
               </div>
             ) : (
-              <button
-                type="button"
-                onClick={changePayed}
-                className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 rounded-lg bg-orange-500 text-white font-medium shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400"
-                aria-label={t("toast.change.value", { input: displayValue(payed), change: displayValue(change) })}
-              >
-                {t("toast.change.value", { input: displayValue(payed), change: displayValue(change) })}
-              </button>
+              <ActionButton type="button" bgColor="[rgba(98,70,234)]" text={t("toast.change.value", { input: displayValue(payed), change: displayValue(change) })} onClick={changePayed} icon={HandCoins} additionalStyle="sm:w-auto inline-flex items-center justify-center" />
             )}
           </div>
         </div>
       </section>
 
-      {/* CARD: opções de pagamento */}
-      <section aria-labelledby="payment-options" className="p-4 bg-white rounded-xl shadow-sm">
-        <h3 id="payment-options" className="text-base font-semibold text-gray-800 text-center">
-          {t("sales.payment.options")}
-        </h3>
-
-        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-          {options.map((option, idx) => {
-            const isSelected = selected === option.value;
-            return (
-              <button
-                key={option.value}
-                ref={option.ref}
-                type="button"
-                onClick={() => setSelected(option.value)}
-                aria-pressed={isSelected}
-                aria-label={option.label}
-                className={`
-                  w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white font-medium transition-transform 
-                  ${option.colorClass} ${isSelected ? "ring-2 ring-offset-2 ring-blue-500 scale-105" : "hover:scale-102"}
-                `}
-              >
-                <span className="text-xl" aria-hidden>{option.icon}</span>
-                <span className="truncate">{option.label}</span>
-                <span className="sr-only">{isSelected ? t("selected") : ""}</span>
-              </button>
-            );
-          })}
-        </div>
+      <section aria-labelledby="payment-options" className="p-5 bg-gray-200 rounded-xl shadow-xl">
+        <OptionsRange text={t("sales.payment.options")} options={options} selected={selected} setSelected={setSelected} />
       </section>
 
-      {/* CARD: entrada de valor + ações */}
-      <section className="p-4 bg-white rounded-xl shadow-sm">
+      <section className="p-5 bg-gray-200 rounded-xl shadow-xl">
         <div className="grid grid-cols-1 gap-3">
           <label className="block">
-            <span className="text-sm font-medium text-gray-700">{t("sales.payed")}</span>
-            {/* Usamos input text para permitir máscara/local-format, mas o handleChange normaliza */}
-            <input
-              ref={inputRef}
-              value={displayValue(paying)}
-              onChange={handleChange}
-              inputMode="numeric"
-              aria-label={t("sales.payed")}
-              className="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-300 px-3 py-2 text-right"
-              placeholder="0.00"
-            />
+            <MoneyInput icon={Banknote} type="number" value={paying} onChange={paymentInput} label={t("sales.payed") + " " + t("currency") + " (F6)"} textSize="text-4xl" inputRef={btnRefs.f6} />
           </label>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <button
-              type="button"
-              onClick={setTotalValueForPay}
-              disabled={change > 0}
-              className={`w-full sm:w-1/3 inline-flex items-center justify-center px-4 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2
-                ${change > 0 ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-orange-500 text-white hover:bg-orange-600 focus:ring-orange-400"}`}
-              aria-disabled={change > 0}
-            >
-              ➤ {t("autocomplete")}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleSale}
-              disabled={paying === 0 || change > 0}
-              className={`w-full sm:w-1/3 inline-flex items-center justify-center px-4 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2
-                ${paying === 0 || change > 0 ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400"}`}
-              aria-disabled={paying === 0 || change > 0}
-            >
-              🤝 {t("receive")}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleSale}
-              disabled={paying === 0 || change > 0}
-              className={`w-full sm:w-1/3 inline-flex items-center justify-center px-4 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2
-                ${paying === 0 || change > 0 ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400"}`}
-              aria-disabled={paying === 0 || change > 0}
-            >
-              💸 {t("discount")}
-            </button>
+            <ActionButton type="button" bgColor="[rgba(98,70,234)]" text={t("discount") + " (F7)"} onClick={() => setOpenDiscount(true)} icon={BanknoteArrowDown} disabled={due === 0 || change > 0 || payed > 0} ref={btnRefs.f7} />
+            <ActionButton type="button" bgColor="[rgba(98,70,234)]" text={t("total.value") + " (F8)"} onClick={setTotalValueForPay} icon={BadgeDollarSign} disabled={due === 0 || change > 0} ref={btnRefs.f8} />
+            <ActionButton type="button" bgColor="red-600" text={t("receive") + " (F9)"} onClick={handleSale} icon={HandCoins} disabled={(paying ?? 0) === 0 || paying == "" || change > 0} ref={btnRefs.f9} />
           </div>
         </div>
       </section>
 
-      {/* MODAL: registrar dívida */}
       <Modal
         title={t("sales.select.customer")}
         isOpen={isOpenRegisterDue}
         onClose={closeRegisterDue}
+        closeButtonRef={btnRefs.Escape}
       >
         <CustomerList
           renderExpandedDiv={(customer, isExpanded) => (
@@ -307,6 +262,21 @@ export default function Payment({ total }) {
           )}
         />
       </Modal>
+
+      <Modal
+        title={t("discount")}
+        isOpen={isOpenDiscount}
+        onClose={() => setOpenDiscount(false)}
+        closeButtonRef={btnRefs.Escape}
+      >
+        <AddDiscount
+          updateBill={updateBillWithDiscounts}
+          handleDiscount={discountInput}
+          discount={discount}
+          closeButtonRef={btnRefs.Escape}
+        />
+      </Modal>
+
     </div>
   );
 }

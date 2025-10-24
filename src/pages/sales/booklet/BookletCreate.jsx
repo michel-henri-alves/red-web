@@ -6,13 +6,14 @@ import BookletForm from "./BookletForm";
 
 
 export default function BookletCreate(customerId) {
+    console.log(customerId)
     const { t } = useTranslation();
 
-    const [pendingToUpdate, setPendingToUpdate] = useState(null);
+    // const [pendingToUpdate, setPendingToUpdate] = useState(null);
     const [isFormModalOpen, setFormModalOpen] = useState(false);
 
     const openCreationModal = () => {
-        setPendingToUpdate({});
+        // setPendingToUpdate({});
         setFormModalOpen(true);
     };
 
@@ -22,15 +23,15 @@ export default function BookletCreate(customerId) {
         <div>
             <FloatingActionButton
                 onClick={openCreationModal}
-                tooltip={t("button.tooltip.form", { domain: t("booklet") })}
+                tooltip={t("button.tooltip.form", { domain: t("booklet.title", {customerName: "Michel"}) })}
                 content={<h1>✚</h1>}
                 position="bottom-40" />
 
             <Modal
-                title={t("modal.title", { "action": t("button.save"), "domain": t("booklet") })}
+                title={t("modal.title", { "action": t("button.save"), "domain": t("booklet.title", {customerName: "Michel"}) })}
                 isOpen={isFormModalOpen}
                 onClose={closeFormModal}>
-                <BookletForm onClose={closeFormModal} pending={pendingToUpdate} customerId={customerId}  />
+                <BookletForm onClose={closeFormModal} pending={{}} customerId={customerId}  />
             </Modal>
         </div>
     );

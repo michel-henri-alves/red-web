@@ -50,7 +50,11 @@ export default function SaleList(
         setEndDate(end?.toISOString())
       }} />
 
-      {allSales.map((sale) => {
+      {allSales.length === 0 ? (
+        <tr>
+          <td colSpan={4} className="py-6 px-4 text-center text-gray-500">{t("sales.empty")}</td>
+        </tr>
+      ) : (allSales.map((sale) => {
         return (
           <ExpandableTable
             key={sale._id}
@@ -59,7 +63,8 @@ export default function SaleList(
             expandedDiv={renderExpandedDiv}
           />
         );
-      })}
+      }))
+      }
 
       <div ref={loaderRef} className="h-10" />
       {isFetchingNextPage && <p className="text-center">{t("loading.waiting")}</p>}

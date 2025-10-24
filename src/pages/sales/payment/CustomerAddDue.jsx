@@ -3,6 +3,11 @@ import { useTranslation } from "react-i18next";
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from "framer-motion";
 import { createPendings } from '../../../shared/hooks/usePendings'
+import ActionButton from "../../../components/ActionButton"
+import {
+    Check
+} from "lucide-react";
+import { useWhatsAppMessage } from "../../../hooks/useWhatsAppMessage";
 
 
 export default function CustomerAddDue({ updateBill, onClose, customer, due, isExpanded }) {
@@ -10,23 +15,30 @@ export default function CustomerAddDue({ updateBill, onClose, customer, due, isE
     const { t } = useTranslation();
     const [debt, setDebt] = useState(due);
     const [errors, setErrors] = useState({});
+    const { openWhatsApp } = useWhatsAppMessage();
 
     const {
         mutate: creation,
         isLoading: isLoadingCreation,
-        isSuccess: isSuccessCreation,
-        isError: isErrorCreation,
-        error: errorCreation,
-        reset: resetCreation,
     } = createPendings();
     const [form, setForm] = useState(customer || {});
     useEffect(() => {
         setForm(customer || {});
     }, [customer]);
 
+    const notifyByWhatsApp = () => {
+        const confirmed = window.confirm(t("notify.by.whatsapp"));
+        if (confirmed) {
+            const phone = t("message.phone.number", { "phoneNumber": customer.phone });
+            const message = t("sales.debt.whatsapp", { value: due, owner: "Padaria Flor do Campo" });
+            openWhatsApp(phone, message);
+        }
+    }
+
     const registerDebt = () => {
+        console.log(customer)
         var debt = {
-            "value": due,
+            "amount": due,
             "customerId": customer._id,
             "pendingType": "DEBIT"
         }
@@ -34,10 +46,7 @@ export default function CustomerAddDue({ updateBill, onClose, customer, due, isE
         creation(debt, {
             onSuccess: () => {
                 setErrors({});
-                const confirmed = window.confirm('Deseja notificar nosso cliente pelo Whatsapp?');
-                if (confirmed) {
-                    notifyCustomer();
-                }
+                notifyByWhatsApp();
                 updateBill();
                 if (onClose) onClose()
                 toast.success(t("toast.due.add", { name: customer.name, value: due }));
@@ -51,14 +60,6 @@ export default function CustomerAddDue({ updateBill, onClose, customer, due, isE
 
     }
 
-    const notifyCustomer = () => {
-        const phone = "55" + customer.phone;
-        const message = t("sales.debt.whatsapp", { value: due, owner: "Padaria Flor do Campo" });
-        const url = `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
-        window.open(url, "_blank");
-    }
-
-
     return (
         <AnimatePresence>
             {isExpanded && (
@@ -69,16 +70,10 @@ export default function CustomerAddDue({ updateBill, onClose, customer, due, isE
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden px-4 text-2xl text-gray-700 m-5">
 
-                    <label className="block p-5">⚠️ {t("sales.debt.information", { input: debt.toFixed(2) })}</label>
-                    <button
-                        type="button"
-                        onClick={registerDebt}
-                        className="w-full py-1 px-1 bg-gray-300 text-gray-350 rounded cursor-pointer transition
-                                hover:bg-blue-700 text-white active:bg-blue-200
-                                focus:bg-blue-700 text-white active:bg-blue-200"
-                    >
-                        📝 {t("button.confirm")}
-                    </button>
+                    <section className="p-5 bg-gray-200 rounded-xl shadow-xl flex justify-center">
+                        <label className="block p-5 font-bold">⚠️ {t("sales.debt.information", { input: debt })}</label>
+                        <ActionButton type="button" bgColor="[rgba(98,70,234)]" text={t("button.confirm")} onClick={registerDebt} icon={Check} />
+                    </section>
 
                 </motion.div>
             )}

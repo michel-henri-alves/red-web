@@ -20,7 +20,7 @@ export default function routeConfig() {
             <Route path="/sales" element={<SalesPage />} />
             <Route path="/payment" element={<PaymentPage />} />
             <Route path="/customers" element={<CustomerPage />} />
-            <Route path="/booklet/:id/:name" element={<BookletPage />} />
+            <Route path="/booklet" element={<BookletPage />} />
             {/* <Route path="/camera" element={<CameraTest />} /> */}
             {/* <Route path="/configuracoes" element={<div>Configurações</div>} /> */}
         </Routes>

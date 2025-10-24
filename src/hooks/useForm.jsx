@@ -44,11 +44,9 @@ export function useForm({ initialData = {}, fieldsConfig = [], onSubmit }) {
         e?.preventDefault();
         const validationErrors = validate();
 
-        // 🔴 Se houver erros, mostrar todos e marcar campos como tocados
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
 
-            // ✅ Marca todos os campos como tocados para exibir mensagens
             const touchedFields = {};
             fieldsConfig.forEach((field) => {
                 touchedFields[field.name] = true;

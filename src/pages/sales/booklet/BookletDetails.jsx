@@ -1,9 +1,7 @@
-import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import BookletButtons from './BookletButtons';
 
-export default function BookletDetails({ pending, isExpanded }) {
-    const { t } = useTranslation();
+export default function BookletDetails({ pending, customer, isExpanded }) {
 
     return (
         <AnimatePresence>
@@ -16,7 +14,7 @@ export default function BookletDetails({ pending, isExpanded }) {
                     className="overflow-hidden px-4 pb-4 text-sm text-gray-700">
                     <div className="space-y-4 bg-white mt-6 p-6 text-2xl">
                         <div className="flex flex-wrap gap-3">
-                            <BookletButtons pending={pending} />
+                            <BookletButtons pending={pending} customer={customer} />
                         </div>
                     </div>
                 </motion.div>

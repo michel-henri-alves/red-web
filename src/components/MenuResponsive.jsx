@@ -1,28 +1,24 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState,  useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-    Menu,
-    X,
     Home,
     Box as Package,
     LayoutDashboard,
     ShoppingCart,
     Users,
-    Sun,
-    Moon,
-    LogOut,
-    Settings,
 } from "lucide-react";
 
 
 export default function MenuResponsive({ user = null, onLogout = () => { } }) {
+    const { t } = useTranslation();
+    const location = useLocation();
 
     const [open, setOpen] = useState(true);
-    const location = useLocation();
     // const [mobileOpen, setMobileOpen] = useState(false);
     // const [collapsed, setCollapsed] = useState(() => {
-    //     try {
+    //     try {MenuResponsive
     //         return localStorage.getItem("sidebar-collapsed") === "true";
     //     } catch {
     //         return false;
@@ -38,11 +34,11 @@ export default function MenuResponsive({ user = null, onLogout = () => { } }) {
     // }, [location.pathname]);
 
     const navItems = useMemo(() => ([
-        { name: "Home", icon: Home, path: "/", roles: undefined },
-        { name: "Produtos", icon: Package, path: "/products", roles: ["admin", "seller"] },
-        { name: "Setores", icon: LayoutDashboard, path: "/sectors", roles: ["admin"] },
-        { name: "Vendas", icon: ShoppingCart, path: "/sales", roles: ["admin", "seller", "cashier"] },
-        { name: "Clientes", icon: Users, path: "/customers", roles: ["admin", "seller"] },
+        { name: t("sidebar.home"), icon: Home, path: "/", roles: undefined },
+        { name: t("sidebar.products"), icon: Package, path: "/products", roles: ["admin", "seller"] },
+        { name: t("sidebar.sectors"), icon: LayoutDashboard, path: "/sectors", roles: ["admin"] },
+        { name: t("sidebar.sales"), icon: ShoppingCart, path: "/sales", roles: ["admin", "seller", "cashier"] },
+        { name: t("sidebar.customers"), icon: Users, path: "/customers", roles: ["admin", "seller"] },
     ]), []);
 
     const visibleNav = useMemo(() => {
@@ -61,16 +57,13 @@ export default function MenuResponsive({ user = null, onLogout = () => { } }) {
 
     return (
         <div className="flex">
-            {/* Sidebar */}
             <div className={`${open ? "w-72" : "w-20"} bg-dark-purple h-screen p-5 pt-8 relative duration-300`}>
-                {/* Toggle Button */}
                 <img
                     src="../../src/assets/images/control.png"
                     className={`absolute cursor-pointer -right-3 top-9 w-7 border-dark-purple border-2 rounded-full ${!open && "rotate-180"}`}
-                    onClick={() => setOpen(!open) }
+                    onClick={() => setOpen(!open)}
                 />
 
-                {/* Logo Section */}
                 <div className="flex gap-x-4 items-center">
                     <img
                         src="../src/assets/images/m4.png"

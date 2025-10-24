@@ -2,6 +2,11 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef } from "react";
 import ActionButton from "./ActionButton";
+import {
+ Check,
+ Hourglass,
+ X,
+} from "lucide-react";
 
 export default function DeleteConfirmationModal({ onClose, deleteMethod, deleteId, description }) {
   const { t } = useTranslation();
@@ -18,44 +23,45 @@ export default function DeleteConfirmationModal({ onClose, deleteMethod, deleteI
         toast.success(t("toast.delete.success", { description }));
         onClose();
       },
-      onError: () => {
-        toast.error(t("toast.delete.error", { description }));
+      onError: (err) => {
+        const errorMessage = err?.response?.data?.message || "toast.delete.error";
+        toast.error(t(errorMessage));
       }
     });
   };
 
   return (
-    <div className="w-full max-w-xl sm:max-w-xl bg-white dark:bg-gray-900 p-5 sm:p-6 rounded-xl shadow-xl space-y-6 mx-auto text-center">
-      
-      {/* Título */}
-      <h1
-        id="delete-confirmation-title"
-        className="text-base sm:text-xl font-medium text-gray-800 dark:text-gray-200"
-      >
-        {t("delete.confirmation.message", { description })}
-      </h1>
+    <div>
 
-      {/* Botões */}
-      <div className="flex flex-col sm:flex-row sm:justify-center gap-3 pt-2">
-        <ActionButton
-          type="button"
-          bgColor="red"
-          onClick={onClose}
-          text={isLoading ? t("button.cancelling") : t("button.cancel")}
-          icon={isLoading ? "⏳" : "✖"}
-          disabled={isLoading}
-          ref={cancelButtonRef}
-        />
-        <ActionButton
-          type="button"
-          bgColor="blue"
-          onClick={handleDelete}
-          text={isLoading ? t("button.deleting") : t("button.confirm")}
-          icon={isLoading ? "⏳" : "✔"}
-          additionalStyle="w-full sm:w-auto transition-transform duration-200 hover:-translate-y-0.5"
-          disabled={isLoading}
-        />
-      </div>
+      <section className="p-5 bg-gray-200 rounded-xl shadow-xl">
+        <h1
+          id="delete-confirmation-title"
+          className="flex flex-col sm:flex-row sm:justify-center gap-3 pt-2 font-bold"
+        >
+          {t("delete.confirmation.message", { description })}
+        </h1>
+
+        <div className="flex flex-col sm:flex-row sm:justify-center gap-3 pt-2">
+          <ActionButton
+            type="button"
+            bgColor="[rgba(98,70,234)]"
+            onClick={onClose}
+            text={isLoading ? t("button.cancelling") : t("button.cancel")}
+            icon={isLoading ? Hourglass : X}    
+            disabled={isLoading}
+            ref={cancelButtonRef}
+          />
+          <ActionButton
+            type="button"
+            bgColor="[rgba(98,70,234)]"
+            onClick={handleDelete}
+            text={isLoading ? t("button.deleting") : t("button.confirm")}
+            icon={isLoading ? Hourglass : Check}
+            additionalStyle="w-full sm:w-auto transition-transform duration-200 hover:-translate-y-0.5"
+            disabled={isLoading}
+          />
+        </div>
+      </section>
     </div>
   );
 }

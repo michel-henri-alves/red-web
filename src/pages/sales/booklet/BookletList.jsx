@@ -14,10 +14,12 @@ export default function BookletList(
 ) {
     const { t } = useTranslation();
 
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
     const [filter, setFilter] = useState(id);
     const debouncedFilter = useDebounce(filter, 500);
     const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage }
-        = fetchAllPendingsPaginatedByCustomerId(debouncedFilter, 10);
+        = fetchAllPendingsPaginatedByCustomerId(debouncedFilter, 10, startDate, endDate);
     var balance = data?.pages[0].balance
     const allRegisters = data?.pages.flatMap((page) => page.data) ?? [];
     const [expandedCustomer, setExpandedCustomer] = useState(null);
@@ -59,16 +61,22 @@ export default function BookletList(
                 setEndDate(end?.toISOString())
             }} />
 
-            {allRegisters.map((pending) => {
-                return (
-                    <ExpandableTable
-                        key={pending._id}
-                        title={setRowTitle(pending)}
-                        item={pending}
-                        expandedDiv={renderExpandedDiv}
-                    />
-                );
-            })}
+            {allRegisters.length === 0 ? (
+                <tr>
+                    <td colSpan={4} className="py-6 px-4 text-center text-gray-500">{t("booklet.empty")}</td>
+                </tr>
+            ) : (
+                allRegisters.map((pending) => {
+                    return (
+                        <ExpandableTable
+                            key={pending._id}
+                            title={setRowTitle(pending)}
+                            item={pending}
+                            expandedDiv={renderExpandedDiv}
+                        />
+                    );
+                }))
+            }
 
             <div ref={loaderRef} className="h-10" />
             {isFetchingNextPage && <p className="text-center">{t("loading.waiting")}</p>}

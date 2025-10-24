@@ -1,7 +1,19 @@
 import ProgressBar from "./ProgressBar";
 import InfoTooltip from "./InfoTooltip";
 
-export default function FormInput({ label, name, value, placeholder, onChange, onBlur, errors, icon: Icon, inputRef, type = "text", max }) {
+export default function MoneyInput({ name, value, onChange, label, icon: Icon, textSize, type, max, errors, inputRef, ...props }) {
+  
+  const formatMoney = (e) => {
+    const numeric = e.replace(/\D/g, "");
+    return (Number(numeric) / 100).toFixed(2);
+  };
+
+  const handleChange = (e) => {
+    const formatted = formatMoney(e.target.value);
+    e.target.value = formatted;
+    onChange?.(e);
+  };
+  
   return (
     <div className="w-full relative">
       <label className="flex items-center space-x-2 text-lg font-medium text-gray-700 mb-1">
@@ -11,13 +23,12 @@ export default function FormInput({ label, name, value, placeholder, onChange, o
       </label>
 
       <input
-        ref={inputRef}
+        {...props}
         type={type}
-        name={name}
         value={type === "number" ? value : value || ""}
-        placeholder={placeholder}
-        onChange={onChange}
-        onBlur={onBlur}
+        name={name}
+        placeholder="0,00"
+        onChange={handleChange}
         className={`
           bg-white w-full py-3 px-4 text-lg rounded-xl border-2
           focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500
@@ -28,16 +39,17 @@ export default function FormInput({ label, name, value, placeholder, onChange, o
             : "border-gray-300"}`}
         aria-invalid={!!errors}
         aria-describedby={`${name}-error`}
-        min="0"
+        ref={inputRef}
       />
 
       {type === "number" && max && <ProgressBar value={value || 0} max={max} />}
+        {errors && (
+          <p id={`${name}-error`} className="text-red-500 text-sm mt-1 absolute left-0 animate-fade-in">
+            {errors}
+          </p>
+          )
+        }
 
-      {errors && (
-        <p id={`${name}-error`} className="text-red-500 text-sm mt-1 absolute left-0 animate-fade-in">
-          {errors}
-        </p>
-      )}
     </div>
   );
 }

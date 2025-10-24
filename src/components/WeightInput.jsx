@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import FormInput from "./FormInput";
+import {
+    Dumbbell,
+} from "lucide-react";
 
 export default function WeightInput({ setWeightParam, label }) {
   const { t } = useTranslation();
@@ -23,7 +26,6 @@ export default function WeightInput({ setWeightParam, label }) {
     setWeightParam(num);
   };
 
-  // Sempre que o value muda, coloca o cursor no final
   useEffect(() => {
     const input = inputRef.current;
     if (input) {
@@ -45,7 +47,7 @@ export default function WeightInput({ setWeightParam, label }) {
         value={weight.toFixed(3)}
         placeholder="0.000"
         onChange={handleChange}
-        icon="🏋"
+        icon={Dumbbell}
         type="text" />
 
       <span>{unitOfMeasurement}</span>

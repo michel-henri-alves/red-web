@@ -9,6 +9,11 @@ import CustomerForm from "./CustomerForm";
 
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import ActionButton from "../../components/ActionButton";
+import {
+ Trash,
+ NotebookPen,
+ Notebook,
+} from "lucide-react";
 
 
 export default function CustomerButtons(inputCustomer) {
@@ -38,9 +43,9 @@ export default function CustomerButtons(inputCustomer) {
 
     return (
         <div className="mt-4 flex justify-end space-x-2">
-            <ActionButton onClick={() => openDeleteModal(customer)} bgColor="red" text={t("button.delete")} icon="🗑" />
-            <ActionButton onClick={() => openUpdateModal(customer)} bgColor="blue" text={t("button.update")} icon="📝" />
-            <ActionButton onClick={() => navigate(`/booklet/${customer.customer._id}/${customer.customer.name}`)} bgColor="green" text={t("button.booklet")} icon="📒" />
+            <ActionButton onClick={() => openDeleteModal(customer)} bgColor="[rgba(98,70,234)]" text={t("button.delete")} icon={Trash} />
+            <ActionButton onClick={() => openUpdateModal(customer)} bgColor="[rgba(98,70,234)]" text={t("button.update")} icon={NotebookPen} />
+            <ActionButton onClick={() => navigate("/booklet", { state: { customer: customer } })} bgColor="[rgba(98,70,234)]" text={t("button.booklet")} icon={Notebook} />
 
             <Modal
                 title={t("modal.title", { "action": t("button.save"), "domain": t("customer") })}

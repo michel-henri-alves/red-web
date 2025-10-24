@@ -7,6 +7,12 @@ import { toast } from 'react-toastify';
 import FormInput from "../../components/FormInput";
 import ActionButton from "../../components/ActionButton";
 import ProgressBar from "../../components/ProgressBar";
+import {
+ ScanBarcode,
+ User,
+ Hourglass,
+ Save
+} from "lucide-react";
 
 
 export default function SectorForm({ onClose, sector = {} }) {
@@ -20,8 +26,8 @@ export default function SectorForm({ onClose, sector = {} }) {
     const { mutateAsync: updating } = updateSector();
 
     const fieldsConfig = [
-        { name: "smartCode", label: t("sector.barcode"), type: "text", icon: "𝄃𝄂𝄀𝄁𝄃𝄂𝄂𝄃" },
-        { name: "name", label: t("sector.name"), type: "text", icon: "👤", required: true },
+        { name: "smartCode", label: t("sector.barcode"), type: "text", icon: ScanBarcode },
+        { name: "name", label: t("sector.name"), type: "text", icon: User, required: true },
     ];
 
     const { form, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useForm({
@@ -52,7 +58,7 @@ export default function SectorForm({ onClose, sector = {} }) {
     return (
         <form
             onSubmit={handleSubmit}
-            className="space-y-4 bg-white p-6 flex flex-wrap gap-5 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="space-y-4 bg-gray-200 p-6 flex flex-wrap gap-5 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300"
         >
             {fieldsConfig.map((field, idx) => (
                 <FormInput
@@ -73,9 +79,9 @@ export default function SectorForm({ onClose, sector = {} }) {
 
             <ActionButton
                 type="submit"
-                bgColor="blue"
+                bgColor="[rgba(98,70,234)]"
                 text={isSubmitting ? t("button.saving") : t("button.save")}
-                icon={isSubmitting ? "⏳" : "💾"}
+                icon={isSubmitting ? Hourglass : Save}
                 disabled={isSubmitting}
             />
             <ProgressBar value={fieldsFilled || 0} max={2} />

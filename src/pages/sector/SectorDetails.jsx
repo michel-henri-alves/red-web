@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 
 import SectorButtons from './SectorButtons';
-import FormattedDate from '../../shared/utils/dateUtils';
+import formatDate from "../../shared/utils/dateUtils";
 import InfoTag from '../../components/InfoTag';
 
 export default function SectorDetails({ sector, isExpanded }) {
@@ -20,9 +20,9 @@ export default function SectorDetails({ sector, isExpanded }) {
                     <div className="space-y-4 bg-white mt-6 p-6 text-2xl">
                         <div className="flex flex-wrap gap-3">
                             <InfoTag inputData={sector.createdBy} label={t("created.by")} />
-                            <InfoTag inputData={<FormattedDate iso={sector.createdAt} />} label={t("created.at")} />
+                            <InfoTag inputData={formatDate(sector.createdAt)} label={t("created.at")} />
                             <InfoTag inputData={sector.updatedBy} label={t("updated.by")} />
-                            <InfoTag inputData={<FormattedDate iso={sector.updatedAt} />} label={t("updated.at")} />
+                            <InfoTag inputData={formatDate(sector.updatedAt)} label={t("updated.at")} />
                             <InfoTag inputData={sector.smartCode} label={t("sector.barcode")} />
                         </div>
                         <SectorButtons sector={sector} />

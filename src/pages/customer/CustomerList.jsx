@@ -23,7 +23,7 @@ export default function CustomerList(
 
     const setRowTitle = (customer) => {
         const nickname = `"${customer.nickname}"`
-        return customer.name + (customer.nickname ? " " +  nickname : "");  
+        return customer.name + (customer.nickname ? " " + nickname : "");
     }
 
     useEffect(() => {
@@ -49,38 +49,21 @@ export default function CustomerList(
     return (
         <div className="text-2xl space-y-4">
             <FilterBar filter={filter} onFilterChange={setFilter} tooltipParam={t("customer.name")} />
-            {allCustomers.map((customer) => {
-                return (
-                    <ExpandableTable
-                        key={customer._id}
-                        title={setRowTitle(customer)}
-                        item={customer}
-                        expandedDiv={renderExpandedDiv} />
-                );
-                // console.log(customer)
-                // const isExpanded = expandedCustomer === customer._id;
-                // return (
-                //     <div
-                //         key={customer._id}
-                //         className="bg-white rounded shadow border hover:shadow-lg transition"
-                //     >
-                //         <button
-                //             onClick={() => toggleExpand(customer._id)}
-                //             className="w-full text-left p-4 flex justify-between items-center cursor-pointer
-                //             focus:outline-none focus:ring-2 focus:ring-blue-500 
-                //             focus:shadow-lg focus:shadow-blue-500/50
-                //             hover:outline-none hover:ring-2 hover:ring-blue-500 
-                //             hover:shadow-lg hover:shadow-blue-500/50"
-                //         >
-                //             <span className="font-semibold">{customer.nickname ? customer.nickname : customer.name}</span>
-                //             <span>
-                //                 {isExpanded ? "▲" : "▼"}
-                //             </span>
-                //         </button>
-                //         {renderExpandedDiv && renderExpandedDiv(customer, isExpanded)}
-                //     </div>
-                // );
-            })}
+            {allCustomers.length === 0 ? (
+                <tr>
+                    <td colSpan={4} className="py-6 px-4 text-center text-gray-500">{t("customers.empty")}</td>
+                </tr>
+            ) : (
+                allCustomers.map((customer) => {
+                    return (
+                        <ExpandableTable
+                            key={customer._id}
+                            title={setRowTitle(customer)}
+                            item={customer}
+                            expandedDiv={renderExpandedDiv} />
+                    );
+                }))
+            }
 
             <div ref={loaderRef} className="h-10" />
             {isFetchingNextPage && <p className="text-center">{t("loading.waiting")}</p>}

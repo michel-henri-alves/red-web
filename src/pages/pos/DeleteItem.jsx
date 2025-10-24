@@ -1,5 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next'
+import ActionButton from '../../components/ActionButton';
+import FormInput from '../../components/FormInput';
+import {
+    ListX,
+    X
+} from "lucide-react";
 
 
 export default function DeleteItem({ handleDelete }) {
@@ -15,24 +21,14 @@ export default function DeleteItem({ handleDelete }) {
     return (
         <div>
             <div className="text-center p-6 bg-gray-50 rounded-lg shadow-md mb-4">
-                <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">
-                    {t("insert.item.number.for.delete")}
-                </h1>
-                <input
+                <FormInput
                     type="number"
-                    // value={payed.toFixed(2)}
-                    // value={paying.toFixed(2)}
+                    label={t("insert.item.number.for.delete")}
                     onChange={(e) => setItemId(e.target.value)}
-                    placeholder="🗑️ Insira o número do item"
-                    className="border border-gray-800 rounded p-2 text-right mb-4 mr-4"
+                    placeholder={t("placeholder.insert.item.number.for.delete")}
+                    icon={ListX}
                 />
-                <button
-                    onClick={deleteItem}
-                    className="bg-blue-600 text-white py-2 px-4 rounded 
-                hover:bg-blue-700 active:bg-blue-200 transition cursor-pointer"
-                >
-                    🗑️ {t("button.delete")}
-                </button>
+                <ActionButton type="button" bgColor="[rgba(98,70,234)]" text={t("button.delete")} onClick={deleteItem} icon={X} additionalStyle="mt-10" />
 
             </div>
         </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Dialog } from "@headlessui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -16,25 +17,13 @@ import {
   Settings,
 } from "lucide-react";
 
-/**
- * Sidebar completo:
- * - mobile drawer (Headless UI)
- * - desktop collapsible (persistido em localStorage)
- * - dark mode persistido (localStorage)
- * - staggered animations (framer-motion)
- * - role-based items (passar user.roles array como prop)
- *
- * Props:
- *  - user: { name, initials, roles: ['admin', 'sales'] }  (opcional)
- *  - onLogout: function (opcional)
- */
-export default function Sidebar({ user = null, onLogout = () => {} }) {
-  const location = useLocation();
 
-  // mobile drawer state
+export default function Sidebar({ user = null, onLogout = () => { } }) {
+  const location = useLocation();
+  const { t } = useTranslation();
+
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // collapsed persisted
   const [collapsed, setCollapsed] = useState(() => {
     try {
       return localStorage.getItem("sidebar-collapsed") === "true";
@@ -43,7 +32,6 @@ export default function Sidebar({ user = null, onLogout = () => {} }) {
     }
   });
 
-  // theme persisted
   const [theme, setTheme] = useState(() => {
     try {
       return localStorage.getItem("theme") || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
@@ -52,40 +40,34 @@ export default function Sidebar({ user = null, onLogout = () => {} }) {
     }
   });
 
-  // apply theme
   useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") root.classList.add("dark");
     else root.classList.remove("dark");
-    try { localStorage.setItem("theme", theme); } catch {}
+    try { localStorage.setItem("theme", theme); } catch { }
   }, [theme]);
 
-  // persist collapsed
   useEffect(() => {
-    try { localStorage.setItem("sidebar-collapsed", collapsed ? "true" : "false"); } catch {}
+    try { localStorage.setItem("sidebar-collapsed", collapsed ? "true" : "false"); } catch { }
   }, [collapsed]);
 
-  // close mobile drawer when route changes
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
-  // NAV ITEMS with optional roles -> if roles is undefined show to all
   const navItems = useMemo(() => ([
-    { name: "Home", icon: Home, path: "/", roles: undefined },
-    { name: "Produtos", icon: Package, path: "/products", roles: ["admin", "seller"] },
-    { name: "Setores", icon: LayoutDashboard, path: "/sectors", roles: ["admin"] },
-    { name: "Vendas", icon: ShoppingCart, path: "/sales", roles: ["admin", "seller", "cashier"] },
-    { name: "Clientes", icon: Users, path: "/customers", roles: ["admin", "seller"] },
+    { name: t("sidebar.home"), icon: Home, path: "/", roles: undefined },
+    { name: t("sidebar.products"), icon: Package, path: "/products", roles: ["admin", "seller"] },
+    { name: t("sidebar.sectors"), icon: LayoutDashboard, path: "/sectors", roles: ["admin"] },
+    { name: t("sidebar.sales"), icon: ShoppingCart, path: "/sales", roles: ["admin", "seller", "cashier"] },
+    { name: t("sidebar.customers"), icon: Users, path: "/customers", roles: ["admin", "seller"] },
   ]), []);
 
-  // Filter nav by user roles
   const visibleNav = useMemo(() => {
     if (!user || !user.roles) return navItems;
     return navItems.filter(item => !item.roles || item.roles.some(r => user.roles.includes(r)));
   }, [navItems, user]);
 
-  // framer-motion variants (stagger)
   const listVariants = {
     visible: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
     hidden: {},
@@ -97,22 +79,11 @@ export default function Sidebar({ user = null, onLogout = () => {} }) {
 
   return (
     <>
-      {/* Mobile Topbar */}
       <header className="lg:hidden flex items-center justify-between p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow">
         <button aria-label="Abrir menu" onClick={() => setMobileOpen(true)} className="p-2 rounded-md hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-white/30">
           <Menu className="w-6 h-6" />
         </button>
-        {/* <div className="flex items-center gap-3">
-          <div className="text-lg font-semibold tracking-wide">M4</div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => setTheme(s => s === "dark" ? "light" : "dark")} aria-label="Toggle theme" className="p-2 rounded-md hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-white/30">
-            {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
-        </div> */}
       </header>
-
-      {/* Desktop Sidebar */}
       <AnimatePresence>
         <motion.aside
           initial={false}
@@ -120,7 +91,6 @@ export default function Sidebar({ user = null, onLogout = () => {} }) {
           transition={{ type: "spring", stiffness: 260, damping: 28 }}
           className="hidden lg:flex lg:flex-col bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-h-screen shadow-2xl p-4"
         >
-          {/* Header */}
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">M4</div>
@@ -139,7 +109,6 @@ export default function Sidebar({ user = null, onLogout = () => {} }) {
             </div>
           </div>
 
-          {/* Nav */}
           <nav className="mt-6 flex-1">
             <motion.ul initial="hidden" animate="visible" variants={listVariants} className="space-y-1">
               {visibleNav.map(item => {
@@ -156,7 +125,6 @@ export default function Sidebar({ user = null, onLogout = () => {} }) {
             </motion.ul>
           </nav>
 
-          {/* Footer (profile + actions) */}
           <div className="mt-auto px-2 py-4 border-t border-slate-200/70 dark:border-slate-800/60">
             <div className="flex items-center justify-between gap-2">
               {!collapsed && (
@@ -184,7 +152,6 @@ export default function Sidebar({ user = null, onLogout = () => {} }) {
         </motion.aside>
       </AnimatePresence>
 
-      {/* Mobile Drawer */}
       <Dialog open={mobileOpen} onClose={() => setMobileOpen(false)} className="lg:hidden">
         <div className="fixed inset-0 z-40 flex">
           <AnimatePresence>
@@ -225,7 +192,7 @@ export default function Sidebar({ user = null, onLogout = () => {} }) {
             </nav>
 
             <div className="mt-6 pt-4 border-t border-slate-200/70 dark:border-slate-800/60">
-              <button className="w-full flex items-center justify-center gap-2 p-3 rounded bg-indigo-600 text-white hover:opacity-95 transition" onClick={() => {/* perfil action */}}>
+              <button className="w-full flex items-center justify-center gap-2 p-3 rounded bg-indigo-600 text-white hover:opacity-95 transition" onClick={() => {/* perfil action */ }}>
                 <Users className="w-5 h-5" />
                 <span>Perfil</span>
               </button>

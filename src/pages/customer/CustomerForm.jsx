@@ -6,6 +6,16 @@ import { useForm } from "../../hooks/useForm";
 import FormInput from '../../components/FormInput';
 import ActionButton from "../../components/ActionButton";
 import ProgressBar from "../../components/ProgressBar";
+import {
+ ScanBarcode,
+ User,
+ Phone,
+ MapPinHouse,
+ AtSign,
+ Cake,
+ Hourglass,
+ Save
+} from "lucide-react";
 
 
 export default function CustomerForm({ onClose, customer = {} }) {
@@ -19,13 +29,13 @@ export default function CustomerForm({ onClose, customer = {} }) {
     const { mutateAsync: updating } = updateCustomer();
 
     const fieldsConfig = [
-        { name: "smartCode", label: t("customer.barcode"), type: "text", icon: "𝄃𝄂𝄀𝄁𝄃𝄂𝄂𝄃" },
-        { name: "name", label: t("customer.name"), type: "text", icon: "👤", required: true },
-        { name: "nickname", label: t("customer.nickname"), type: "text", icon: "👤" },
-        { name: "phone", label: t("customer.phone"), type: "text", icon: "📞", required: true },
-        { name: "address", label: t("customer.address"), type: "text", icon: "🏠︎", required: true },
-        { name: "email", label: t("customer.email"), type: "text", icon: "@" },
-        { name: "birth", label: t("customer.birth"), type: "date", icon: "🎂" },
+        { name: "smartCode", label: t("customer.barcode"), type: "text", icon: ScanBarcode },
+        { name: "name", label: t("customer.name"), type: "text", icon: User, required: true },
+        { name: "nickname", label: t("customer.nickname"), type: "text", icon: User },
+        { name: "phone", label: t("customer.phone"), type: "text", icon: Phone, required: true },
+        { name: "address", label: t("customer.address"), type: "text", icon: MapPinHouse, required: true },
+        { name: "email", label: t("customer.email"), type: "text", icon: AtSign },
+        { name: "birth", label: t("customer.birth"), type: "date", icon: Cake },
     ];
 
     const { form, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useForm({
@@ -51,27 +61,13 @@ export default function CustomerForm({ onClose, customer = {} }) {
         },
     });
 
-
-    // const [form, setForm] = useState(customer || {});
-    // useEffect(() => {
-    //     setForm(customer || {});
-    // }, [customer]);
-
-    // const [isForCreate, setForCreate] = useState(() => {
-    //     if (Object.keys(customer).length === 0) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // })
-    // const [errors, setErrors] = useState({});
     useEffect(() => inputRef.current?.focus(), []);
     const fieldsFilled = Object.values(form).filter(Boolean).length;
 
     return (
         <form
             onSubmit={handleSubmit}
-            className="space-y-4 bg-white p-6 flex flex-wrap gap-5 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="space-y-4 bg-gray-200 p-6 flex flex-wrap gap-5 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300"
         >
 
             {fieldsConfig.map((field, idx) => (
@@ -93,9 +89,9 @@ export default function CustomerForm({ onClose, customer = {} }) {
 
             <ActionButton
                 type="submit"
-                bgColor="blue"
+                bgColor="[rgba(98,70,234)]"
                 text={isSubmitting ? t("button.saving") : t("button.save")}
-                icon={isSubmitting ? "⏳" : "💾"}
+                icon={isSubmitting ? Hourglass : Save}
                 disabled={isSubmitting}
             />
             <ProgressBar value={fieldsFilled || 0} max={7} />
