@@ -10,6 +10,11 @@ import {
     Users,
 } from "lucide-react";
 
+import m4 from '../assets/images/m4.png';
+import control from '../assets/images/control.png';
+
+
+
 
 export default function MenuResponsive({ user = null, onLogout = () => { } }) {
     const { t } = useTranslation();
@@ -59,14 +64,14 @@ export default function MenuResponsive({ user = null, onLogout = () => { } }) {
         <div className="flex">
             <div className={`${open ? "w-72" : "w-20"} bg-dark-purple h-screen p-5 pt-8 relative duration-300`}>
                 <img
-                    src="../../src/assets/images/control.png"
+                    src={control} alt="control"
                     className={`absolute cursor-pointer -right-3 top-9 w-7 border-dark-purple border-2 rounded-full ${!open && "rotate-180"}`}
                     onClick={() => setOpen(!open)}
                 />
 
                 <div className="flex gap-x-4 items-center">
                     <img
-                        src="../src/assets/images/m4.png"
+                        src={m4} alt="M4"
                         className={`cursor-pointer duration-500 ${open && "rotate-[360deg]"}`}
                     />
                     {/* <h1 className={`text-white origin-left font-medium text-xl duration-200 ${!open && "scale-0"}`}>
