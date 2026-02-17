@@ -28,6 +28,13 @@ export default function SaleDetails({ sale, isExpanded }) {
                             } label={t("sales.payment.method.value")} />
                             <InfoTag inputData={t("currency") + "" + sale.discount} label={t("sales.discount")} />
                             <InfoTag inputData={t("currency") + "" + sale.change} label={t("sales.change")} />
+                            <InfoTag inputData={
+                                <ul>
+                                    {sale.items.map((item, index) => (
+                                        <li key={index}>{t(item.productName)}</li>
+                                    ))}
+                                </ul>
+                            } label={t("sales.items")} />
                         </div>
                     </div>
                 </motion.div>

@@ -73,6 +73,7 @@
     "sales.discount": "desconto",
     "sales.enter.discount": "Insira o desconto:",
     "sales.summary": "Resumo da venda",
+    "sales.items": "Produtos vendidos",
     "toast.due.add": "Adicionado o valor de {{value}} a caderneta de {{name}}",
     "payment.title": "Pagamento",
     "customer": "clientes",

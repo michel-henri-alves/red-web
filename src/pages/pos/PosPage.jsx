@@ -123,7 +123,13 @@ const PosPage = ({ onScan: onScanProp, postToBackend = true, fetchProductBySmart
   const openPaymentModal = useCallback(() => {
     if (bill > 0) {
       setFocusActive(false);
-      navigate(`/payment?total=${bill}`);
+      // navigate(`/payment?total=${bill}`);
+      navigate("/payment", {
+        state: {
+          total: bill,
+          products: scans, // sua lista de produtos
+        },
+      });
     } else {
       toast.error(t("toast.cart.empty"));
     }
