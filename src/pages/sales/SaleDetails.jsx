@@ -31,7 +31,7 @@ export default function SaleDetails({ sale, isExpanded }) {
                             <InfoTag inputData={
                                 <ul>
                                     {sale.items.map((item, index) => (
-                                        <li key={index}>{t(item.productName)}</li>
+                                        <li key={index}>{t(item.productName)} ({item.quantity})</li>
                                     ))}
                                 </ul>
                             } label={t("sales.items")} />

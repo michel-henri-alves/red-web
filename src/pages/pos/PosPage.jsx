@@ -93,7 +93,14 @@ const PosPage = ({ onScan: onScanProp, postToBackend = true, fetchProductBySmart
 
   const addedManually = useCallback((productSelected) => {
     setFocusActive(true);
-    add({ code: productSelected.smartCode, name: productSelected.name, price: parseFloat(productSelected.priceForSale || 0) });
+    add(
+      {
+        code: productSelected.smartCode,
+        name: productSelected.name,
+        price: parseFloat(productSelected.priceForSale || 0),
+        quantity: productSelected.quantity || 1
+      }
+    );
     toast.success(t("toast.add.to.cart", { description: `${productSelected.name} - ${t("currency")}${productSelected.priceForSale}` }));
     setSearchModalOpen(false);
     inputRef.current?.focus();

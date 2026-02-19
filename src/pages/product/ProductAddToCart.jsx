@@ -31,6 +31,7 @@ export default function ProductAddToCart({ product, isExpanded, addToCartMethod 
     const buildSelectedProduct = (value) => ({
         ...form,
         priceForSale: productPrice(form.priceForSale, value),
+        quantity: value,
     });
 
     const handleAddToCart = (value) => {

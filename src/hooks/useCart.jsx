@@ -9,7 +9,9 @@ const CART_ACTIONS = {
 function cartReducer(state, action) {
   switch (action.type) {
     case CART_ACTIONS.ADD: {
+      console.log("Adding to cart:", action.payload);
       const item = action.payload;
+      console.log("item", item);
       const newScans = [item, ...state.scans];
       const newBill = Number(state.bill) + Number(item.price || 0);
       return { ...state, scans: newScans, bill: newBill };

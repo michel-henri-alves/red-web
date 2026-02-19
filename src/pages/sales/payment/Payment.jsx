@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from "react-router-dom";
 import { createSale } from '../../../shared/hooks/useSales';
 import { useKeyboardShortcut } from "../../../hooks/useKeyboardShortcut";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +22,17 @@ import {
   BanknoteArrowDown
 } from "lucide-react";
 
-export default function Payment({ total }) {
+export default function Payment() {
+
+  const location = useLocation();
+
+  const { total, products } = location.state || {
+    total: 0,
+    products: [],
+  };
+  console.log("Total:", total);
+  console.log("Products:", products);
+
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -120,22 +131,32 @@ export default function Payment({ total }) {
     setPaymentMethod(newPaymentMethod);
 
     if (result === 0) {
-      creation({
-        paymentMethod: newPaymentMethod,
-        amountPaid: newAmountPaid,
-        change,
-        discount,
-        realizedAt: Date.now(),
-      }, {
-        onSuccess: () => {
-          navigate("/pos");
-          toast.success(t("toast.sales.finished"));
-        },
-        onError: (error) => {
-          console.error(error);
-          toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
-        }
-      });
+        creation({
+          code: "1",
+          items: products.map(
+            p => (
+              { 
+                smartCode: p.code, 
+                quantity: p.quantity, 
+                productName: p.name 
+              }
+            )
+          ),
+          paymentMethod: newPaymentMethod,
+          amountPaid: newAmountPaid,
+          change,
+          discount,
+          realizedAt: Date.now(),
+        }, {
+          onSuccess: () => {
+            navigate("/pos");
+            toast.success(t("toast.sales.finished"));
+          },
+          onError: (error) => {
+            console.error(error);
+            toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
+          }
+        });
     } else if (result > 0) {
       setDue(result);
       toast.success(t("toast.discounted.value", { input: payed, due: result }));
@@ -157,21 +178,31 @@ export default function Payment({ total }) {
   };
 
   const changePayed = () => {
-    creation({
-      paymentMethod,
-      amountPaid,
-      change,
-      realizedAt: Date.now(),
-    }, {
-      onSuccess: () => {
-        navigate("/pos");
-        toast.success(t("toast.sales.finished"));
-      },
-      onError: (error) => {
-        console.error(error);
-        toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
-      }
-    });
+      creation({
+        code: "1",
+        items: products.map(
+          p => (
+            {
+              smartCode: p.code,
+              quantity: p.quantity,
+              productName: p.name
+            }
+          )
+        ),
+        paymentMethod,
+        amountPaid,
+        change,
+        realizedAt: Date.now(),
+      }, {
+        onSuccess: () => {
+          navigate("/pos");
+          toast.success(t("toast.sales.finished"));
+        },
+        onError: (error) => {
+          console.error(error);
+          toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
+        }
+      });
   };
 
   const closeRegisterDue = () => {
