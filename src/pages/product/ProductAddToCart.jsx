@@ -31,12 +31,20 @@ export default function ProductAddToCart({ product, isExpanded, addToCartMethod 
     const buildSelectedProduct = (value) => ({
         ...form,
         priceForSale: productPrice(form.priceForSale, value),
-        quantity: value,
+        quantity: formatQuantityValue(value)
     });
 
     const handleAddToCart = (value) => {
         addToCartMethod(buildSelectedProduct(value));
     };
+
+    const formatQuantityValue = (quantity) => {
+        const fixed = quantity.toFixed(3);
+
+        return fixed.endsWith('.000')
+            ? parseInt(fixed, 10).toString()
+            : fixed;
+    }
 
     return (
         <AnimatePresence>

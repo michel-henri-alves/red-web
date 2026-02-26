@@ -7,8 +7,8 @@ export default function axiosClient(domain) {
 
     return axios.create({
        //cloud
-        // baseURL: import.meta.env.VITE_API_BASE_URL + '/' + domain,
+        baseURL: import.meta.env.VITE_API_BASE_URL + '/' + domain,
         //local
-        baseURL: 'http://192.168.1.167:3001/' + domain,
+        // baseURL: 'http://192.168.1.167:3001/' + domain,
     })
 }

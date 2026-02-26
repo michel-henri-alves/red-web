@@ -20,7 +20,7 @@ export default function SaleList(
 
   const setRowTitle = (sale) => {
     const received = sale.amountPaid.reduce((acc, num) => acc + num, 0) - sale.change;
-    const realizedAt = formatDate(sale.realizedAt);
+    const realizedAt = formatDate(sale.createdAt);
     return realizedAt + " - " + t("currency") + received
   }
 

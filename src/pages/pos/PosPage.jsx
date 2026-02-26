@@ -65,8 +65,16 @@ const PosPage = ({ onScan: onScanProp, postToBackend = true, fetchProductBySmart
       if (postToBackend) {
         getProduct(code, {
           onSuccess: (data) => {
+            console.log("Product data received:", data);
             if (data) {
-              add({ code, name: data.name, price: parseFloat(data.priceForSale || 0) });
+              add({ 
+                code,
+                name: data.name, 
+                price: parseFloat(data.priceForSale || 0),
+                quantity: data.quantity.toString() || "0",
+                measure: data.unitOfMeasurement,
+              });
+              toast.success(t("toast.add.to.cart", { description: `${data.name} - ${t("currency")}${data.priceForSale}` }));
               setLastScan(data.name);
 
             } else {
@@ -93,12 +101,14 @@ const PosPage = ({ onScan: onScanProp, postToBackend = true, fetchProductBySmart
 
   const addedManually = useCallback((productSelected) => {
     setFocusActive(true);
+    console.log("Product selected to add to cart:", productSelected);
     add(
       {
         code: productSelected.smartCode,
         name: productSelected.name,
         price: parseFloat(productSelected.priceForSale || 0),
-        quantity: productSelected.quantity || 1
+        quantity: productSelected.quantity || "0",
+        measure: productSelected.unitOfMeasurement,
       }
     );
     toast.success(t("toast.add.to.cart", { description: `${productSelected.name} - ${t("currency")}${productSelected.priceForSale}` }));
@@ -130,7 +140,6 @@ const PosPage = ({ onScan: onScanProp, postToBackend = true, fetchProductBySmart
   const openPaymentModal = useCallback(() => {
     if (bill > 0) {
       setFocusActive(false);
-      // navigate(`/payment?total=${bill}`);
       navigate("/payment", {
         state: {
           total: bill,

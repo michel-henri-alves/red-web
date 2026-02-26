@@ -131,32 +131,35 @@ export default function Payment() {
     setPaymentMethod(newPaymentMethod);
 
     if (result === 0) {
-        creation({
-          code: "1",
-          items: products.map(
-            p => (
-              { 
-                smartCode: p.code, 
-                quantity: p.quantity, 
-                productName: p.name 
-              }
-            )
-          ),
-          paymentMethod: newPaymentMethod,
-          amountPaid: newAmountPaid,
-          change,
-          discount,
-          realizedAt: Date.now(),
-        }, {
-          onSuccess: () => {
-            navigate("/pos");
-            toast.success(t("toast.sales.finished"));
-          },
-          onError: (error) => {
-            console.error(error);
-            toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
-          }
-        });
+      creation({
+        code: "1",
+        items: products.map(
+          p => (
+            {
+              smartCode: p.code,
+              quantity: p.quantity,
+              productName: p.name,
+              unitOfMeasurement: p.measure || 'unit',
+              price: p.price || 0,
+              code: "1"
+            }
+          )
+        ),
+        paymentMethod: newPaymentMethod,
+        amountPaid: newAmountPaid,
+        change,
+        discount,
+        realizedAt: Date.now(),
+      }, {
+        onSuccess: () => {
+          navigate("/pos");
+          toast.success(t("toast.sales.finished"));
+        },
+        onError: (error) => {
+          console.error(error);
+          toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
+        }
+      });
     } else if (result > 0) {
       setDue(result);
       toast.success(t("toast.discounted.value", { input: payed, due: result }));
@@ -178,31 +181,34 @@ export default function Payment() {
   };
 
   const changePayed = () => {
-      creation({
-        code: "1",
-        items: products.map(
-          p => (
-            {
-              smartCode: p.code,
-              quantity: p.quantity,
-              productName: p.name
-            }
-          )
-        ),
-        paymentMethod,
-        amountPaid,
-        change,
-        realizedAt: Date.now(),
-      }, {
-        onSuccess: () => {
-          navigate("/pos");
-          toast.success(t("toast.sales.finished"));
-        },
-        onError: (error) => {
-          console.error(error);
-          toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
-        }
-      });
+    creation({
+      code: "1",
+      items: products.map(
+        p => (
+          {
+            smartCode: p.code,
+            quantity: p.quantity,
+            productName: p.name,
+            unitOfMeasurement: p.measure || 'UNIT',
+            price: p.price || 0,
+            code: "1"
+          }
+        )
+      ),
+      paymentMethod,
+      amountPaid,
+      change,
+      realizedAt: Date.now(),
+    }, {
+      onSuccess: () => {
+        navigate("/pos");
+        toast.success(t("toast.sales.finished"));
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
+      }
+    });
   };
 
   const closeRegisterDue = () => {
