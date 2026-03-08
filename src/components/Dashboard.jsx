@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useTenant } from "./TenantProvider";
 import NewsTicker from "./NewsTicket";
 import SalesChart from "./SalesChart";
 
@@ -7,6 +8,8 @@ export default function Dashboard() {
   const { t } = useTranslation();
   const [newsSelected, setNewsSelected] = useState("1");
   const [comingSoonSelected, setComingSoonSelected] = useState("1");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            const { tenant, config } = useTenant();
+
 
   const news = [
     { label: "Cadastro de Produtos", value: "1", icon: "📦" },
@@ -24,7 +27,7 @@ export default function Dashboard() {
 
   const notifications = [
     "🚀 Em breve, notificações sobre validade e quantidade",
-    "🙏🏻 Obrigado por usar Typpo",
+    "🙏🏻 Obrigado por usar Tipo",
     "🎨 Em breve, customização de visual",
     "💡 Para realizar vendas necessário ter produtos cadastrados",
   ];
@@ -42,7 +45,7 @@ export default function Dashboard() {
 
       {/* Bem vindo */}
       <div className="flex flex-col bg-blue-100 p-4 rounded shadow border-l-4 border-l-blue-500 text-center">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Bem-vindo ao TYPPO</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Bem-vindo ao TIPO</h1>
         <p className="text-gray-600">versão de degustação</p>
       </div>
 

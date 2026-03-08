@@ -1,4 +1,4 @@
-import { useState,  useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -8,6 +8,7 @@ import {
     LayoutDashboard,
     ShoppingCart,
     Users,
+    Handshake,
 } from "lucide-react";
 
 import m4 from '../assets/images/m4.png';
@@ -43,7 +44,8 @@ export default function MenuResponsive({ user = null, onLogout = () => { } }) {
         { name: t("sidebar.products"), icon: Package, path: "/products", roles: ["admin", "seller"] },
         { name: t("sidebar.sectors"), icon: LayoutDashboard, path: "/sectors", roles: ["admin"] },
         { name: t("sidebar.sales"), icon: ShoppingCart, path: "/sales", roles: ["admin", "seller", "cashier"] },
-        { name: t("sidebar.customers"), icon: Users, path: "/customers", roles: ["admin", "seller"] },
+        { name: t("sidebar.customers"), icon: Handshake, path: "/customers", roles: ["admin", "seller"] },
+        { name: t("sidebar.user"), icon: Users, path: "/users", roles: ["admin", "seller"] },
     ]), []);
 
     const visibleNav = useMemo(() => {
