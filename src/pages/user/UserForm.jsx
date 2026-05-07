@@ -7,6 +7,7 @@ import FormInput from '../../components/FormInput';
 import ActionButton from "../../components/ActionButton";
 import ProgressBar from "../../components/ProgressBar";
 import OptionsRange from "../../components/OptionsRange";
+import { formatApiErrorCause } from "../../shared/utils/apiErrorFormatter";
 import {
  User,
  AtSign,
@@ -14,6 +15,7 @@ import {
  Save,
  IdCard,
  KeyRound,
+ LockKeyhole,
  Hammer,
  BriefcaseBusiness
 } from "lucide-react";
@@ -36,18 +38,23 @@ export default function UserForm({ onClose, user = {} }) {
     ];
 
     const fieldsConfig = [
-        { name: "name", label: t("user.name"), type: "text", icon: User, required: true },
-        { name: "username", label: t("user.username"), type: "text", icon: IdCard },
-        { name: "email", label: t("user.email"), type: "text", icon: AtSign },
+        { name: "name", label: t("user.name"), type: "text", icon: User, required: true, maxLength: 80 },
+        { name: "username", label: t("user.username"), type: "text", icon: IdCard, required: true, minLength: 8, maxLength: 24 },
+        { name: "email", label: t("user.email"), type: "email", icon: AtSign, required: true, maxLength: 60 },
+        { name: "password", label: t("user.password"), type: "password", icon: LockKeyhole, required: !user?._id, minLength: 6, maxLength: 60 },
     ];
 
     const { form, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useForm({
         initialData: { ...user },
         fieldsConfig,
         onSubmit: async (data) => {
+            data = { ...data, role: selected };
+            if (user?._id && !data.password) {
+                delete data.password;
+            }
+
             try {
                 if (!user._id) {
-                    console.log(user)
                     await creation(data);
                     toast.success(t("toast.creation.success", { description: data.name }));
                 } else {
@@ -58,14 +65,15 @@ export default function UserForm({ onClose, user = {} }) {
             } catch (err) {
                 toast.error(t("toast.creation.error", {
                     description: data.name,
-                    errorCause: err.response?.data?.error
+                    errorCause: formatApiErrorCause(err, t)
                 }));
             }
         },
     });
 
     useEffect(() => inputRef.current?.focus(), []);
-    const fieldsFilled = Object.values(form).filter(Boolean).length;
+    const requiredFields = fieldsConfig.filter((field) => field.required);
+    const fieldsFilled = requiredFields.filter((field) => form[field.name]).length + (selected ? 1 : 0);
 
     return (
         <form
@@ -87,6 +95,7 @@ export default function UserForm({ onClose, user = {} }) {
                     inputRef={idx === 0 ? inputRef : null}
                     type={field.type}
                     max={field.max}
+                    maxLength={field.maxLength}
                 />
             ))}
 
@@ -102,7 +111,7 @@ export default function UserForm({ onClose, user = {} }) {
                 icon={isSubmitting ? Hourglass : Save}
                 disabled={isSubmitting}
             />
-            <ProgressBar value={fieldsFilled || 0} max={7} />
+            <ProgressBar value={fieldsFilled || 0} max={requiredFields.length + 1} />
 
         </form>
     );

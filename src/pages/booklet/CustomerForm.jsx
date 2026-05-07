@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { saveCustomer, updateCustomerById } from 'red-shared'
 import { toast } from 'react-toastify';
 import FormInput from '../../../components/FormInput';
+import { formatApiErrorCause } from '../../shared/utils/apiErrorFormatter';
 
 export default function CustomerForm({ onClose, customer }) {
     const { t } = useTranslation();
@@ -67,7 +68,7 @@ export default function CustomerForm({ onClose, customer }) {
                 },
                 onError: (error) => {
                     console.error(error);
-                    toast.error(t("toast.creation.error", { description: form.name, errorCause: error.response.data.error }));
+                    toast.error(t("toast.creation.error", { description: form.name, errorCause: formatApiErrorCause(error, t) }));
                 },
             });
         } else {
@@ -82,7 +83,7 @@ export default function CustomerForm({ onClose, customer }) {
                 },
                 onError: (error) => {
                     console.error(error);
-                    toast.error(t("toast.update.error", { description: form.name, errorCause: error.response.data.error }));
+                    toast.error(t("toast.update.error", { description: form.name, errorCause: formatApiErrorCause(error, t) }));
                 },
             });
         }

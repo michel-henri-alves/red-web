@@ -1,6 +1,5 @@
 import axiosClient from "../utils/apiBaseUrl";
 
-// const API = axiosClient("products");
 const DOMAIN = "/products";
 
 export const create = (data) => axiosClient.post(DOMAIN, data);

@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next'
 import { saveSale } from 'red-shared'
 import { useKeyboardShortcut } from "../../hook/useKeyboardShortcut";
+import { formatApiErrorCause } from "../../shared/utils/apiErrorFormatter";
 
 
 
@@ -126,7 +127,7 @@ export default function PaymemtOptions({ cleanSale, onClose, total }) {
                 },
                 onError: (error) => {
                     console.error(error);
-                    toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error.response.data.error }));
+                    toast.error(t("toast.creation.error", { description: t("sales"), errorCause: formatApiErrorCause(error, t) }));
                 },
             });
 
@@ -164,7 +165,7 @@ export default function PaymemtOptions({ cleanSale, onClose, total }) {
             },
             onError: (error) => {
                 console.error(error);
-                toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error.response.data.error }));
+                toast.error(t("toast.creation.error", { description: t("sales"), errorCause: formatApiErrorCause(error, t) }));
             },
         });
 

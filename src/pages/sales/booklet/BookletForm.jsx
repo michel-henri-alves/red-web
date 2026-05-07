@@ -7,6 +7,7 @@ import FormInput from '../../../components/FormInput';
 import ActionButton from "../../../components/ActionButton";
 import ProgressBar from "../../../components/ProgressBar";
 import OptionsRange from "../../../components/OptionsRange";
+import { formatApiErrorCause } from "../../../shared/utils/apiErrorFormatter";
 import {
     Banknote,
     BanknoteArrowDown,
@@ -67,7 +68,7 @@ export default function BookletForm({ onClose, pending = {}, customerId }) {
             } catch (err) {
                 toast.error(t("toast.creation.error", {
                     description: data.name,
-                    errorCause: err.response?.data?.error
+                    errorCause: formatApiErrorCause(err, t)
                 }));
             }
         },
@@ -101,6 +102,7 @@ export default function BookletForm({ onClose, pending = {}, customerId }) {
                         inputRef={idx === 0 ? inputRef : null}
                         type={field.type}
                         max={field.max}
+                        maxLength={field.maxLength}
                     />
                 );
             })}

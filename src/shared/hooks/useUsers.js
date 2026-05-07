@@ -25,7 +25,7 @@ export const createUser = () => {
     return useMutation({
         mutationFn: create,
         onSuccess: () => {
-            queryClient.invalidateQueries(['users']);
+            queryClient.invalidateQueries({ queryKey: ['users-infinite'] });
         },
     });
 }
@@ -53,7 +53,7 @@ export const updateUser = () => {
     return useMutation({
         mutationFn: ({ id, data }) => update(id, data),
         onSuccess: () => {
-            queryClient.invalidateQueries(['users']);
+            queryClient.invalidateQueries({ queryKey: ['users-infinite'] });
         },
     });
 };
@@ -64,7 +64,7 @@ export const removeUser = () => {
     return useMutation({
         mutationFn: remove,
         onSuccess: () => {
-            queryClient.invalidateQueries(['users']);
+            queryClient.invalidateQueries({ queryKey: ['users-infinite'] });
         },
     });
 };

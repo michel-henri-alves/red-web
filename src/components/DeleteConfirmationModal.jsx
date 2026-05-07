@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef } from "react";
 import ActionButton from "./ActionButton";
+import { formatApiErrorCause } from "../shared/utils/apiErrorFormatter";
 import {
  Check,
  Hourglass,
@@ -24,8 +25,8 @@ export default function DeleteConfirmationModal({ onClose, deleteMethod, deleteI
         onClose();
       },
       onError: (err) => {
-        const errorMessage = err?.response?.data?.message || "toast.delete.error";
-        toast.error(t(errorMessage));
+        const errorCause = err?.response?.data ? formatApiErrorCause(err, t) : t("toast.delete.error");
+        toast.error(errorCause);
       }
     });
   };

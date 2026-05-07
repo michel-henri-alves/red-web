@@ -25,7 +25,7 @@ export default function MoneyInput({ name, value, onChange, label, icon: Icon, t
       <input
         {...props}
         type={type}
-        value={type === "number" ? value : value || ""}
+        value={value ?? ""}
         name={name}
         placeholder="0,00"
         onChange={handleChange}

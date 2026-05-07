@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import FormInput from "../../components/FormInput";
 import ActionButton from "../../components/ActionButton";
 import ProgressBar from "../../components/ProgressBar";
+import { formatApiErrorCause } from "../../shared/utils/apiErrorFormatter";
 import {
  ScanBarcode,
  User,
@@ -46,7 +47,7 @@ export default function SectorForm({ onClose, sector = {} }) {
             } catch (err) {
                 toast.error(t("toast.creation.error", {
                     description: data.name,
-                    errorCause: err.response?.data?.error
+                    errorCause: formatApiErrorCause(err, t)
                 }));
             }
         },
@@ -74,6 +75,7 @@ export default function SectorForm({ onClose, sector = {} }) {
                     inputRef={idx === 0 ? inputRef : null}
                     type={field.type}
                     max={field.max}
+                    maxLength={field.maxLength}
                 />
             ))}
 

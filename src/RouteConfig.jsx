@@ -39,7 +39,7 @@ export default function RouteConfig() {
         <Route path="/sectors" element={<SectorPage />} />
         <Route path="/pos" element={<PosPage />} />
         <Route path="/sales" element={
-          <RoleRoute allowedRoles={["user"]}>
+          <RoleRoute allowedRoles={["admin", "user"]}>
             <SalesPage />
           </RoleRoute>
         }

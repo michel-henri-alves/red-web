@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from "framer-motion";
 import { createPendings } from '../../../shared/hooks/usePendings'
 import ActionButton from "../../../components/ActionButton"
+import { formatApiErrorCause } from "../../../shared/utils/apiErrorFormatter";
 import {
     Check
 } from "lucide-react";
@@ -54,7 +55,7 @@ export default function CustomerAddDue({ updateBill, onClose, customer, due, isE
             },
             onError: (error) => {
                 console.error(error);
-                toast.error(t("toast.creation.error", { description: customer.name, errorCause: error.response.data.error }));
+                toast.error(t("toast.creation.error", { description: customer.name, errorCause: formatApiErrorCause(error, t) }));
             },
         });
 

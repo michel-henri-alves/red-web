@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 
 import formatDate from "../../shared/utils/dateUtils";
-// import CustomerButtons from './CustomerButtons';
+import UserButtons from './UserButtons';
 import InfoTag from '../../components/InfoTag';
 
 
@@ -29,7 +29,7 @@ export default function UserDetails({ user, isExpanded }) {
                             <InfoTag inputData={user.updatedBy} label={t("updated.by")} />
                             <InfoTag inputData={formatDate(user.updatedAt)} label={t("user.updatedAt")} />
                         </div>
-                        {/* <CustomerButtons customer={customer} /> */}
+                        <UserButtons user={user} />
                     </div>
 
 

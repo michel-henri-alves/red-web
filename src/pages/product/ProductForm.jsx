@@ -8,6 +8,7 @@ import ActionButton from "../../components/ActionButton";
 import ProgressBar from "../../components/ProgressBar";
 import OptionsRange from "../../components/OptionsRange";
 import MoneyInput from "../../components/MoneyInput";
+import { formatApiErrorCause } from "../../shared/utils/apiErrorFormatter";
 import {
     ScanBarcode,
     User,
@@ -22,6 +23,7 @@ import {
     Gauge,
     Scale
 } from "lucide-react";
+import { maxLength } from "zod";
 
 
 export default function ProductForm({ onClose, product = {} }) {
@@ -40,13 +42,13 @@ export default function ProductForm({ onClose, product = {} }) {
     ];
 
     const fieldsConfig = [
-        { name: "smartCode", label: t("product.barcode"), type: "text", icon: ScanBarcode },
-        { name: "name", label: t("product.name"), type: "text", icon: User, required: true },
-        { name: "manufacturer", label: t("manufacturer"), type: "text", icon: Factory },
-        { name: "category", label: t("product.category"), type: "text", icon: Tags },
-        { name: "priceForSale", label: t("product.priceForSale"), type: "number", icon: BanknoteArrowUp, required: true, component: MoneyInput },
-        { name: "minQuantity", label: t("product.minQuantity"), type: "number", icon: Gauge },
-        { name: "actualQuantity", label: t("product.qty.actual"), type: "number", icon: Boxes, required: true },
+        { name: "smartCode", label: t("product.barcode"), type: "text", icon: ScanBarcode, maxLength: 50 },
+        { name: "name", label: t("product.name"), type: "text", icon: User, required: true, maxLength: 80 },
+        { name: "manufacturer", label: t("manufacturer"), type: "text", icon: Factory, maxLength: 50 },
+        { name: "category", label: t("product.category"), type: "text", icon: Tags, maxLength: 50 },
+        { name: "priceForSale", label: t("product.priceForSale"), type: "number", icon: BanknoteArrowUp, required: true, component: MoneyInput, maxLength: 10 },
+        { name: "minQuantity", label: t("product.minQuantity"), type: "number", icon: Gauge, maxLength: 5 },
+        { name: "actualQuantity", label: t("product.qty.actual"), type: "number", icon: Boxes, required: true, maxLength: 5 },
     ];
 
     const { form, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useForm({
@@ -69,7 +71,7 @@ export default function ProductForm({ onClose, product = {} }) {
             } catch (err) {
                 toast.error(t("toast.creation.error", {
                     description: data.name,
-                    errorCause: err.response?.data?.error
+                    errorCause: formatApiErrorCause(err, t)
                 }));
             }
         },
@@ -78,7 +80,7 @@ export default function ProductForm({ onClose, product = {} }) {
     useEffect(() => inputRef.current?.focus(), []);
     const requiredFields = ["name", "priceForSale", "actualQuantity"];
     const fieldsFilled = Object.entries(form)
-        .filter(([key, value]) => requiredFields.includes(key) && Boolean(value))
+        .filter(([key, value]) => requiredFields.includes(key) && value !== "" && value !== null && value !== undefined)
         .length;
 
 
@@ -95,7 +97,7 @@ export default function ProductForm({ onClose, product = {} }) {
                         key={field.name}
                         label={field.label}
                         name={field.name}
-                        value={form[field.name] || ""}
+                        value={form[field.name] ?? ""}
                         placeholder={field.label}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -104,6 +106,7 @@ export default function ProductForm({ onClose, product = {} }) {
                         inputRef={idx === 0 ? inputRef : null}
                         type={field.type}
                         max={field.max}
+                        maxLength={field.maxLength}
                     />
                 );
             })}

@@ -1,7 +1,7 @@
 import ProgressBar from "./ProgressBar";
 import InfoTooltip from "./InfoTooltip";
 
-export default function FormInput({ label, name, value, placeholder, onChange, onBlur, errors, icon: Icon, inputRef, type = "text", max }) {
+export default function FormInput({ label, name, value, placeholder, onChange, onBlur, errors, icon: Icon, inputRef, type = "text", max, maxLength }) {
   return (
     <div className="w-full relative">
       <label className="flex items-center space-x-2 text-lg font-medium text-gray-700 mb-1">
@@ -14,8 +14,9 @@ export default function FormInput({ label, name, value, placeholder, onChange, o
         ref={inputRef}
         type={type}
         name={name}
-        value={type === "number" ? value : value || ""}
+        value={value ?? ""}
         placeholder={placeholder}
+        maxLength={maxLength}
         onChange={onChange}
         onBlur={onBlur}
         className={`

@@ -6,6 +6,7 @@ import { useForm } from "../../hooks/useForm";
 import FormInput from '../../components/FormInput';
 import ActionButton from "../../components/ActionButton";
 import ProgressBar from "../../components/ProgressBar";
+import { formatApiErrorCause } from "../../shared/utils/apiErrorFormatter";
 import {
  ScanBarcode,
  User,
@@ -16,6 +17,7 @@ import {
  Hourglass,
  Save
 } from "lucide-react";
+import { maxLength } from 'zod';
 
 
 export default function CustomerForm({ onClose, customer = {} }) {
@@ -29,12 +31,12 @@ export default function CustomerForm({ onClose, customer = {} }) {
     const { mutateAsync: updating } = updateCustomer();
 
     const fieldsConfig = [
-        { name: "smartCode", label: t("customer.barcode"), type: "text", icon: ScanBarcode },
-        { name: "name", label: t("customer.name"), type: "text", icon: User, required: true },
-        { name: "nickname", label: t("customer.nickname"), type: "text", icon: User },
-        { name: "phone", label: t("customer.phone"), type: "text", icon: Phone, required: true },
-        { name: "address", label: t("customer.address"), type: "text", icon: MapPinHouse, required: true },
-        { name: "email", label: t("customer.email"), type: "text", icon: AtSign },
+        { name: "smartCode", label: t("customer.barcode"), type: "text", icon: ScanBarcode, maxLength: 50 },
+        { name: "name", label: t("customer.name"), type: "text", icon: User, required: true, maxLength: 80 },
+        { name: "nickname", label: t("customer.nickname"), type: "text", icon: User, maxLength: 100 },
+        { name: "phone", label: t("customer.phone"), type: "text", icon: Phone, required: true, maxLength: 11 },
+        { name: "address", label: t("customer.address"), type: "text", icon: MapPinHouse, required: true, maxLength: 200 },
+        { name: "email", label: t("customer.email"), type: "text", icon: AtSign, maxLength: 60 },
         { name: "birth", label: t("customer.birth"), type: "date", icon: Cake },
     ];
 
@@ -44,7 +46,6 @@ export default function CustomerForm({ onClose, customer = {} }) {
         onSubmit: async (data) => {
             try {
                 if (!customer._id) {
-                    console.log(customer)
                     await creation(data);
                     toast.success(t("toast.creation.success", { description: data.name }));
                 } else {
@@ -55,7 +56,7 @@ export default function CustomerForm({ onClose, customer = {} }) {
             } catch (err) {
                 toast.error(t("toast.creation.error", {
                     description: data.name,
-                    errorCause: err.response?.data?.error
+                    errorCause: formatApiErrorCause(err, t)
                 }));
             }
         },
@@ -84,6 +85,7 @@ export default function CustomerForm({ onClose, customer = {} }) {
                     inputRef={idx === 0 ? inputRef : null}
                     type={field.type}
                     max={field.max}
+                    maxLength={field.maxLength}
                 />
             ))}
 

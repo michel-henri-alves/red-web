@@ -12,6 +12,7 @@ import Modal from '../../../components/Modal';
 import MoneyInput from '../../../components/MoneyInput';
 import ActionButton from '../../../components/ActionButton';
 import OptionsRange from '../../../components/OptionsRange';
+import { formatApiErrorCause } from '../../../shared/utils/apiErrorFormatter';
 import {
   CreditCard,
   Banknote,
@@ -157,7 +158,7 @@ export default function Payment() {
         },
         onError: (error) => {
           console.error(error);
-          toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
+          toast.error(t("toast.creation.error", { description: t("sales"), errorCause: formatApiErrorCause(error, t) }));
         }
       });
     } else if (result > 0) {
@@ -206,7 +207,7 @@ export default function Payment() {
       },
       onError: (error) => {
         console.error(error);
-        toast.error(t("toast.creation.error", { description: t("sales"), errorCause: error?.response?.data?.error }));
+        toast.error(t("toast.creation.error", { description: t("sales"), errorCause: formatApiErrorCause(error, t) }));
       }
     });
   };
