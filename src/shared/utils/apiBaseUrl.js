@@ -1,4 +1,12 @@
 import axios from 'axios';
+import {
+    clearAuthSession,
+    hasExpiredSession,
+    readStoredToken,
+    readStoredUser,
+    refreshAuthToken,
+    touchAuthSession,
+} from './authSession';
 
 // export default function axiosClient(domain) {
 
@@ -16,9 +24,16 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    const tenant = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).tenantId : null;
-    const username = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).name : null;
+    if (hasExpiredSession()) {
+        clearAuthSession();
+        window.location.href = "/login";
+        return Promise.reject(new axios.CanceledError("Session expired"));
+    }
+
+    const token = readStoredToken();
+    const user = readStoredUser();
+    const tenant = user?.tenantId;
+    const username = user?.name;
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -36,10 +51,20 @@ axiosClient.interceptors.request.use((config) => {
 });
 
 axiosClient.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        const refreshedToken = response.headers?.["x-access-token"];
+
+        if (refreshedToken) {
+            refreshAuthToken(refreshedToken);
+        } else if (response.config?.headers?.Authorization) {
+            touchAuthSession();
+        }
+
+        return response;
+    },
     (error) => {
         if (error.response?.status === 401) {
-            localStorage.clear();
+            clearAuthSession();
             window.location.href = "/login";
         }
 

@@ -6,6 +6,7 @@ Use this map to choose context instead of loading the entire frontend repository
 - `docs/sdd/constitution.md`: mandatory project rules.
 - `docs/sdd/workflow.md`: feature workflow.
 - `docs/sdd/agents.md`: agent roles and handoff rules; load when delegating or reviewing SDD work.
+- `docs/memory/project.memory.md`: durable project decisions; load only for cross-domain architecture questions.
 - `ai/context/frontend.md`: architecture summary; load only when implementation patterns are unclear.
 - `ai/agents/{agent}.md`: role-specific instructions; load only the agent being used.
 

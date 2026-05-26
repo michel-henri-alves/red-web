@@ -9,6 +9,11 @@ const defaultCommands = [
   'npm run lint',
   'npm run build'
 ];
+const fullOutputModes = new Set(['full', 'verbose']);
+const outputMode = process.env.SDD_RUN_OUTPUT || 'summary';
+const maxOutputChars = Number(process.env.SDD_RUN_MAX_OUTPUT_CHARS || 12000);
+const headChars = Number(process.env.SDD_RUN_HEAD_CHARS || 4000);
+const tailChars = Number(process.env.SDD_RUN_TAIL_CHARS || 4000);
 
 function usage() {
   console.log(`Usage: npm run sdd:run -- <feature-id> [command...]
@@ -16,9 +21,13 @@ function usage() {
 Runs verification commands and writes:
 docs/features/<feature-id>/runs/<timestamp>.md
 
+Output is summarized by default to keep SDD evidence compact.
+Use SDD_RUN_OUTPUT=full for complete stdout/stderr.
+
 Examples:
   npm run sdd:run -- 0002-user-initial-password-change
-  npm run sdd:run -- 0002-user-initial-password-change "npm run sdd:check" "npm run test"`);
+  npm run sdd:run -- 0002-user-initial-password-change "npm run sdd:check" "npm run test"
+  SDD_RUN_OUTPUT=full npm run sdd:run -- 0002-user-initial-password-change`);
 }
 
 function timestamp() {
@@ -58,6 +67,46 @@ function fenced(value) {
   return trimmed ? `\n\`\`\`text\n${trimmed}\n\`\`\`\n` : '\n_None._\n';
 }
 
+function summarizeOutput(value) {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return { text: '', truncated: false, originalChars: 0, originalLines: 0 };
+  }
+
+  const originalChars = trimmed.length;
+  const originalLines = trimmed.split(/\r?\n/).length;
+
+  if (fullOutputModes.has(outputMode) || originalChars <= maxOutputChars) {
+    return { text: trimmed, truncated: false, originalChars, originalLines };
+  }
+
+  const head = trimmed.slice(0, headChars).trimEnd();
+  const tail = trimmed.slice(-tailChars).trimStart();
+  const omittedChars = Math.max(originalChars - head.length - tail.length, 0);
+  const text = [
+    head,
+    '',
+    `[output truncated: ${omittedChars} chars omitted; set SDD_RUN_OUTPUT=full to record complete output]`,
+    '',
+    tail
+  ].join('\n');
+
+  return { text, truncated: true, originalChars, originalLines };
+}
+
+function outputSection(title, value) {
+  const summary = summarizeOutput(value);
+  const metadata = [
+    `#### ${title}`,
+    '',
+    `- Original size: ${summary.originalChars} chars, ${summary.originalLines} lines`,
+    `- Truncated: ${summary.truncated ? 'yes' : 'no'}`,
+    fenced(summary.text)
+  ];
+
+  return metadata;
+}
+
 function writeReport(featureDir, feature, results) {
   const runsDir = path.join(featureDir, 'runs');
   fs.mkdirSync(runsDir, { recursive: true });
@@ -70,6 +119,7 @@ function writeReport(featureDir, feature, results) {
     `- Status: ${success ? 'passed' : 'failed'}`,
     `- Created at UTC: ${new Date().toISOString()}`,
     `- Project: ${root}`,
+    `- Output mode: ${fullOutputModes.has(outputMode) ? 'full' : 'summary'}`,
     '',
     '## Commands',
     '',
@@ -80,10 +130,8 @@ function writeReport(featureDir, feature, results) {
       `- Started at UTC: ${result.startedAt}`,
       `- Duration: ${result.durationMs}ms`,
       '',
-      '#### stdout',
-      fenced(result.stdout),
-      '#### stderr',
-      fenced(result.stderr)
+      ...outputSection('stdout', result.stdout),
+      ...outputSection('stderr', result.stderr)
     ])
   ].join('\n');
 

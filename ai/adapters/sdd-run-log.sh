@@ -31,14 +31,14 @@ sdd_count_file_lines() {
   awk 'END { print NR }' "$1"
 }
 
-sdd_print_execution_log() {
+sdd_build_execution_log() {
   local provider=$1
   local status=$2
   local started_at=$3
   local duration_ms=$4
   local output_file=$5
 
-  local input_chars input_lines input_tokens output_chars output_lines output_tokens total_tokens
+  local input_chars input_lines input_tokens output_chars output_lines output_tokens total_tokens output_ratio diagnostic
   input_chars=$(sdd_count_chars "${INPUT:-}")
   input_lines=$(sdd_count_lines "${INPUT:-}")
   input_tokens=$(sdd_estimate_tokens_from_chars "$input_chars")
@@ -46,6 +46,15 @@ sdd_print_execution_log() {
   output_lines=$(sdd_count_file_lines "$output_file")
   output_tokens=$(sdd_estimate_tokens_from_chars "$output_chars")
   total_tokens=$((input_tokens + output_tokens))
+  output_ratio=0
+  if [[ "$input_tokens" -gt 0 ]]; then
+    output_ratio=$((output_tokens / input_tokens))
+  fi
+
+  diagnostic="adequado"
+  if [[ "$output_tokens" -gt 20000 || "$output_ratio" -gt 3 ]]; then
+    diagnostic="alto: revise o prompt de execucao e evite logs/diffs completos na resposta"
+  fi
 
   cat <<EOF
 
@@ -62,15 +71,34 @@ sdd_print_execution_log() {
 - Entrada: ${input_chars} chars, ${input_lines} linhas, ~${input_tokens} tokens
 - Saida: ${output_chars} chars, ${output_lines} linhas, ~${output_tokens} tokens
 - Total estimado: ~${total_tokens} tokens
+- Diagnostico de saida: ${diagnostic}
 - Observacao: tokens estimados localmente por chars/4; o uso cobrado pelo provider pode variar.
 EOF
+}
+
+sdd_execution_log_path() {
+  if [[ -z "${FEATURE:-}" ]]; then
+    return 1
+  fi
+
+  local feature_dir runs_dir stamp action
+  feature_dir="${PROJECT_ROOT:-$(pwd)}/docs/features/${FEATURE}"
+  if [[ ! -d "$feature_dir" ]]; then
+    return 1
+  fi
+
+  runs_dir="$feature_dir/runs"
+  mkdir -p "$runs_dir"
+  stamp=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
+  action="${ACTION_CANONICAL:-${ACTION:-run}}"
+  echo "${runs_dir}/${stamp}-${action}-${1}-execution-log.md"
 }
 
 run_sdd_logged() {
   local provider=$1
   shift
 
-  local started_at start_ms end_ms duration_ms status output_file
+  local started_at start_ms end_ms duration_ms status output_file execution_log log_path
   output_file=$(mktemp "${TMPDIR:-/tmp}/sdd-run.XXXXXX")
   started_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
   start_ms=$(sdd_now_ms)
@@ -82,7 +110,12 @@ run_sdd_logged() {
 
   end_ms=$(sdd_now_ms)
   duration_ms=$((end_ms - start_ms))
-  sdd_print_execution_log "$provider" "$status" "$started_at" "$duration_ms" "$output_file"
+  execution_log=$(sdd_build_execution_log "$provider" "$status" "$started_at" "$duration_ms" "$output_file")
+  printf '%s\n' "$execution_log"
+  if log_path=$(sdd_execution_log_path "$provider"); then
+    printf '%s\n' "$execution_log" > "$log_path"
+    printf '\n- Log de consumo salvo em: %s\n' "${log_path#${PROJECT_ROOT:-$(pwd)}/}"
+  fi
   rm -f "$output_file"
 
   return "$status"

@@ -176,7 +176,7 @@ The command writes:
 docs/features/NNNN-feature-slug/runs/<timestamp>.md
 ```
 
-The report includes command status, start time, duration, stdout, and stderr for each verification command.
+The report includes command status, start time, duration, stdout, and stderr for each verification command. Output is summarized by default to keep SDD evidence compact. Use `SDD_RUN_OUTPUT=full npm run sdd:run -- NNNN-feature-slug` only when complete logs are needed.
 
 ### 8. Project-Specific Quality Gates
 Frontend:
@@ -391,7 +391,7 @@ O comando grava:
 docs/features/NNNN-feature-slug/runs/<timestamp>.md
 ```
 
-O relatorio inclui status, inicio, duracao, stdout e stderr de cada comando de verificacao.
+O relatorio inclui status, inicio, duracao, stdout e stderr de cada comando de verificacao. A saida e resumida por padrao para manter a evidencia SDD compacta. Use `SDD_RUN_OUTPUT=full npm run sdd:run -- NNNN-feature-slug` somente quando logs completos forem necessarios.
 
 ### 8. Quality Gates Por Projeto
 Frontend:

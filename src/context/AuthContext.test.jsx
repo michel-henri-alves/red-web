@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { AuthProvider, mustChangeInitialPassword, useAuth } from './AuthContext';
+import { AUTH_SESSION_CHANGED_EVENT, SESSION_TIMEOUT_MS } from '../shared/utils/authSession';
 
 function AuthProbe() {
   const { token, user, login, logout, updateUserSession } = useAuth();
@@ -60,6 +61,10 @@ describe('AuthProvider', () => {
     localStorage.clear();
   });
 
+  afterEach(() => {
+    cleanup();
+  });
+
   it('persists login data and exposes the authenticated session', () => {
     renderAuthProbe();
 
@@ -69,6 +74,7 @@ describe('AuthProvider', () => {
     expect(screen.getByLabelText('user-name')).toHaveTextContent('Michel');
     expect(screen.getByLabelText('initial-password')).toHaveTextContent('true');
     expect(localStorage.getItem('token')).toBe('token-123');
+    expect(Number(localStorage.getItem('authLastActivityAt'))).toBeGreaterThan(0);
     expect(JSON.parse(localStorage.getItem('user'))).toMatchObject({
       id: 'user-1',
       name: 'Michel',
@@ -78,6 +84,7 @@ describe('AuthProvider', () => {
 
   it('updates the stored user session without dropping existing fields', () => {
     localStorage.setItem('token', 'stored-token');
+    localStorage.setItem('authLastActivityAt', String(Date.now()));
     localStorage.setItem('user', JSON.stringify({
       id: 'user-1',
       name: 'Michel',
@@ -99,6 +106,7 @@ describe('AuthProvider', () => {
 
   it('clears token and user data on logout', () => {
     localStorage.setItem('token', 'stored-token');
+    localStorage.setItem('authLastActivityAt', String(Date.now()));
     localStorage.setItem('user', JSON.stringify({ id: 'user-1', name: 'Michel' }));
 
     renderAuthProbe();
@@ -108,6 +116,36 @@ describe('AuthProvider', () => {
     expect(screen.getByLabelText('token')).toHaveTextContent('no-token');
     expect(screen.getByLabelText('user-name')).toHaveTextContent('no-user');
     expect(localStorage.getItem('token')).toBeNull();
+    expect(localStorage.getItem('authLastActivityAt')).toBeNull();
     expect(localStorage.getItem('user')).toBeNull();
+  });
+
+  it('syncs a refreshed access token written by api responses', () => {
+    localStorage.setItem('token', 'stored-token');
+    localStorage.setItem('authLastActivityAt', String(Date.now()));
+    localStorage.setItem('user', JSON.stringify({ id: 'user-1', name: 'Michel' }));
+
+    renderAuthProbe();
+
+    act(() => {
+      localStorage.setItem('token', 'refreshed-token');
+      localStorage.setItem('authLastActivityAt', String(Date.now() + 1000));
+      window.dispatchEvent(new Event(AUTH_SESSION_CHANGED_EVENT));
+    });
+
+    expect(screen.getByLabelText('token')).toHaveTextContent('refreshed-token');
+  });
+
+  it('expires the session after 10 minutes without activity', () => {
+    localStorage.setItem('token', 'stored-token');
+    localStorage.setItem('authLastActivityAt', String(Date.now() - SESSION_TIMEOUT_MS));
+    localStorage.setItem('user', JSON.stringify({ id: 'user-1', name: 'Michel' }));
+
+    renderAuthProbe();
+
+    expect(screen.getByLabelText('token')).toHaveTextContent('no-token');
+    expect(screen.getByLabelText('user-name')).toHaveTextContent('no-user');
+    expect(localStorage.getItem('token')).toBeNull();
+    expect(localStorage.getItem('authLastActivityAt')).toBeNull();
   });
 });
