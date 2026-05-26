@@ -137,12 +137,13 @@ export default function Payment() {
         items: products.map(
           p => (
             {
-              smartCode: p.code,
+              smartCode: p.code || "0",
               quantity: p.quantity,
               productName: p.name,
               unitOfMeasurement: p.measure || 'unit',
               price: p.price || 0,
-              code: "1"
+              code: "1",
+              companyId: p.companyId
             }
           )
         ),
@@ -187,18 +188,20 @@ export default function Payment() {
       items: products.map(
         p => (
           {
-            smartCode: p.code,
+            smartCode: p.code || "0",
             quantity: p.quantity,
             productName: p.name,
-            unitOfMeasurement: p.measure || 'UNIT',
+            unitOfMeasurement: p.measure || 'unit',
             price: p.price || 0,
-            code: "1"
+            code: "1",
+            companyId: p.companyId
           }
         )
       ),
       paymentMethod,
       amountPaid,
       change,
+      discount,
       realizedAt: Date.now(),
     }, {
       onSuccess: () => {

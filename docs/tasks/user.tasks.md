@@ -4,6 +4,7 @@
 
 ### ✅ Completed Features
 - Login page and authentication flow
+- Initial password change page and authenticated API integration
 - User management page and list view
 - User creation and edit forms
 - Role-based route authorization

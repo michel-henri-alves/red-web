@@ -41,7 +41,7 @@ export default function UserForm({ onClose, user = {} }) {
         { name: "name", label: t("user.name"), type: "text", icon: User, required: true, maxLength: 80 },
         { name: "username", label: t("user.username"), type: "text", icon: IdCard, required: true, minLength: 8, maxLength: 24 },
         { name: "email", label: t("user.email"), type: "email", icon: AtSign, required: true, maxLength: 60 },
-        { name: "password", label: t("user.password"), type: "password", icon: LockKeyhole, required: !user?._id, minLength: 6, maxLength: 60 },
+        // { name: "password", label: t("user.password"), type: "password", icon: LockKeyhole, required: !user?._id, minLength: 6, maxLength: 60 },
     ];
 
     const { form, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useForm({

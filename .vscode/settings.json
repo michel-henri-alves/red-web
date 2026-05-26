@@ -1,0 +1,17 @@
+{
+  // Additional glob patterns for spec folder discovery
+  "sddVisualizer.customSpecPaths": [
+    "red-web/docs/specs/**",
+    "red-web/.specs/**"
+  ],
+
+  // Glob patterns to exclude from discovery
+  "sddVisualizer.excludePaths": [
+    "**/node_modules/**",
+    "**/dist/**"
+  ],
+
+  // Default visualization opened from the status bar click
+  // Options: "traceabilityMatrix" | "kanbanBoard"
+  "sddVisualizer.defaultView": "traceabilityMatrix"
+}

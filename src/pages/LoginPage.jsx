@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import axiosClient from "../services/axiosClient";
 import { loginUser } from "../shared/hooks/useUsers";
-import { useAuth } from "../context/AuthContext";
+import { mustChangeInitialPassword, useAuth } from "../context/AuthContext";
 
 const schema = z.object({
   email: z.string().email("Email inválido"),
@@ -32,12 +32,13 @@ export default function LoginPage() {
       setError(null);
 
       const response = await executeLogin(data);
-      console.log("Resposta do login:", response);
       // login(response.data.accessToken);
       login(response.data);
 
-
-      navigate("/", { replace: true });
+      navigate(
+        mustChangeInitialPassword(response.data?.user) ? "/change-password" : "/",
+        { replace: true }
+      );
 
     } catch (err) {
       setError("Credenciais inválidas");

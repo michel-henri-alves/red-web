@@ -9,6 +9,12 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/setupTests.js',
+    css: true,
+  },
   server: {
     host: true, // permite acesso externo
     port: parseInt(process.env.FRONTEND_PORT) || 5173,

@@ -5,4 +5,4 @@ const DOMAIN = "/companies";
 
 
 
-export const fetchByName = (name) => axiosClient.get(`${DOMAIN}/by-name/${name}`);
+export const fetchByCompanyId = (companyId) => axiosClient.get(`${DOMAIN}/by-company-id/${companyId}`);

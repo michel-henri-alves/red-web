@@ -1,13 +1,30 @@
 import { createContext, useContext, useState } from "react";
-import { set } from "zod";
 
 const AuthContext = createContext(null);
+
+const readStoredUser = () => {
+  const storedUser = localStorage.getItem("user");
+
+  if (!storedUser) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(storedUser);
+  } catch {
+    localStorage.removeItem("user");
+    return null;
+  }
+};
+
+export const mustChangeInitialPassword = (user) =>
+  user?.requiresInitialPasswordChange === true;
 
 export function AuthProvider({ children }) {
 
   const [token, setToken] = useState(localStorage.getItem("token"));
   // const [tenantId, setTenantId] = useState(localStorage.getItem("tenantId"));
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(readStoredUser);
 
 
   // const login = (jwt) => {
@@ -25,6 +42,18 @@ export function AuthProvider({ children }) {
     setUser(userData);
   };
 
+  const updateUserSession = (updates) => {
+    setUser((currentUser) => {
+      if (!currentUser) {
+        return currentUser;
+      }
+
+      const updatedUser = { ...currentUser, ...updates };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  };
+
   const logout = () => {
     localStorage.removeItem("token");
     // localStorage.removeItem("tenantId");
@@ -35,7 +64,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, login, logout, updateUserSession }}>
       {children}
     </AuthContext.Provider>
   );

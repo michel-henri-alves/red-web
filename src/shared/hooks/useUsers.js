@@ -5,6 +5,7 @@ import {
     remove,
     fetchPaginated,
     login,
+    changeInitialPassword,
 } from '../api/UsersApi';
 
 
@@ -15,6 +16,17 @@ export const loginUser = () => {
         mutationFn: login,
         onSuccess: () => {
             queryClient.invalidateQueries(['users']);
+        },
+    });
+}
+
+export const changeInitialPasswordUser = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: changeInitialPassword,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users-infinite'] });
         },
     });
 }

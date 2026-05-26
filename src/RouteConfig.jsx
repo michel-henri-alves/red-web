@@ -10,6 +10,7 @@ import CustomerPage from "./pages/customer/CustomerPage";
 import PaymentPage from "./pages/sales/payment/PaymentPage";
 import BookletPage from "./pages/sales/booklet/BookletPage";
 import UserPage from "./pages/user/UserPage";
+import ChangeInitialPassword from "./pages/user/ChangeInitialPassword";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 
 import PrivateLayout from "./PrivateLayout";
@@ -48,6 +49,7 @@ export default function RouteConfig() {
         <Route path="/customers" element={<CustomerPage />} />
         <Route path="/booklet" element={<BookletPage />} />
         <Route path="/users" element={<UserPage />} />
+        <Route path="/change-password" element={<ChangeInitialPassword />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
       </Route>
     </Routes>

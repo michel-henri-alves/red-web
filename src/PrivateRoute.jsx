@@ -1,15 +1,17 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "./context/AuthContext";
+import { Navigate, useLocation } from "react-router-dom";
+import { mustChangeInitialPassword, useAuth } from "./context/AuthContext";
 
 export default function PrivateRoute({ children }) {
-  const { token } = useAuth();
-  console.log("Verificando token de autenticação...");
+  const { token, user } = useAuth();
+  const location = useLocation();
+
   if (!token) {
-    console.log("Token não encontrado, redirecionando para login...");
     return <Navigate to="/login" replace />;
   }
 
-  console.log("Token encontrado, acesso permitido.");
+  if (mustChangeInitialPassword(user) && location.pathname !== "/change-password") {
+    return <Navigate to="/change-password" replace />;
+  }
 
   return children;
 }

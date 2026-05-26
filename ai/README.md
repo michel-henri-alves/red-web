@@ -10,6 +10,13 @@ This directory contains tools and prompts for AI-assisted development in the `re
   - `implement-from-spec.md` — For implementing features from SDD specs
   - `test-generator.md` — For generating comprehensive tests
   - `refactor.md` — For refactoring existing code
+- `agents/` — Role-specific professional agents for SDD execution and review
+  - `sdd-spec-reviewer.md` — Reviews feature specs before planning
+  - `sdd-planner.md` — Converts specs into focused plans and tasks
+  - `implementation-engineer.md` — Implements approved SDD plans
+  - `test-engineer.md` — Adds focused automated tests
+  - `code-reviewer.md` — Reviews correctness and maintainability
+  - `performance-cost-reviewer.md` — Reviews runtime cost and AI context cost
 - `adapters/` — Scripts to invoke specific AI assistants
   - `copilot.sh` — For GitHub Copilot CLI
   - `claude.sh` — For Claude
@@ -46,6 +53,31 @@ The prompts in `prompts/` are designed to work with any capable AI assistant. Th
 - Following frontend architecture patterns
 - Generating testable, maintainable code
 - Ensuring consistency with existing codebase
+
+### SDD Agents
+
+The agents in `agents/` are reusable role prompts. Use them with the SDD docs to keep each AI run focused:
+
+```bash
+# Inspect available agents
+npm run sdd:agents
+
+# Recommended sequence
+# 1. sdd-spec-reviewer
+# 2. sdd-planner
+# 3. implementation-engineer
+# 4. test-engineer
+# 5. code-reviewer
+# 6. performance-cost-reviewer when needed
+```
+
+Each agent should receive only:
+- `docs/sdd/constitution.md`
+- the active agent prompt
+- the relevant feature SDD files
+- the smallest set of code files needed for that role
+
+Use `docs/sdd/agents.md` for the full orchestration and MCP guidance.
 
 ## Contributing
 

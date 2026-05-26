@@ -35,6 +35,18 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "lint": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "contracts:check": "node scripts/check-backend-contract.js",
+    "sdd:new": "node scripts/sdd-new.js",
+    "sdd:new:translate": "node scripts/sdd-new.js --translate",
+    "sdd:new:ai": "node scripts/sdd-new-ai.js",
+    "sdd:agent": "node scripts/sdd-agent.js",
+    "sdd:agents": "node scripts/sdd-agents.js",
+    "sdd:check": "node scripts/sdd-check.js",
+    "sdd:estimate": "node scripts/sdd-estimate.js",
+    "sdd:run": "node scripts/sdd-run.js",
     "preview": "vite preview"
   },
   "eslintConfig": {
@@ -58,7 +70,9 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.7",
     "@vitejs/plugin-react": "^4.5.0",
+    "jsdom": "^24.1.3",
     "tailwindcss": "^4.1.14",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^4.1.6"
   }
 }

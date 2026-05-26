@@ -73,6 +73,7 @@ const PosPage = ({ onScan: onScanProp, postToBackend = true, fetchProductBySmart
                 price: parseFloat(data.priceForSale || 0),
                 quantity: data.quantity.toString() || "0",
                 measure: data.unitOfMeasurement,
+                companyId: data.companyId
               });
               toast.success(t("toast.add.to.cart", { description: `${data.name} - ${t("currency")}${data.priceForSale}` }));
               setLastScan(data.name);
@@ -109,6 +110,7 @@ const PosPage = ({ onScan: onScanProp, postToBackend = true, fetchProductBySmart
         price: parseFloat(productSelected.priceForSale || 0),
         quantity: productSelected.quantity || "0",
         measure: productSelected.unitOfMeasurement,
+        companyId: productSelected.companyId
       }
     );
     toast.success(t("toast.add.to.cart", { description: `${productSelected.name} - ${t("currency")}${productSelected.priceForSale}` }));

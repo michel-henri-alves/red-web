@@ -43,10 +43,20 @@
 ### Prompt Usage
 These prompts are vendor-agnostic and can be used with GitHub Copilot, Codex, Claude, or other capable language models.
 
-Use the files in `.github/copilot/prompts/`:
-- `implement-from-spec.prompt.md`
-- `test-generator.prompt.md`
-- `refactor.prompt.md`
+Use the files in `ai/prompts/` for action-level guidance:
+- `implement-from-spec.md`
+- `test-generator.md`
+- `refactor.md`
+
+Use the files in `ai/agents/` for role-specific SDD work:
+- `sdd-spec-reviewer.md`
+- `sdd-planner.md`
+- `implementation-engineer.md`
+- `test-engineer.md`
+- `code-reviewer.md`
+- `performance-cost-reviewer.md`
+
+Use `docs/sdd/agents.md` for the recommended orchestration and MCP guidance.
 
 ## Quality Assurance
 
@@ -54,10 +64,12 @@ Use the files in `.github/copilot/prompts/`:
 - Add unit tests for new components and hooks.
 - Add integration tests for page flows and route behavior.
 - Ensure critical interactions are covered.
+- Run `npm run test` before closing behavior-changing work.
 
 ### Documentation
-- Update frontend specs in `red-web/docs/specs/`.
-- Update task lists in `red-web/docs/tasks/`.
+- Prefer feature-scoped docs in `red-web/docs/features/{feature-id}/`.
+- Update domain specs in `red-web/docs/specs/` only for durable domain behavior.
+- Update domain task lists in `red-web/docs/tasks/` only when maintaining legacy domain task tracking.
 - Keep architecture notes aligned with implementation.
 
 ### Security
