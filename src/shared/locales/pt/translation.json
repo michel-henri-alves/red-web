@@ -229,6 +229,7 @@
     "field.is.invalid": "{{field}} é inválido",
     "validation.failed": "Validação falhou",
     "username.at.least.8.characters": "nome de usuário deve ter pelo menos 8 caracteres",
+    "dashboard.sales.today": "Vendas do dia",
     
     "name": "nome",
     "smartCode": "código de barras",

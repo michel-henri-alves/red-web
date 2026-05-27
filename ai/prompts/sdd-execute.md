@@ -15,9 +15,10 @@ Rules:
 - If code and spec disagree, stop expanding scope and update the spec or plan explicitly.
 
 Output budget:
-- Keep the final response concise and implementation-focused.
+- Keep the final response minimal: at most 20 lines.
+- On success, return only a compact summary of changed files and verification status.
 - Do not paste full file contents, full diffs, or full command output.
-- For successful commands, report command, status, and duration only when available.
+- Do not include command logs for successful commands.
 - For failed commands, include only the relevant error lines and the next corrective action.
 - Put long verification evidence in `docs/features/<feature-id>/runs/` instead of the chat/stdout response.
-- Target 120 lines or fewer for the final response unless the user explicitly requests full logs.
+- Never print full diffs, full test output, dependency trees, or repeated file listings unless explicitly requested.

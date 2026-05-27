@@ -1,15 +1,36 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useTenant } from "./TenantProvider";
 import NewsTicker from "./NewsTicket";
 import SalesChart from "./SalesChart";
+import { useLast5DaysSales, useTodaySalesTotal } from "../shared/hooks/useDashboard";
+import { useTranslation } from "react-i18next";
+
+const formatCurrency = (value) =>
+  new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+
 
 export default function Dashboard() {
   const { t } = useTranslation();
   const [newsSelected, setNewsSelected] = useState("1");
   const [comingSoonSelected, setComingSoonSelected] = useState("1");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            const { tenant, config } = useTenant();
-
+  const {
+    data: todaySalesTotal = 0,
+    isLoading: isTodaySalesLoading,
+    isError: isTodaySalesError,
+    isFetching: isTodaySalesFetching,
+    refetch: refetchTodaySales,
+  } = useTodaySalesTotal();
+  const {
+    data: salesData = [],
+    isLoading: isSalesLoading,
+    isError: isSalesError,
+    isFetching: isSalesFetching,
+    refetch: refetchSales,
+  } = useLast5DaysSales();
 
   const news = [
     { label: "Cadastro de Produtos", value: "1", icon: "📦" },
@@ -30,14 +51,6 @@ export default function Dashboard() {
     "🙏🏻 Obrigado por usar Tipo",
     "🎨 Em breve, customização de visual",
     "💡 Para realizar vendas necessário ter produtos cadastrados",
-  ];
-
-  const salesData = [
-    { day: "10/08", sales: 120 },
-    { day: "11/08", sales: 98 },
-    { day: "12/08", sales: 150 },
-    { day: "13/08", sales: 170 },
-    { day: "14/08", sales: 130 },
   ];
 
   return (
@@ -87,14 +100,66 @@ export default function Dashboard() {
 
       {/* Vendas do dia */}
       <div className="bg-green-100 p-4 rounded shadow border-l-4 border-l-green-500 text-center">
-        <h2 className="text-xl font-bold text-gray-800 mb-2">Vendas do dia</h2>
-        <p className="text-5xl text-blue-500 font-bold">R$ 5.350,32</p>
+        <h2 className="text-xl font-bold text-gray-800 mb-2"> {t("dashboard.sales.today")} </h2>
+        {isTodaySalesLoading ? (
+          <p className="text-gray-600" role="status">Carregando vendas de hoje...</p>
+        ) : isTodaySalesError ? (
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-gray-700">Não foi possível carregar as vendas de hoje.</p>
+            <button
+              type="button"
+              onClick={() => refetchTodaySales()}
+              className="rounded bg-green-600 px-4 py-2 font-semibold text-white transition hover:bg-green-700"
+            >
+              Tentar novamente
+            </button>
+          </div>
+        ) : (
+          <>
+            <p className="text-5xl text-blue-500 font-bold">{formatCurrency(todaySalesTotal)}</p>
+            {todaySalesTotal === 0 ? (
+              <p className="mt-2 text-sm text-gray-600">Nenhuma venda registrada hoje.</p>
+            ) : null}
+            {isTodaySalesFetching ? (
+              <p className="mt-2 text-sm text-green-700">Atualizando...</p>
+            ) : null}
+          </>
+        )}
       </div>
 
       {/* Gráfico */}
       <div className="bg-purple-100 p-4 rounded shadow border-l-4 border-l-purple-500 sm:col-span-2 lg:col-span-2">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">💲 Vendas Últimos 5 Dias</h2>
-        <SalesChart data={salesData} />
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 className="text-xl font-bold text-gray-800">💲 Vendas Últimos 5 Dias</h2>
+          {isSalesFetching && !isSalesLoading ? (
+            <span className="text-sm text-purple-700">Atualizando...</span>
+          ) : null}
+        </div>
+
+        {isSalesLoading ? (
+          <div className="flex h-64 items-center justify-center rounded bg-white text-gray-600" role="status">
+            Carregando vendas...
+          </div>
+        ) : isSalesError ? (
+          <div className="flex h-64 flex-col items-center justify-center gap-3 rounded bg-white p-4 text-center">
+            <p className="text-gray-700">Não foi possível carregar as vendas dos últimos 5 dias.</p>
+            <button
+              type="button"
+              onClick={() => refetchSales()}
+              className="rounded bg-purple-600 px-4 py-2 font-semibold text-white transition hover:bg-purple-700"
+            >
+              Tentar novamente
+            </button>
+          </div>
+        ) : salesData.length === 0 ? (
+          <div className="flex h-64 items-center justify-center rounded bg-white p-4 text-center text-gray-600">
+            Nenhuma venda encontrada nos últimos 5 dias.
+          </div>
+        ) : (
+          <div className="rounded bg-white p-4">
+            <SalesChart data={salesData} />
+          </div>
+        )}
       </div>
 
       {/* Estoque */}

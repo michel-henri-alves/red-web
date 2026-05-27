@@ -148,20 +148,9 @@ Actions:
 - `refactor`: refactors using SDD context without adding an agent role.
 
 ### 6. What The Terminal Shows After An LLM Run
-At the end of each adapter execution, the terminal prints an SDD execution log:
-- project path;
-- provider;
-- feature id;
-- action;
-- exit status;
-- UTC start time;
-- duration in milliseconds;
-- prompt file used;
-- delta file used, or `none`;
-- input characters, lines, and estimated tokens;
-- output characters, lines, and estimated tokens;
-- total estimated tokens;
-- note that tokens are estimated locally and provider billing may differ.
+Adapter executions are quiet by default to reduce terminal noise and avoid carrying large logs into later AI context. During a run, the terminal shows a compact loading indicator. On success, it prints only provider, feature, action, exit status, duration, and the saved compact log path when available.
+
+The adapter does not collect stdout/stderr or estimate output tokens by default. Use `SDD_EXEC_OUTPUT=full` only when you need the provider stdout/stderr in the terminal for debugging.
 
 ### 7. Record Verification Evidence
 Run and record verification:
@@ -363,20 +352,9 @@ Acoes:
 - `refactor`: refatora usando o contexto SDD sem adicionar um papel de agente.
 
 ### 6. O Que O Terminal Mostra Ao Final De Uma Execucao LLM
-Ao final de cada adapter, o terminal imprime um log de execucao SDD:
-- caminho do projeto;
-- provider;
-- id da feature;
-- acao;
-- status de saida;
-- horario de inicio em UTC;
-- duracao em milissegundos;
-- arquivo de prompt usado;
-- arquivo delta usado, ou `none`;
-- caracteres, linhas e tokens estimados de entrada;
-- caracteres, linhas e tokens estimados de saida;
-- total estimado de tokens;
-- observacao de que os tokens sao estimados localmente e a cobranca do provider pode variar.
+As execucoes dos adapters sao silenciosas por padrao para reduzir ruido no terminal e evitar que logs grandes entrem em contextos de IA posteriores. Durante a execucao, o terminal mostra um indicador compacto de andamento. Em sucesso, imprime apenas provider, feature, acao, status de saida, duracao e o caminho do log compacto salvo quando existir.
+
+O adapter nao coleta stdout/stderr nem estima tokens de saida por padrao. Use `SDD_EXEC_OUTPUT=full` somente quando precisar ver stdout/stderr do provider no terminal para depuracao.
 
 ### 7. Registrar Evidencia De Verificacao
 Execute e registre as verificacoes:
