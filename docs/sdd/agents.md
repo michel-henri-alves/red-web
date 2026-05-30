@@ -52,7 +52,7 @@ Outputs:
 - page, route, hook, API, component, locale, and test impact
 - risks and open questions
 - verification commands
-- planned task updates linked to `REQ-*`
+- planned task updates linked to `REQ-*`, split into `Txxx` units with agent, dependency, and verification metadata
 
 Cost guidance:
 - Prefer file lists and short excerpts over full domain docs.
@@ -78,6 +78,7 @@ Outputs:
 - verification results
 
 Quality bar:
+- When a `Txxx` task is supplied, implement only that task and its declared dependencies.
 - Preserve auth, tenant, route, and backend contracts.
 - Keep page composition in pages, HTTP calls in API modules, and React Query orchestration in hooks.
 - Add loading, error, empty, and success states when user-facing async behavior changes.
@@ -198,6 +199,7 @@ Every agent response should include:
 - Context used
 - Findings or changes
 - Requirement ids affected
+- Requirement task ids affected, such as `T003`
 - Verification performed or recommended
 - Open questions
 - Next recommended agent

@@ -8,11 +8,19 @@ cd "$PROJECT_ROOT"
 
 FEATURE=${1:-}
 ACTION=${2:-implement}
-DELTA_FILE=${3:-}
+DELTA_FILE=""
+TASK_ID=""
+
+if [[ "${3:-}" =~ ^T[0-9]{3}$ ]]; then
+  TASK_ID=${3:-}
+else
+  DELTA_FILE=${3:-}
+  TASK_ID=${4:-}
+fi
 
 usage() {
   cat <<EOF
-Usage: $0 <feature> [action] [delta-file]
+Usage: $0 <feature> [action] [delta-file] [task-id]
 
 Actions:
   implement   Implement feature from SDD spec (default)
@@ -23,7 +31,9 @@ Examples:
   $0 product
   $0 product test
   $0 product refactor
+  $0 product implement T003
   $0 customer implement docs/specs/customer.delta.md
+  $0 customer implement docs/specs/customer.delta.md T003
 EOF
 }
 
@@ -34,6 +44,11 @@ fi
 
 if [[ -z "$FEATURE" ]]; then
   usage
+  exit 1
+fi
+
+if [[ -n "$TASK_ID" && ! "$TASK_ID" =~ ^T[0-9]{3}$ ]]; then
+  echo "Task id must use Txxx format, for example T003: $TASK_ID" >&2
   exit 1
 fi
 
@@ -98,6 +113,13 @@ if [[ -d "$FEATURE_DIR" ]]; then
     fi
   done
 
+  if [[ -n "$TASK_ID" ]]; then
+    if ! grep -Eq "\b${TASK_ID}\b" "$FEATURE_TASKS_FILE"; then
+      echo "Task id not found in $FEATURE_TASKS_FILE: $TASK_ID" >&2
+      exit 1
+    fi
+  fi
+
   FEATURE_CONTEXT=$(cat <<EOF
 ## Feature Specification
 $(cat "$FEATURE_SPEC_FILE")
@@ -110,6 +132,11 @@ $(cat "$FEATURE_TASKS_FILE")
 EOF
 )
 else
+  if [[ -n "$TASK_ID" ]]; then
+    echo "Task-focused execution requires docs/features/${FEATURE}/tasks.md" >&2
+    exit 1
+  fi
+
   for file in "$DOMAIN_SPEC_FILE" "$DOMAIN_TASKS_FILE" "$CONTEXT_FILE"; do
     if [[ ! -f "$file" ]]; then
       echo "Required domain file not found: $file" >&2
@@ -126,6 +153,19 @@ $(cat "$DOMAIN_TASKS_FILE")
 
 ## Frontend Context
 $(cat "$CONTEXT_FILE")
+EOF
+)
+fi
+
+TASK_SECTION=""
+if [[ -n "$TASK_ID" ]]; then
+  ACTION_DESCRIPTION="Execute only SDD task ${TASK_ID}. Do not implement unrelated pending tasks."
+  TASK_SECTION=$(cat <<EOF
+
+## SDD Task Focus
+Task id: ${TASK_ID}
+
+Implement only this task and its declared dependencies. Keep changes scoped to the files and verification listed for this task. Mark only this task complete when verification passes.
 EOF
 )
 fi
@@ -164,6 +204,7 @@ $(cat "$PROMPT_FILE")
 
 $(if [[ -n "$AGENT_FILE" ]]; then printf '## SDD Agent\n%s\n\n' "$(cat "$AGENT_FILE")"; fi)
 $FEATURE_CONTEXT
+$TASK_SECTION
 $DELTA_SECTION
 EOF
 )

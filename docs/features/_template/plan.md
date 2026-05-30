@@ -3,6 +3,11 @@
 ## Files
 - `path/to/file.jsx`
 
+## Gate Checks
+- Spec has no `[NEEDS CLARIFICATION: ...]` markers.
+- Plan lists the expected files, tests, risks, and verification commands before implementation.
+- Tasks are split into `T001`, `T002`, ... with `REQ-*`, agent, dependency, and verification metadata.
+
 ## Agents
 - Spec review:
 - Planning:
@@ -24,6 +29,7 @@
 
 ## Definition Of Done
 - [ ] All `REQ-*` ids in `spec.md` are represented in `tasks.md`.
+- [ ] Every task has a `Txxx` id, assigned agent, dependency note, and verification command or check.
 - [ ] Planned files match the implemented scope or the plan was updated.
 - [ ] Focused automated tests were added or an explicit exception was recorded.
 - [ ] Verification commands passed and were recorded in `runs/`.

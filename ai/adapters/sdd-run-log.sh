@@ -61,6 +61,7 @@ sdd_build_execution_log() {
 - Provider: $provider
 - Feature: ${FEATURE:-}
 - Acao: ${ACTION_CANONICAL:-${ACTION:-}}
+- Tarefa: ${TASK_ID:-none}
 - Status: $status
 - Inicio UTC: $started_at
 - Duracao: ${duration_ms}ms

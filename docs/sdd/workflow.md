@@ -13,6 +13,8 @@ The spec must include:
 
 Recommended agent: `ai/agents/sdd-spec-reviewer.md`.
 
+Gate: do not plan or implement while `spec.md` contains `[NEEDS CLARIFICATION: ...]`.
+
 ## 2. Plan
 Create or update `docs/features/{feature-id}/plan.md`.
 
@@ -24,15 +26,30 @@ The plan must include:
 
 Recommended agent: `ai/agents/sdd-planner.md`.
 
+Gate: do not implement until `plan.md` lists expected files, tests, risks, verification commands, and any required agent handoff.
+
 ## 3. Task
 Create or update `docs/features/{feature-id}/tasks.md`.
 
-Every task should reference at least one requirement id and expected verification.
+Every task should:
+- use a stable `Txxx` id such as `T001`;
+- reference at least one `REQ-*` id;
+- name the responsible agent;
+- state dependencies;
+- include an expected verification command or check.
+
+Gate: prefer one LLM implementation run per pending task when scope is non-trivial.
 
 ## 4. Implement
 Implement only the planned scope. If the code reveals a better approach, update the plan before expanding scope.
 
 Recommended agent: `ai/agents/implementation-engineer.md`.
+
+For focused execution, pass a task id to the adapter:
+
+```bash
+ai/adapters/codex.sh NNNN-feature-slug implement T003
+```
 
 ## 5. Verify
 Run:

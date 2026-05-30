@@ -98,6 +98,8 @@ Recommended sequence:
 - `code-reviewer`: inspect correctness, maintainability, regressions, and missing tests.
 - `performance-cost`: use when latency, database access, bundle size, cloud cost, or AI token cost matters.
 
+Do not continue while any feature file contains `[NEEDS CLARIFICATION: ...]`. Resolve the question in `spec.md`, update `plan.md`, then regenerate or edit `tasks.md`.
+
 ### 4. Estimate LLM Context Cost
 Estimate before expensive or large LLM runs:
 
@@ -118,6 +120,7 @@ Codex:
 ai/adapters/codex.sh NNNN-feature-slug
 ai/adapters/codex.sh NNNN-feature-slug test
 ai/adapters/codex.sh NNNN-feature-slug refactor
+ai/adapters/codex.sh NNNN-feature-slug implement T003
 ```
 
 Claude:
@@ -140,12 +143,15 @@ Optional delta file:
 
 ```bash
 ai/adapters/codex.sh NNNN-feature-slug implement docs/specs/example.delta.md
+ai/adapters/codex.sh NNNN-feature-slug implement docs/specs/example.delta.md T003
 ```
 
 Actions:
 - `implement`: implements the feature from SDD files using `implementation-engineer`.
 - `test`: generates focused tests using `test-engineer`.
 - `refactor`: refactors using SDD context without adding an agent role.
+
+For non-trivial work, prefer task-focused execution with `Txxx`. Each task in `tasks.md` should include a `REQ-*` id, responsible agent, dependency note, and verification command or check.
 
 ### 6. What The Terminal Shows After An LLM Run
 Adapter executions are quiet by default to reduce terminal noise and avoid carrying large logs into later AI context. During a run, the terminal shows a compact loading indicator. On success, it prints only provider, feature, action, exit status, duration, and the saved compact log path when available.
@@ -302,6 +308,8 @@ Sequencia recomendada:
 - `code-reviewer`: revisa corretude, manutencao, regressoes e testes faltantes.
 - `performance-cost`: use quando houver impacto em latencia, banco de dados, bundle, custo cloud ou custo de tokens.
 
+Nao continue enquanto qualquer arquivo da feature tiver `[NEEDS CLARIFICATION: ...]`. Resolva a pergunta no `spec.md`, atualize o `plan.md` e entao regenere ou edite o `tasks.md`.
+
 ### 4. Estimar Custo De Contexto Da LLM
 Estime antes de execucoes grandes ou caras:
 
@@ -322,6 +330,7 @@ Codex:
 ai/adapters/codex.sh NNNN-feature-slug
 ai/adapters/codex.sh NNNN-feature-slug test
 ai/adapters/codex.sh NNNN-feature-slug refactor
+ai/adapters/codex.sh NNNN-feature-slug implement T003
 ```
 
 Claude:
@@ -344,12 +353,15 @@ Arquivo delta opcional:
 
 ```bash
 ai/adapters/codex.sh NNNN-feature-slug implement docs/specs/example.delta.md
+ai/adapters/codex.sh NNNN-feature-slug implement docs/specs/example.delta.md T003
 ```
 
 Acoes:
 - `implement`: implementa a feature a partir dos arquivos SDD usando `implementation-engineer`.
 - `test`: gera testes focados usando `test-engineer`.
 - `refactor`: refatora usando o contexto SDD sem adicionar um papel de agente.
+
+Para trabalhos nao triviais, prefira execucao focada por tarefa com `Txxx`. Cada tarefa em `tasks.md` deve incluir um id `REQ-*`, agente responsavel, dependencia e comando ou check de verificacao.
 
 ### 6. O Que O Terminal Mostra Ao Final De Uma Execucao LLM
 As execucoes dos adapters sao silenciosas por padrao para reduzir ruido no terminal e evitar que logs grandes entrem em contextos de IA posteriores. Durante a execucao, o terminal mostra um indicador compacto de andamento. Em sucesso, imprime apenas provider, feature, acao, status de saida, duracao e o caminho do log compacto salvo quando existir.

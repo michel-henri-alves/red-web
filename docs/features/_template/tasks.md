@@ -1,6 +1,22 @@
 # Feature Tasks Template
 
-- [ ] REQ-FEATURE-001 Implement the requirement.
-- [ ] REQ-FEATURE-001 Add focused automated tests or record why tests are not applicable.
-- [ ] REQ-FEATURE-001 Record verification evidence in `runs/`.
-- [ ] REQ-FEATURE-001 Update docs/tasks status if domain backlog changed.
+- [ ] T001 - REQ-FEATURE-001 Confirm the approved spec and plan have no `[NEEDS CLARIFICATION: ...]` markers.
+  - Agent: `sdd-planner`
+  - Depends on: none
+  - Verification: `npm run sdd:check`
+- [ ] T002 - REQ-FEATURE-001 Add or update focused tests before implementation when behavior changes.
+  - Agent: `test-engineer`
+  - Depends on: T001
+  - Verification: `npm run test -- path/to/file.test.jsx`
+- [ ] T003 - REQ-FEATURE-001 Implement the planned frontend behavior.
+  - Agent: `implementation-engineer`
+  - Depends on: T002
+  - Verification: focused test command from T002 plus relevant manual UI check
+- [ ] T004 - REQ-FEATURE-001 Run verification and record evidence in `runs/`.
+  - Agent: `implementation-engineer`
+  - Depends on: T003
+  - Verification: `npm run sdd:check`, `npm run test`, `npm run lint`, `npm run build`
+- [ ] T005 - REQ-FEATURE-001 Review the completed change for regressions and missing coverage.
+  - Agent: `code-reviewer`
+  - Depends on: T004
+  - Verification: review findings resolved or documented as residual risk

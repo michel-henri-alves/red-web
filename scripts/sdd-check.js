@@ -80,6 +80,18 @@ function hasConcreteTestFile(planContent) {
   return /`[^`]+\.(?:test|spec)\.(?:jsx?|tsx?)`/.test(testsSection);
 }
 
+function hasClarificationMarker(content) {
+  return /\[(?:NEEDS CLARIFICATION|PRECISA ESCLARECER):[^\]]+\]/i.test(content);
+}
+
+function extractTaskIds(content) {
+  return [...content.matchAll(/\bT\d{3}\b/g)].map((match) => match[0]);
+}
+
+function hasTaskMetadata(content) {
+  return /Agent:/i.test(content) && /Depends on:/i.test(content) && /Verification:/i.test(content);
+}
+
 function checkTemplateDocs() {
   [
     'docs/features/_template/spec.md',
@@ -97,6 +109,10 @@ function checkTemplateDocs() {
 
     if (!planTemplate.includes('Definition Of Done')) {
       fail('Feature plan template is missing Definition Of Done section');
+    }
+
+    if (!planTemplate.includes('Gate Checks')) {
+      fail('Feature plan template is missing Gate Checks section');
     }
   }
 
@@ -196,8 +212,18 @@ function checkFeatureDocs() {
       }
     }
 
-    if (exists(tasksPath) && !/REQ-[A-Z0-9-]+/.test(read(tasksPath))) {
-      fail(`Feature ${featureDir} tasks.md has no REQ-* requirement ids`);
+    if (exists(tasksPath)) {
+      const tasks = read(tasksPath);
+      if (!/REQ-[A-Z0-9-]+/.test(tasks)) {
+        fail(`Feature ${featureDir} tasks.md has no REQ-* requirement ids`);
+      }
+
+      const taskIds = unique(extractTaskIds(tasks));
+      if (taskIds.length === 0) {
+        warn(`Feature ${featureDir} tasks.md has no Txxx task ids; migrate to incremental SDD tasks when the feature is touched`);
+      } else if (!hasTaskMetadata(tasks)) {
+        fail(`Feature ${featureDir} tasks.md uses Txxx ids but is missing Agent, Depends on, or Verification metadata`);
+      }
     }
 
     if (exists(planPath)) {
@@ -256,6 +282,24 @@ function checkManualFollowUp() {
     });
 }
 
+function checkClarificationBlockers() {
+  const featureRoot = path.join(root, 'docs/features');
+  if (!fs.existsSync(featureRoot)) {
+    return;
+  }
+
+  fs.readdirSync(featureRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && !entry.name.startsWith('_'))
+    .forEach((entry) => {
+      ['spec.md', 'plan.md', 'tasks.md'].forEach((fileName) => {
+        const relativePath = `docs/features/${entry.name}/${fileName}`;
+        if (exists(relativePath) && hasClarificationMarker(read(relativePath))) {
+          fail(`Feature ${entry.name} has unresolved clarification marker in ${fileName}`);
+        }
+      });
+    });
+}
+
 function checkDomainSpecs() {
   const specFiles = listMarkdownFiles('docs/specs');
   const taskFiles = listMarkdownFiles('docs/tasks');
@@ -308,6 +352,7 @@ if (exists('package.json')) {
 
 checkFeatureDocs();
 checkManualFollowUp();
+checkClarificationBlockers();
 checkDomainSpecs();
 checkKnownContracts();
 checkAgentDocs();

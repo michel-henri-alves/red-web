@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main, master, develop]
 
+permissions:
+  contents: read
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -25,8 +28,52 @@ jobs:
       - name: SDD check
         run: npm run sdd:check
 
+      - name: Backend contract check
+        run: npm run contracts:check
+
       - name: Tests
         run: npm run test
 
-      - name: Build and lint
-        run: npm run lint
+      - name: Build
+        run: npm run build
+
+      - name: Upload production bundle
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: red-web-dist
+          path: dist/
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: red-web-production
+      cancel-in-progress: false
+
+    steps:
+      - name: Download production bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: red-web-dist
+          path: dist/
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }} --delete
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"

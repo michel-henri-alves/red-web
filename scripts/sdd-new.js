@@ -102,16 +102,34 @@ function numberedReqs(prefix, requirements) {
 }
 
 function taskList(prefix, requirements, verificationCommands) {
-  const tasks = requirements.flatMap((requirement, index) => {
-    const id = `${prefix}-${String(index + 1).padStart(3, '0')}`;
-    return [
-      `- [ ] ${id} Implement: ${requirement}`,
-      `- [ ] ${id} Add or update focused verification.`
-    ];
+  const tasks = [];
+  let taskNumber = 1;
+
+  requirements.forEach((requirement, index) => {
+    const reqId = `${prefix}-${String(index + 1).padStart(3, '0')}`;
+    const testTaskId = `T${String(taskNumber++).padStart(3, '0')}`;
+    const implementationTaskId = `T${String(taskNumber++).padStart(3, '0')}`;
+
+    tasks.push(
+      `- [ ] ${testTaskId} - ${reqId} Add or update focused verification before implementation.`,
+      `  - Agent: \`test-engineer\``,
+      `  - Depends on: none`,
+      `  - Verification: ${verificationCommands[0] ? `\`${verificationCommands[0]}\`` : 'focused test command or documented exception'}`,
+      `- [ ] ${implementationTaskId} - ${reqId} Implement: ${requirement}`,
+      `  - Agent: \`implementation-engineer\``,
+      `  - Depends on: ${testTaskId}`,
+      `  - Verification: focused verification from ${testTaskId}`
+    );
   });
 
   verificationCommands.forEach((command) => {
-    tasks.push(`- [ ] Run \`${command}\`.`);
+    const taskId = `T${String(taskNumber++).padStart(3, '0')}`;
+    tasks.push(
+      `- [ ] ${taskId} - ${prefix}-001 Run \`${command}\`.`,
+      `  - Agent: \`implementation-engineer\``,
+      `  - Depends on: previous implementation tasks`,
+      `  - Verification: \`${command}\` exits with status 0`
+    );
   });
 
   return tasks.join('\n');
