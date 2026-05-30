@@ -22,6 +22,8 @@ jobs:
           repository: michel-henri-alves/red-backend
           token: ${{ secrets.RED_BACKEND_READ_TOKEN || github.token }}
           path: red-backend
+          sparse-checkout: docs/contracts/openapi.json
+          sparse-checkout-cone-mode: false
 
       - name: Use Node.js
         uses: actions/setup-node@v4
