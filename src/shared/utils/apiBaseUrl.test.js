@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import axiosClient from './apiBaseUrl';
+import axiosClient, { resolveApiBaseURL } from './apiBaseUrl';
 
 const originalAdapter = axiosClient.defaults.adapter;
 
@@ -35,5 +35,18 @@ describe('axiosClient auth session handling', () => {
 
         expect(localStorage.getItem('token')).toBe('new-token');
         expect(Number(localStorage.getItem('authLastActivityAt'))).toBeGreaterThan(0);
+    });
+
+    it('uses the configured API base URL for production builds', () => {
+        expect(resolveApiBaseURL({
+            DEV: false,
+            VITE_API_BASE_URL: 'https://api.example.com',
+        })).toBe('https://api.example.com');
+    });
+
+    it('requires an explicit API base URL', () => {
+        expect(() => resolveApiBaseURL({ DEV: false })).toThrow(
+            'VITE_API_BASE_URL is required.'
+        );
     });
 });

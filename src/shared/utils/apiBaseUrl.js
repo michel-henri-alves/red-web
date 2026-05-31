@@ -8,16 +8,16 @@ import {
     touchAuthSession,
 } from './authSession';
 
-// export default function axiosClient(domain) {
+export const resolveApiBaseURL = (env = import.meta.env) => {
+    if (env.VITE_API_BASE_URL) {
+        return env.VITE_API_BASE_URL;
+    }
 
-// return axios.create({
+    throw new Error('VITE_API_BASE_URL is required.');
+};
+
 const axiosClient = axios.create({
-    //cloud
-    // baseURL: import.meta.env.VITE_API_BASE_URL + '/' + domain,
-    //local
-    //baseURL: 'http://192.168.1.167:3001/' + domain,
-    // baseURL: import.meta.env.VITE_API_BASE_URL,
-    baseURL: "http://localhost:3001/",
+    baseURL: resolveApiBaseURL(),
     headers: {
         "Content-Type": "application/json"
     }

@@ -281,6 +281,7 @@ AWS_DEPLOY_ROLE_ARN
 AWS_REGION
 S3_BUCKET
 CLOUDFRONT_DISTRIBUTION_ID
+VITE_API_BASE_URL
 ```
 
 Exemplo:
@@ -290,9 +291,15 @@ AWS_DEPLOY_ROLE_ARN=arn:aws:iam::ACCOUNT_ID:role/github-actions-red-web-deploy
 AWS_REGION=us-east-1
 S3_BUCKET=red-web-dev
 CLOUDFRONT_DISTRIBUTION_ID=E2XHRVYUHIIIIZ
+VITE_API_BASE_URL=https://1biotj4t46.execute-api.us-east-1.amazonaws.com
 ```
 
 Importante: `S3_BUCKET` deve receber apenas o nome do bucket, nao a ARN.
+Importante: `VITE_API_BASE_URL` e lido durante `npm run build`; alterar essa
+URL exige novo build, upload do `dist/` e invalidacao do CloudFront.
+Recomendado: cadastre `VITE_API_BASE_URL` como GitHub Actions variable no
+environment `production`; ela nao precisa ser secret porque fica embutida no
+JavaScript publico do frontend.
 
 ## 7. Workflows
 
