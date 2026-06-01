@@ -37,6 +37,35 @@ describe('axiosClient auth session handling', () => {
         expect(Number(localStorage.getItem('authLastActivityAt'))).toBeGreaterThan(0);
     });
 
+    it('does not send unused custom tenant or username headers', async () => {
+        localStorage.setItem('token', 'token-123');
+        localStorage.setItem('authLastActivityAt', String(Date.now()));
+        localStorage.setItem('user', JSON.stringify({
+            id: 'user-1',
+            name: 'Michel',
+            tenantId: 'tenant-1',
+        }));
+
+        let requestHeaders;
+        axiosClient.defaults.adapter = async (config) => {
+            requestHeaders = config.headers;
+            return {
+                config,
+                data: {},
+                headers: {},
+                request: {},
+                status: 200,
+                statusText: 'OK',
+            };
+        };
+
+        await axiosClient.get('/users');
+
+        expect(requestHeaders.Authorization).toBe('Bearer token-123');
+        expect(requestHeaders['x-tenant-id']).toBeUndefined();
+        expect(requestHeaders['x-username']).toBeUndefined();
+    });
+
     it('uses the configured API base URL for production builds', () => {
         expect(resolveApiBaseURL({
             DEV: false,

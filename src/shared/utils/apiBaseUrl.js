@@ -31,20 +31,9 @@ axiosClient.interceptors.request.use((config) => {
     }
 
     const token = readStoredToken();
-    const user = readStoredUser();
-    const tenant = user?.tenantId;
-    const username = user?.name;
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    if (tenant) {
-        config.headers["x-tenant-id"] = tenant;
-    }
-
-    if (username) {
-        config.headers["x-username"] = username;
     }
 
     return config;
