@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { saveSale } from 'red-shared'
 import { useKeyboardShortcut } from "../../hook/useKeyboardShortcut";
 import { formatApiErrorCause } from "../../shared/utils/apiErrorFormatter";
+import { toBrasiliaTimestamp } from "../../shared/utils/brasiliaDate";
 
 
 
@@ -117,7 +118,7 @@ export default function PaymemtOptions({ cleanSale, onClose, total }) {
                     paymentMethod: newPaymentMethod,
                     amountPaid: newAmountPaid,
                     change: change,
-                    realizedAt: Date.now(),
+                    realizedAt: toBrasiliaTimestamp(),
                 }, {
                 onSuccess: () => {
                     //msg de sucesso, fecha o modal e limpa a tela de venda
@@ -155,7 +156,7 @@ export default function PaymemtOptions({ cleanSale, onClose, total }) {
                 paymentMethod: paymentMethod,
                 amountPaid: amountPaid,
                 change: change,
-                realizedAt: Date.now(),
+                realizedAt: toBrasiliaTimestamp(),
             }, {
             onSuccess: () => {
                 //msg de sucesso, fecha o modal e limpa a tela de venda

@@ -17,6 +17,8 @@ The Sales domain in `red-web` manages sales listing, details, and user-facing sa
 ## Data and API
 - Fetch paginated sales with `GET /sales?startDate={start}&endDate={end}&page={page}&limit={limit}`
 - Create sale with `POST /sales`
+- Sales creation must send `realizedAt` adjusted to UTC-3 (Brasilia time) so persisted sales records use the business timezone instead of raw UTC.
+- Sales date filters must send `startDate` and `endDate` using the same UTC-3 adjustment as persisted sales records.
 
 ## Behavior
 - Sales list should support date-range filtering

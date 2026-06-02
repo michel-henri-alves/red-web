@@ -13,6 +13,7 @@ import MoneyInput from '../../../components/MoneyInput';
 import ActionButton from '../../../components/ActionButton';
 import OptionsRange from '../../../components/OptionsRange';
 import { formatApiErrorCause } from '../../../shared/utils/apiErrorFormatter';
+import { toBrasiliaTimestamp } from '../../../shared/utils/brasiliaDate';
 import {
   CreditCard,
   Banknote,
@@ -151,7 +152,7 @@ export default function Payment() {
         amountPaid: newAmountPaid,
         change,
         discount,
-        realizedAt: Date.now(),
+        realizedAt: toBrasiliaTimestamp(),
       }, {
         onSuccess: () => {
           navigate("/pos");
@@ -202,7 +203,7 @@ export default function Payment() {
       amountPaid,
       change,
       discount,
-      realizedAt: Date.now(),
+      realizedAt: toBrasiliaTimestamp(),
     }, {
       onSuccess: () => {
         navigate("/pos");

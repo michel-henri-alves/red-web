@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { fetchAllSalesPaginatedAndFilteredByDate } from "../../shared/hooks/useSales";
 import formatDate from "../../shared/utils/dateUtils";
+import { toBrasiliaISOString } from "../../shared/utils/brasiliaDate";
 import DateFilter from "../../components/DateFilter";
 import ExpandableTable from "../../components/ExpandableTable";
 
@@ -46,8 +47,8 @@ export default function SaleList(
   return (
     <div className="text-2xl space-y-4">
       <DateFilter onFilter={(start, end) => {
-        setStartDate(start?.toISOString())
-        setEndDate(end?.toISOString())
+        setStartDate(start ? toBrasiliaISOString(start) : undefined)
+        setEndDate(end ? toBrasiliaISOString(end) : undefined)
       }} />
 
       {allSales.length === 0 ? (
