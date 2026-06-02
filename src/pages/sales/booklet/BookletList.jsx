@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import useDebounce from "../../../shared/hooks/useDebounce";
 import { fetchAllPendingsPaginatedByCustomerId } from "../../../shared/hooks/usePendings";
 import formatDate from "../../../shared/utils/dateUtils";
+import { toBrasiliaISOString } from "../../../shared/utils/brasiliaDate";
 import MainCard from "../../../components/MainCard";
 import DateFilter from "../../../components/DateFilter";
 import ExpandableTable from "../../../components/ExpandableTable";
@@ -57,8 +58,8 @@ export default function BookletList(
             <MainCard amount={balance} />
 
             <DateFilter onFilter={(start, end) => {
-                setStartDate(start?.toISOString())
-                setEndDate(end?.toISOString())
+                setStartDate(start ? toBrasiliaISOString(start) : undefined)
+                setEndDate(end ? toBrasiliaISOString(end) : undefined)
             }} />
 
             {allRegisters.length === 0 ? (

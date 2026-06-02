@@ -33,16 +33,16 @@ export default function Dashboard() {
   } = useLast5DaysSales();
 
   const news = [
-    { label: "Cadastro de Produtos", value: "1", icon: "📦" },
-    { label: "Cadastro de Locais", value: "2", icon: "🏘️" },
-    { label: "Ponto de vendas", value: "3", icon: "💲" },
-    { label: "Leitura de código de barras", value: "4", icon: "𝄃𝄃𝄂𝄀𝄁𝄃" },
+    { label: "Controle de Acesso", value: "1", icon: "🔑" },
+    { label: "Vendas do dia", value: "2", icon: "📆" },
+    { label: "Vendas dos últimos 5 dias", value: "3", icon: "🗓" },
+    { label: "Cadastro de usuários", value: "4", icon: "👨‍🦱" },
   ];
 
   const comingSoon = [
-    { label: "Cadastro de Usuários", value: "1", icon: "🪪" },
-    { label: "Cadastro de Clientes", value: "2", icon: "👩🏻‍💼" },
-    { label: "Modo de venda 'Caderneta'", value: "3", icon: "📝" },
+    { label: "Aplicativo móvel", value: "1", icon: "📱" },
+    { label: "Produtos por setor", value: "2", icon: "🏘" },
+    { label: "Integração com POS", value: "3", icon: "🏧" },
     { label: "Inventário", value: "4", icon: "🔍" },
   ];
 
