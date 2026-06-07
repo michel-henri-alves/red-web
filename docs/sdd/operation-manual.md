@@ -23,9 +23,9 @@ docs/features/NNNN-feature-slug/tasks.md
 ```
 
 3. Fill the minimum required content:
-- `spec.md`: problem, scope, criticality, requirements with `REQ-*` ids, API/data contract, test strategy, and MCP sources when relevant.
-- `plan.md`: files, context bundle, agents, implementation sequence, tests, verification commands, risks, and Definition of Done.
-- `tasks.md`: one implementation task and one verification/test task for each `REQ-*` id.
+- `spec.md`: problem, scope, impact classification, criticality, requirements with `REQ-*` ids, API/data contract, test strategy, and MCP sources when relevant.
+- `plan.md`: files, canonical documentation updates for high-impact work, context bundle, agents, implementation sequence, tests, verification commands, risks, and Definition of Done.
+- `tasks.md`: one implementation task and one verification/test task for each `REQ-*` id, plus a canonical documentation task when the feature is high impact.
 
 4. Validate:
 
@@ -34,6 +34,8 @@ npm run sdd:check
 ```
 
 If the terminal prints `Manual follow-up required`, fill those fields before implementation.
+
+High-impact frontend features include new domains/workflows, domain data assumption changes, public backend/frontend contract changes, auth/tenant/role/session changes, POS/payment/data-loss flows, durable project memory changes, and reusable architecture patterns. For these features, update or create the impacted `docs/specs/{domain}.spec.md`, `docs/tasks/{domain}.tasks.md`, and `docs/memory/project.memory.md` entries before closing the work.
 
 ### 2. Create A New Spec With The Wizard
 Use the wizard when you want consistent files and less manual formatting.
@@ -92,11 +94,22 @@ npm run sdd:agent -- NNNN-feature-slug planner
 
 Recommended sequence:
 - `spec-reviewer`: clarify ambiguity, missing requirements, contracts, risks, and acceptance criteria.
-- `planner`: verify files, tests, implementation order, and Definition of Done.
+- `planner`: verify files, tests, implementation order, high-impact documentation updates, and Definition of Done.
 - `implementation`: implement the approved plan.
 - `test`: add or improve automated tests.
-- `code-reviewer`: inspect correctness, maintainability, regressions, and missing tests.
+- `code-reviewer`: inspect correctness, maintainability, regressions, missing tests, and missing high-impact documentation updates.
 - `performance-cost`: use when latency, database access, bundle size, cloud cost, or AI token cost matters.
+
+Project skills:
+- Read `docs/sdd/skills.md` when a task may need specialized frontend guidance.
+- Load only the matching `ai/skills/{skill}/SKILL.md` files.
+- Use `red-web-domain-workflow` for pages, routes, menus, API modules, hooks, forms, lists, details, and locales.
+- Use `red-web-api-contract` for backend/frontend payloads, filters, pagination, status/error handling, and contract drift.
+- Use `red-web-auth-session-tenant` for login, auth context, roles, protected routes, tenant/company context, and headers.
+- Use `red-web-ui-state-accessibility` for UI states, i18n, accessibility, responsive layout, and user-facing interactions.
+- Use `red-web-react-query-testing` for Vitest, Testing Library, React Query, API mocks, and regression tests.
+- Use `red-web-build-deploy-config` for Vite env vars, API base URL, production bundle behavior, and deploy docs.
+- Use `red-web-sdd-documentation-gate` for high-impact documentation and feature closure.
 
 Do not continue while any feature file contains `[NEEDS CLARIFICATION: ...]`. Resolve the question in `spec.md`, update `plan.md`, then regenerate or edit `tasks.md`.
 
@@ -233,9 +246,9 @@ docs/features/NNNN-feature-slug/tasks.md
 ```
 
 3. Preencha o conteudo minimo:
-- `spec.md`: problema, escopo, criticidade, requisitos com ids `REQ-*`, contrato de API/dados, estrategia de testes e fontes MCP quando aplicavel.
-- `plan.md`: arquivos, pacote de contexto, agentes, sequencia de implementacao, testes, comandos de verificacao, riscos e Definition of Done.
-- `tasks.md`: uma tarefa de implementacao e uma tarefa de verificacao/teste para cada id `REQ-*`.
+- `spec.md`: problema, escopo, classificacao de impacto, criticidade, requisitos com ids `REQ-*`, contrato de API/dados, estrategia de testes e fontes MCP quando aplicavel.
+- `plan.md`: arquivos, atualizacoes documentais canonicas para trabalho de alto impacto, pacote de contexto, agentes, sequencia de implementacao, testes, comandos de verificacao, riscos e Definition of Done.
+- `tasks.md`: uma tarefa de implementacao e uma tarefa de verificacao/teste para cada id `REQ-*`, mais uma tarefa de documentacao canonica quando a feature for de alto impacto.
 
 4. Valide:
 
@@ -244,6 +257,8 @@ npm run sdd:check
 ```
 
 Se o terminal mostrar `Manual follow-up required`, preencha esses campos antes de implementar.
+
+Features frontend de alto impacto incluem novos dominios/workflows, mudancas nas premissas de dados de dominio, mudancas no contrato publico backend/frontend, mudancas de auth/tenant/role/sessao, fluxos de POS/pagamento/perda de dados, mudancas duraveis na memoria do projeto e novos padroes arquiteturais reutilizaveis. Para essas features, atualize ou crie os registros impactados em `docs/specs/{domain}.spec.md`, `docs/tasks/{domain}.tasks.md` e `docs/memory/project.memory.md` antes de fechar o trabalho.
 
 ### 2. Criar Uma Nova Spec Com Wizard
 Use o wizard quando quiser arquivos consistentes e menos formatacao manual.
@@ -302,11 +317,22 @@ npm run sdd:agent -- NNNN-feature-slug planner
 
 Sequencia recomendada:
 - `spec-reviewer`: esclarece ambiguidades, requisitos ausentes, contratos, riscos e criterios de aceite.
-- `planner`: valida arquivos, testes, ordem de implementacao e Definition of Done.
+- `planner`: valida arquivos, testes, ordem de implementacao, atualizacoes documentais de alto impacto e Definition of Done.
 - `implementation`: implementa o plano aprovado.
 - `test`: adiciona ou melhora testes automatizados.
-- `code-reviewer`: revisa corretude, manutencao, regressoes e testes faltantes.
+- `code-reviewer`: revisa corretude, manutencao, regressoes, testes faltantes e atualizacoes documentais de alto impacto ausentes.
 - `performance-cost`: use quando houver impacto em latencia, banco de dados, bundle, custo cloud ou custo de tokens.
+
+Skills do projeto:
+- Leia `docs/sdd/skills.md` quando a tarefa puder exigir orientacao frontend especializada.
+- Carregue somente os arquivos `ai/skills/{skill}/SKILL.md` correspondentes.
+- Use `red-web-domain-workflow` para paginas, rotas, menus, modulos de API, hooks, formularios, listas, detalhes e locales.
+- Use `red-web-api-contract` para payloads backend/frontend, filtros, paginacao, status/erros e drift de contrato.
+- Use `red-web-auth-session-tenant` para login, auth context, roles, rotas protegidas, tenant/company context e headers.
+- Use `red-web-ui-state-accessibility` para estados de UI, i18n, acessibilidade, layout responsivo e interacoes visiveis ao usuario.
+- Use `red-web-react-query-testing` para Vitest, Testing Library, React Query, mocks de API e testes de regressao.
+- Use `red-web-build-deploy-config` para variaveis Vite, API base URL, bundle de producao e docs de deploy.
+- Use `red-web-sdd-documentation-gate` para documentacao de alto impacto e fechamento de feature.
 
 Nao continue enquanto qualquer arquivo da feature tiver `[NEEDS CLARIFICATION: ...]`. Resolva a pergunta no `spec.md`, atualize o `plan.md` e entao regenere ou edite o `tasks.md`.
 

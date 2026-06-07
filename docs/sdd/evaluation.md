@@ -49,9 +49,10 @@ Other model profiles for the same feature bundle:
 - Character count is about 35% higher than the legacy POS baseline.
 - Estimated `codex` input tokens are about 34% higher than the legacy POS baseline. The added cost buys stronger orchestration, explicit review roles, and clearer context rules.
 - Requirements are traceable through `REQ-*` ids.
-- The SDD checker now blocks missing core docs, missing feature files, missing package scripts, missing domain task files, missing route config, and missing POS implementation references.
+- The SDD checker now blocks missing core docs, missing feature files, missing package scripts, missing domain task files, declared high-impact feature documentation gaps, missing route config, and missing POS implementation references.
 - Feature plans now explicitly identify pages, hooks, API modules, reusable components, and verification commands before implementation.
 - SDD agents now define professional roles for spec review, planning, implementation, testing, code review, and performance/cost review.
+- Project skills now define reusable specialized procedures for frontend domain workflows, API contracts, auth/session/tenant, UI states/accessibility, React Query testing, build/deploy config, and high-impact SDD documentation gates.
 
 ## Agent Layer
 The project now includes:
@@ -62,6 +63,14 @@ The project now includes:
 - `ai/agents/test-engineer.md`
 - `ai/agents/code-reviewer.md`
 - `ai/agents/performance-cost-reviewer.md`
+- `docs/sdd/skills.md`
+- `ai/skills/red-web-domain-workflow/SKILL.md`
+- `ai/skills/red-web-api-contract/SKILL.md`
+- `ai/skills/red-web-auth-session-tenant/SKILL.md`
+- `ai/skills/red-web-ui-state-accessibility/SKILL.md`
+- `ai/skills/red-web-react-query-testing/SKILL.md`
+- `ai/skills/red-web-build-deploy-config/SKILL.md`
+- `ai/skills/red-web-sdd-documentation-gate/SKILL.md`
 
 List the available agents with:
 
@@ -107,5 +116,6 @@ npm run sdd:estimate -- customer implement docs/specs/customer.delta.md --model 
 ## Remaining Risks
 - Automated tests are configured with Vitest, but coverage is still young and should grow with each feature.
 - Domain specs are still broad and should be migrated into feature folders over time.
+- Legacy feature folders without `Impact Classification` currently warn instead of failing; add the classification when those features are touched.
 - Existing duplicated docs outside this repository can still drift unless one canonical docs root is chosen.
 - Token counts are estimates, not provider billing records. They are useful for trend comparison between SDD runs and model profiles.

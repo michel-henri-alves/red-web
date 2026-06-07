@@ -25,10 +25,12 @@ The Sales domain in `red-web` manages sales listing, details, and user-facing sa
 - Sales detail view should show items and payment details
 - Sales creation is supported by POS and payment flow
 - Sales pages should display totals and financial summaries
+- Payment flow supports one sale-level discount mode at a time: absolute currency discount or whole-number percentage discount. Percentage discounts are converted to the existing absolute `discount` value before sale creation.
 
 ## Validation
 - Date filter inputs should validate date ranges
 - Sales data must align with backend required fields (items, paymentMethod, amountPaid, companyId)
+- Percentage discounts must be whole, non-negative values and must not calculate a discount greater than the sale total.
 - UI should handle empty sales and loading states gracefully
 
 ## UI Patterns

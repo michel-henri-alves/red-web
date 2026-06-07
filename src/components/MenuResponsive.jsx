@@ -9,6 +9,7 @@ import {
     ShoppingCart,
     Users,
     Handshake,
+    CircleAlert,
 } from "lucide-react";
 
 import m4 from '../assets/images/m4.png';
@@ -45,8 +46,9 @@ export default function MenuResponsive({ user = null, onLogout = () => { } }) {
         // { name: t("sidebar.sectors"), icon: LayoutDashboard, path: "/sectors", roles: ["admin"] },
         { name: t("sidebar.sales"), icon: ShoppingCart, path: "/sales", roles: ["admin", "seller", "cashier"] },
         { name: t("sidebar.customers"), icon: Handshake, path: "/customers", roles: ["admin", "seller"] },
+        { name: t("sidebar.issues"), icon: CircleAlert, path: "/issues", roles: ["admin", "seller"] },
         { name: t("sidebar.user"), icon: Users, path: "/users", roles: ["admin", "seller"] },
-    ]), []);
+    ]), [t]);
 
     const visibleNav = useMemo(() => {
         if (!user || !user.roles) return navItems;

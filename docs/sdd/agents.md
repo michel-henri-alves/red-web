@@ -11,6 +11,7 @@ make quality checks explicit before code reaches production.
 - Agents must prefer existing project patterns over new abstractions.
 - Agents must report uncertainty instead of inventing missing backend, UI, or domain contracts.
 - Agents should use MCP sources only when they are authoritative for the question being answered.
+- Agents should load `docs/sdd/skills.md` and matching `ai/skills/{skill}/SKILL.md` files when specialized project guidance applies.
 
 ## Agent Roster
 
@@ -36,7 +37,7 @@ Cost guidance:
 - Do not load implementation files unless a requirement references an existing behavior that must be preserved.
 
 ### SDD Planner
-Purpose: convert an approved spec into a focused implementation plan.
+Purpose: convert an approved spec into a focused implementation plan, including canonical documentation tasks for high-impact work.
 
 Use after the spec is accepted and before code changes.
 
@@ -49,6 +50,7 @@ Inputs:
 
 Outputs:
 - files expected to change
+- canonical documentation expected to change for high-impact work
 - page, route, hook, API, component, locale, and test impact
 - risks and open questions
 - verification commands
@@ -127,6 +129,7 @@ Outputs:
 
 Review focus:
 - requirement coverage
+- high-impact canonical documentation coverage
 - auth, tenant, and role preservation
 - API contract correctness
 - UI state completeness
@@ -153,6 +156,17 @@ Outputs:
 Cost guidance:
 - Prefer reducing context before changing model/provider.
 - Record meaningful token changes in `docs/sdd/evaluation.md`.
+
+## Skill Use
+
+Skills are reusable capability guides, not role replacements. Agents keep their role and load skills only when the task matches the skill description.
+
+Common combinations:
+- New frontend domain: `sdd-planner` or `implementation-engineer` + `red-web-domain-workflow` + `red-web-api-contract` + `red-web-sdd-documentation-gate`.
+- Auth/session change: any relevant agent + `red-web-auth-session-tenant`.
+- Async UI or form work: any relevant agent + `red-web-ui-state-accessibility`.
+- Regression test work: `test-engineer` + `red-web-react-query-testing`.
+- Production API/build config: any relevant agent + `red-web-build-deploy-config`.
 
 ## Recommended Workflow
 
@@ -201,6 +215,8 @@ Every agent response should include:
 - Requirement ids affected
 - Requirement task ids affected, such as `T003`
 - Verification performed or recommended
+- High-impact documentation notes, including canonical specs/tasks/project memory updates when applicable
+- Skills used, or why an obvious skill was not applicable
 - Open questions
 - Next recommended agent
 

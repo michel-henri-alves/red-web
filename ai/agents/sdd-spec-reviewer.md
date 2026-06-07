@@ -15,6 +15,8 @@ Make the spec precise, testable, and safe to implement with minimal context.
 
 ## Review Checklist
 - Every behavior requirement has a `REQ-*` id.
+- Impact classification is present and matches the scope.
+- High-impact features name the impacted canonical docs.
 - Requirements describe observable behavior or explicit contracts.
 - Acceptance criteria are testable.
 - API/data contract assumptions are explicit.

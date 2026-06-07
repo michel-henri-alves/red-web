@@ -7,7 +7,7 @@ import { useKeyboardShortcut } from "../../../hooks/useKeyboardShortcut";
 import { useNavigate } from "react-router-dom";
 import CustomerList from '../../customer/CustomerList';
 import CustomerAddDue from './CustomerAddDue';
-import AddDiscount from './AddDiscount';
+import AddDiscount, { calculatePercentageDiscount, isWholePercentageValue } from './AddDiscount';
 import Modal from '../../../components/Modal';
 import MoneyInput from '../../../components/MoneyInput';
 import ActionButton from '../../../components/ActionButton';
@@ -48,6 +48,11 @@ export default function Payment() {
   const [due, setDue] = useState(total ?? 0);
   const [change, setChange] = useState(0);
   const [discount, setDiscount] = useState();
+  const [discountInputValue, setDiscountInputValue] = useState("");
+  const [discountType, setDiscountType] = useState("amount");
+  const [discountPercentage, setDiscountPercentage] = useState("");
+  const [appliedDiscountPercentage, setAppliedDiscountPercentage] = useState("");
+  const [discountError, setDiscountError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState([]);
   const [amountPaid, setAmountPaid] = useState([]);
   const [isOpenRegisterDue, setOpenRegisterDue] = useState(false);
@@ -222,8 +227,21 @@ export default function Payment() {
   };
 
   const updateBillWithDiscounts = () => {
-    setDue(total - discount)
+    const totalValue = Number(total) || 0;
+    const nextDiscount = discountType === "percentage"
+      ? calculatePercentageDiscount(totalValue, discountPercentage)
+      : Number(discountInputValue || 0);
+
+    if (nextDiscount < 0 || nextDiscount > totalValue) {
+      setDiscountError(t("sales.discount.invalid"));
+      return;
+    }
+
+    setDiscount(+nextDiscount.toFixed(2));
+    setAppliedDiscountPercentage(discountType === "percentage" ? discountPercentage : "");
+    setDue(+(totalValue - nextDiscount).toFixed(2));
     setPaying("");
+    setDiscountError("");
     setOpenDiscount(false)
   }
 
@@ -232,7 +250,35 @@ export default function Payment() {
   }
 
   const discountInput = (e) => {
-    setDiscount(e.target.value)
+    setDiscountInputValue(e.target.value)
+    setDiscountError("");
+  }
+
+  const discountPercentageInput = (e) => {
+    const nextValue = e.target.value;
+
+    if (isWholePercentageValue(nextValue)) {
+      setDiscountPercentage(nextValue);
+      setDiscountError("");
+    }
+  }
+
+  const changeDiscountType = (nextType) => {
+    setDiscountType(nextType);
+    setDiscountError("");
+
+    if (nextType === "amount") {
+      setDiscountPercentage("");
+    } else {
+      setDiscountInputValue("");
+    }
+  }
+
+  const openDiscountModal = () => {
+    setDiscountInputValue(discount ?? "");
+    setDiscountPercentage(appliedDiscountPercentage);
+    setDiscountError("");
+    setOpenDiscount(true);
   }
 
 
@@ -253,8 +299,9 @@ export default function Payment() {
           <div className="text-base sm:text-lg font-bold text-green-600">
             {t("payed")}: {t("currency")} {displayValue(payed)}
           </div>
-          {discount && <div className="text-base sm:text-lg font-bold text-yellow-600">
-            {t("discount")}: {t("currency")} {discount}
+          {Number(discount) > 0 && <div className="text-base sm:text-lg font-bold text-yellow-600">
+            {t("discount")}: {t("currency")} {displayValue(Number(discount))}
+            {appliedDiscountPercentage !== "" ? ` (${appliedDiscountPercentage}%)` : ""}
           </div>}
           <div className="mt-2">
             {change === 0 ? (
@@ -279,7 +326,7 @@ export default function Payment() {
           </label>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <ActionButton type="button" bgColor="[rgba(98,70,234)]" text={t("discount") + " (F7)"} onClick={() => setOpenDiscount(true)} icon={BanknoteArrowDown} disabled={due === 0 || change > 0 || payed > 0} ref={btnRefs.f7} />
+            <ActionButton type="button" bgColor="[rgba(98,70,234)]" text={t("discount") + " (F7)"} onClick={openDiscountModal} icon={BanknoteArrowDown} disabled={due === 0 || change > 0 || payed > 0} ref={btnRefs.f7} />
             <ActionButton type="button" bgColor="[rgba(98,70,234)]" text={t("total.value") + " (F8)"} onClick={setTotalValueForPay} icon={BadgeDollarSign} disabled={due === 0 || change > 0} ref={btnRefs.f8} />
             <ActionButton type="button" bgColor="red-600" text={t("receive") + " (F9)"} onClick={handleSale} icon={HandCoins} disabled={(paying ?? 0) === 0 || paying == "" || change > 0} ref={btnRefs.f9} />
           </div>
@@ -314,7 +361,12 @@ export default function Payment() {
         <AddDiscount
           updateBill={updateBillWithDiscounts}
           handleDiscount={discountInput}
-          discount={discount}
+          handlePercentageDiscount={discountPercentageInput}
+          discount={discountInputValue}
+          discountPercentage={discountPercentage}
+          discountType={discountType}
+          onDiscountTypeChange={changeDiscountType}
+          discountError={discountError}
           closeButtonRef={btnRefs.Escape}
         />
       </Modal>

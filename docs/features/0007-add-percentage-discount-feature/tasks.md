@@ -1,0 +1,46 @@
+# Add percentage discount feature Tasks
+
+- [x] T001 - REQ-SALES-001 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run sdd:check`
+- [x] T002 - REQ-SALES-001 Implement: add possibility of user input a percentage that will be use to discount total value of sale
+  - Agent: `implementation-engineer`
+  - Depends on: T001
+  - Verification: focused verification from T001
+- [x] T003 - REQ-SALES-002 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run sdd:check`
+- [x] T004 - REQ-SALES-002 Implement: must follow the same rules used by actual numeric input
+  - Agent: `implementation-engineer`
+  - Depends on: T003
+  - Verification: focused verification from T003
+- [x] T005 - REQ-SALES-003 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run sdd:check`
+- [x] T006 - REQ-SALES-003 Implement: not will accept decimal value
+  - Agent: `implementation-engineer`
+  - Depends on: T005
+  - Verification: focused verification from T005
+- [x] T007 - REQ-SALES-004 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run sdd:check`
+- [x] T008 - REQ-SALES-004 Implement: user can use only one discount way by each sale (numeric or percentual)
+  - Agent: `implementation-engineer`
+  - Depends on: T007
+  - Verification: focused verification from T007
+- [x] T009 - REQ-SALES-001 Run `npm run sdd:check`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run sdd:check` exits with status 0
+- [x] T010 - REQ-SALES-001 Run `npm run lint`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run lint` exits with status 0
+- [x] T011 - REQ-SALES-001 Run `npm run build`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run build` exits with status 0

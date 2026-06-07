@@ -6,6 +6,17 @@ Describe the user/business problem in one paragraph.
 ## Scope
 Describe what will change.
 
+## Impact Classification
+- Impact: low | medium | high
+- Creates new domain/workflow: yes | no
+- Changes domain model: yes | no
+- Changes public API contract: yes | no
+- Changes durable architecture/project memory: yes | no
+- Impacted canonical docs:
+  - `docs/specs/{domain}.spec.md`
+  - `docs/tasks/{domain}.tasks.md`
+  - `docs/memory/project.memory.md`
+
 ## Criticality
 Normal
 

@@ -180,6 +180,7 @@ function buildBundle(feature, action, deltaFile, mode) {
   const constitutionFile = 'docs/sdd/constitution.md';
   const workflowFile = 'docs/sdd/workflow.md';
   const contextMapFile = 'docs/sdd/context-map.md';
+  const skillsFile = 'docs/sdd/skills.md';
   const contextFile = 'ai/context/frontend.md';
   const featureDir = `docs/features/${feature}`;
   const featureSpecFile = `${featureDir}/spec.md`;
@@ -202,7 +203,7 @@ function buildBundle(feature, action, deltaFile, mode) {
     ];
   }
 
-  [promptFile, constitutionFile, workflowFile, contextMapFile].forEach(requireFile);
+  [promptFile, constitutionFile, workflowFile, contextMapFile, skillsFile].forEach(requireFile);
   if (agentFile) {
     requireFile(agentFile);
   }
@@ -215,7 +216,8 @@ function buildBundle(feature, action, deltaFile, mode) {
     },
     buildSection('SDD Constitution', constitutionFile),
     buildSection('SDD Workflow', workflowFile),
-    buildSection('SDD Context Map', contextMapFile)
+    buildSection('SDD Context Map', contextMapFile),
+    buildSection('SDD Skills Guide', skillsFile)
   ];
 
   if (exists(featureDir)) {

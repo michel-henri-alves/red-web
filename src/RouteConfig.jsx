@@ -7,6 +7,7 @@ import SectorPage from "./pages/sector/SectorPage";
 import SalesPage from "./pages/sales/SalesPage";
 import PosPage from "./pages/pos/PosPage";
 import CustomerPage from "./pages/customer/CustomerPage";
+import IssuePage from "./pages/issue/IssuePage";
 import PaymentPage from "./pages/sales/payment/PaymentPage";
 import BookletPage from "./pages/sales/booklet/BookletPage";
 import UserPage from "./pages/user/UserPage";
@@ -47,6 +48,7 @@ export default function RouteConfig() {
         />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/customers" element={<CustomerPage />} />
+        <Route path="/issues" element={<IssuePage />} />
         <Route path="/booklet" element={<BookletPage />} />
         <Route path="/users" element={<UserPage />} />
         <Route path="/change-password" element={<ChangeInitialPassword />} />

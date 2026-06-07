@@ -100,6 +100,23 @@ Frontend SDD plans should include:
 
 Use `npm run sdd:run -- <feature-id>` to record verification evidence. The report is compact by default; use `SDD_RUN_OUTPUT=full` only when complete logs are necessary.
 
+### High-Impact Documentation Gate
+Feature specs must classify impact with `Impact Classification`. High-impact frontend features include new domains/workflows, domain data assumption changes, public backend/frontend contract changes, auth/tenant/role/session changes, POS/payment/data-loss flows, durable project memory changes, and reusable architecture patterns.
+
+For high-impact features, the SDD Planner must include canonical documentation updates in `plan.md` and `tasks.md`. Before closure, impacted `docs/specs/{domain}.spec.md`, `docs/tasks/{domain}.tasks.md`, and `docs/memory/project.memory.md` entries must exist or be explicitly documented as not applicable.
+
+### SDD Skills
+Project-specific skills live in `ai/skills/{skill}/SKILL.md` and are indexed by `docs/sdd/skills.md`. Agents keep their role and load only the matching skill when specialized guidance applies.
+
+Current skills:
+- `red-web-domain-workflow`: pages, routes, menu entries, API modules, hooks, forms, lists, details, locales, and canonical frontend domain docs.
+- `red-web-api-contract`: backend/frontend payloads, filters, pagination, status/error handling, API wrappers, hooks, and contract checks.
+- `red-web-auth-session-tenant`: login, auth context, token/session behavior, protected routes, roles, tenant/company context, and headers.
+- `red-web-ui-state-accessibility`: UI states, i18n, accessibility, responsive layout, forms, and user-facing interactions.
+- `red-web-react-query-testing`: Vitest, Testing Library, React Query tests, API mocks, async UI, and regression coverage.
+- `red-web-build-deploy-config`: Vite env vars, `VITE_API_BASE_URL`, API base URL resolution, production bundle behavior, deploy docs, and CI build wiring.
+- `red-web-sdd-documentation-gate`: impact classification, high-impact canonical docs, project memory, context map, workflow, and evaluation updates.
+
 ## Development Practices
 - Prefer existing components, hooks, API wrappers, and styling conventions.
 - Keep UI states explicit: loading, error, empty, and success when applicable.

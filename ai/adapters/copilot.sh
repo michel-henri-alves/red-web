@@ -81,6 +81,7 @@ esac
 CONSTITUTION_FILE="docs/sdd/constitution.md"
 WORKFLOW_FILE="docs/sdd/workflow.md"
 CONTEXT_MAP_FILE="docs/sdd/context-map.md"
+SKILLS_FILE="docs/sdd/skills.md"
 CONTEXT_FILE="ai/context/frontend.md"
 FEATURE_DIR="docs/features/${FEATURE}"
 FEATURE_SPEC_FILE="${FEATURE_DIR}/spec.md"
@@ -89,7 +90,7 @@ FEATURE_TASKS_FILE="${FEATURE_DIR}/tasks.md"
 DOMAIN_SPEC_FILE="docs/specs/${FEATURE}.spec.md"
 DOMAIN_TASKS_FILE="docs/tasks/${FEATURE}.tasks.md"
 
-for file in "$PROMPT_FILE" "$CONSTITUTION_FILE" "$WORKFLOW_FILE" "$CONTEXT_MAP_FILE"; do
+for file in "$PROMPT_FILE" "$CONSTITUTION_FILE" "$WORKFLOW_FILE" "$CONTEXT_MAP_FILE" "$SKILLS_FILE"; do
   if [[ ! -f "$file" ]]; then
     echo "Required file not found: $file" >&2
     exit 1
@@ -198,6 +199,9 @@ $(cat "$WORKFLOW_FILE")
 
 ## SDD Context Map
 $(cat "$CONTEXT_MAP_FILE")
+
+## SDD Skills Guide
+$(cat "$SKILLS_FILE")
 
 ## AI Prompt
 $(cat "$PROMPT_FILE")

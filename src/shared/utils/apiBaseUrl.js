@@ -9,6 +9,7 @@ import {
 } from './authSession';
 
 export const resolveApiBaseURL = (env = import.meta.env) => {
+    console.log('API Base URL:', env.VITE_API_BASE_URL);
     if (env.VITE_API_BASE_URL) {
         return env.VITE_API_BASE_URL;
     }

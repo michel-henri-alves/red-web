@@ -56,7 +56,16 @@ Use the files in `ai/agents/` for role-specific SDD work:
 - `code-reviewer.md`
 - `performance-cost-reviewer.md`
 
-Use `docs/sdd/agents.md` for the recommended orchestration and MCP guidance.
+Use the files in `ai/skills/` for project-specific procedure guidance when the task matches:
+- `red-web-domain-workflow`
+- `red-web-api-contract`
+- `red-web-auth-session-tenant`
+- `red-web-ui-state-accessibility`
+- `red-web-react-query-testing`
+- `red-web-build-deploy-config`
+- `red-web-sdd-documentation-gate`
+
+Use `docs/sdd/agents.md` for orchestration, `docs/sdd/skills.md` for skill selection, and MCP guidance from the SDD docs.
 
 ## Quality Assurance
 

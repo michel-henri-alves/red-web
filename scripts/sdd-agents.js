@@ -3,6 +3,7 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const agentsDir = path.join(root, 'ai/agents');
+const skillsDir = path.join(root, 'ai/skills');
 
 const recommendedOrder = [
   'sdd-spec-reviewer.md',
@@ -21,6 +22,15 @@ function readAgentTitle(fileName) {
     ?.replace(/\s+/g, ' ');
 
   return { title, objective };
+}
+
+function readSkill(dirName) {
+  const relativePath = `ai/skills/${dirName}/SKILL.md`;
+  const content = fs.readFileSync(path.join(root, relativePath), 'utf8');
+  const name = content.match(/^name:\s*(.+)$/m)?.[1]?.trim() || dirName;
+  const description = content.match(/^description:\s*(.+)$/m)?.[1]?.trim() || '';
+
+  return { name, description, relativePath };
 }
 
 function main() {
@@ -52,6 +62,29 @@ function main() {
 
   console.log('');
   console.log('Orchestration guide: docs/sdd/agents.md');
+
+  if (fs.existsSync(skillsDir)) {
+    const skillDirs = fs.readdirSync(skillsDir, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .filter((dirName) => fs.existsSync(path.join(skillsDir, dirName, 'SKILL.md')))
+      .sort();
+
+    if (skillDirs.length) {
+      console.log('');
+      console.log('Project skills:');
+      skillDirs.forEach((dirName) => {
+        const skill = readSkill(dirName);
+        console.log(`- ${skill.name}`);
+        console.log(`  File: ${skill.relativePath}`);
+        if (skill.description) {
+          console.log(`  Description: ${skill.description}`);
+        }
+      });
+      console.log('');
+      console.log('Skill selection guide: docs/sdd/skills.md');
+    }
+  }
 }
 
 main();

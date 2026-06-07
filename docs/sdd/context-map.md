@@ -6,9 +6,11 @@ Use this map to choose context instead of loading the entire frontend repository
 - `docs/sdd/constitution.md`: mandatory project rules.
 - `docs/sdd/workflow.md`: feature workflow.
 - `docs/sdd/agents.md`: agent roles and handoff rules; load when delegating or reviewing SDD work.
+- `docs/sdd/skills.md`: project-specific skill roster; load when a task may need specialized frontend procedure guidance.
 - `docs/memory/project.memory.md`: durable project decisions; load only for cross-domain architecture questions.
 - `ai/context/frontend.md`: architecture summary; load only when implementation patterns are unclear.
 - `ai/agents/{agent}.md`: role-specific instructions; load only the agent being used.
+- `ai/skills/{skill}/SKILL.md`: specialized procedure guidance; load only when `docs/sdd/skills.md` maps the task to that skill.
 
 ## Domain Context
 - Specs live in `docs/specs/{domain}.spec.md`.
@@ -29,6 +31,7 @@ Use this map to choose context instead of loading the entire frontend repository
 For a new feature, include:
 - `docs/sdd/constitution.md`
 - the active `ai/agents/{agent}.md` file, when an agent role is being used
+- `docs/sdd/skills.md` and only the matching `ai/skills/{skill}/SKILL.md` files, when specialized skill guidance is relevant
 - `docs/features/{feature-id}/spec.md`
 - `docs/features/{feature-id}/tasks.md`
 - Domain spec and task file only for the impacted domain

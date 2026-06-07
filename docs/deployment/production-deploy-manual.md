@@ -266,12 +266,19 @@ AWS_REGION
 LAMBDA_FUNCTION_NAME
 ```
 
+Configure tambem `MONGO_URI` como variavel de ambiente da propria Lambda
+`red-backend`. Ela nao precisa ser enviada no pacote nem montada pelo codigo; o
+backend le `process.env.MONGO_URI` em runtime e falha rapido se a variavel nao
+existir.
+
 Exemplo:
 
 ```text
 AWS_DEPLOY_ROLE_ARN=arn:aws:iam::ACCOUNT_ID:role/github-actions-red-backend-deploy
 AWS_REGION=us-east-1
 LAMBDA_FUNCTION_NAME=red-backend
+Lambda environment variable:
+MONGO_URI=mongodb+srv://USER:PASSWORD@HOST/red_db?retryWrites=true&w=majority
 ```
 
 ### 6.3 red-web
@@ -300,6 +307,9 @@ URL exige novo build, upload do `dist/` e invalidacao do CloudFront.
 Recomendado: cadastre `VITE_API_BASE_URL` como GitHub Actions variable no
 environment `production`; ela nao precisa ser secret porque fica embutida no
 JavaScript publico do frontend.
+Para execucao local via `red-infra/.vscode/launch.json`, o `make start` usa
+`VITE_API_BASE_URL=http://192.168.1.167:3001`. Em producao, use
+`VITE_API_BASE_URL=https://1biotj4t46.execute-api.us-east-1.amazonaws.com`.
 
 ## 7. Workflows
 

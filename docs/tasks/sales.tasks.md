@@ -7,6 +7,7 @@
 - Sales detail cards and row actions
 - Backend pagination support via React Query
 - Role-based access for sales page
+- Payment flow supports mutually exclusive absolute or whole-percentage sale discounts
 
 ### 🔄 In Progress Features
 - None currently

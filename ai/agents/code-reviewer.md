@@ -18,6 +18,9 @@ Review implemented changes against the SDD spec and project constitution.
 - API payloads and response handling match backend contracts.
 - Loading, error, empty, and success states are handled.
 - Tests cover meaningful behavior.
+- High-impact features have updated canonical domain/workflow docs and project memory when required by `Impact Classification`.
+- New domains/workflows or domain model changes are reflected in `docs/specs/{domain}.spec.md` and `docs/tasks/{domain}.tasks.md`.
+- Durable architecture or domain-map changes are reflected in `docs/memory/project.memory.md`.
 - Code is readable, localized, and maintainable.
 - No unrelated refactors or accidental behavior changes.
 

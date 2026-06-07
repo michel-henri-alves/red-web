@@ -16,7 +16,11 @@
   - Agent: `implementation-engineer`
   - Depends on: T003
   - Verification: `npm run sdd:check`, `npm run test`, `npm run lint`, `npm run build`
-- [ ] T005 - REQ-FEATURE-001 Review the completed change for regressions and missing coverage.
-  - Agent: `code-reviewer`
+- [ ] T005 - REQ-FEATURE-001 Update canonical domain/workflow documentation and project memory when the feature is high impact.
+  - Agent: `sdd-planner`
   - Depends on: T004
+  - Verification: impacted `docs/specs/*`, `docs/tasks/*`, and `docs/memory/project.memory.md` entries exist or are documented as not applicable
+- [ ] T006 - REQ-FEATURE-001 Review the completed change for regressions, missing coverage, and missing high-impact documentation updates.
+  - Agent: `code-reviewer`
+  - Depends on: T005
   - Verification: review findings resolved or documented as residual risk
