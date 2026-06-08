@@ -7,15 +7,18 @@ export const create = (data) => axiosClient.post(DOMAIN, data);
 export const fetchByInternalId = (internalId) =>
     axiosClient.get(`${DOMAIN}/by-internalid/${internalId}`);
 
-export const fetchPaginated = (filter, page, limit = 10) =>
-    axiosClient.get(DOMAIN, {
-        params: {
-            internalId: filter,
-            workflow: filter,
-            page,
-            limit
-        }
-    });
+export const fetchPaginated = ({ workflow = "", risk = "", status = "" } = {}, page, limit = 10) => {
+    const params = {
+        page,
+        limit,
+    };
+
+    if (workflow) params.workflow = workflow;
+    if (risk) params.risk = risk;
+    if (status) params.status = status;
+
+    return axiosClient.get(DOMAIN, { params });
+};
 
 export const update = (id, data) => axiosClient.put(`${DOMAIN}/${id}`, data);
 

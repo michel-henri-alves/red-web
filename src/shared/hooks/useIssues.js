@@ -20,11 +20,11 @@ export const createIssue = () => {
     });
 };
 
-export const fetchAllIssuesPaginated = (filter, limit = 10) => {
+export const fetchAllIssuesPaginated = (filters, limit = 10) => {
     return useInfiniteQuery({
-        queryKey: ['issues-infinite', filter],
+        queryKey: ['issues-infinite', filters],
         queryFn: async ({ pageParam = 1 }) => {
-            const response = await fetchPaginated(filter, pageParam, limit);
+            const response = await fetchPaginated(filters, pageParam, limit);
             return response.data;
         },
         initialPageParam: 1,

@@ -38,7 +38,7 @@ export default function IssueButtons({ issue }) {
 
     return (
         <div className="mt-4 flex justify-end space-x-2">
-            <ActionButton onClick={() => openDeleteModal(issue)} bgColor="[rgba(98,70,234)]" text={t("button.delete")} icon={Trash2} />
+            {/* <ActionButton onClick={() => openDeleteModal(issue)} bgColor="[rgba(98,70,234)]" text={t("button.delete")} icon={Trash2} /> */}
             <ActionButton onClick={() => openUpdateModal(issue)} bgColor="[rgba(98,70,234)]" text={t("button.update")} icon={NotebookPen} />
 
             <Modal

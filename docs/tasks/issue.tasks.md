@@ -5,7 +5,7 @@
 ### Completed Features
 - Issue management page with paginated list view.
 - Issue details expansion.
-- Issue internal id/workflow filtering.
+- Issue workflow, risk, and status filtering.
 - Issue create, update, and delete actions.
 - Sidebar and authenticated route access.
 - Structured issue metadata formatting for list details and edit forms.
@@ -17,7 +17,7 @@
 ### Backlog Features
 
 #### Issue Management
-- [ ] Replace free-text risk/status fields with select controls if backend enums are published.
+- [ ] Replace free-text status fields with select controls if backend enums are published.
 - [ ] Add exact internal id lookup screen if product workflow requires direct lookup.
 - [ ] Add issue assignment or ownership when backend exposes those fields.
 

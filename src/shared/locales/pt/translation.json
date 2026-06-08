@@ -105,6 +105,7 @@
     "issue.risk": "risco",
     "issue.status": "status",
     "issue.sponsor": "responsável",
+    "issue.action": "ação",
     "issue.metadata": "metadados",
     "issue.noInternalId": "sem identificador",
     "booklet.title": "Caderneta de {{customerName}}",
@@ -261,5 +262,14 @@
     "phone": "telefone",
     "address": "endereço",
     "email": "email",
-    "birth": "data de nascimento"
+    "birth": "data de nascimento",
+
+    "OPEN": "Aberto",
+    "DOING": "Em andamento",
+    "TREATED": "Resolvido",
+
+    "INFO": "Informação",
+    "WARN": "Aviso",
+    "ERROR": "Problema",
+    "all": "Todos"
 }

@@ -1,0 +1,46 @@
+# Change input filter by internalId to name and add a new combo box input filter for filtering issue data by risk Tasks
+
+- [x] T001 - REQ-ISSUE-001 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run test -- IssueList.test.jsx`
+- [x] T002 - REQ-ISSUE-001 Implement: combo box input must have all values from Risk enum
+  - Agent: `implementation-engineer`
+  - Depends on: T001
+  - Verification: `npm run test -- IssueList.test.jsx`
+- [x] T003 - REQ-ISSUE-002 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run test -- IssueList.test.jsx`
+- [x] T004 - REQ-ISSUE-002 Implement: default value must be All
+  - Agent: `implementation-engineer`
+  - Depends on: T003
+  - Verification: `npm run test -- IssueList.test.jsx`
+- [x] T005 - REQ-ISSUE-003 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run test -- IssueApi.test.js`
+- [x] T006 - REQ-ISSUE-003 Implement: contracts must be updated
+  - Agent: `implementation-engineer`
+  - Depends on: T005
+  - Verification: `npm run test -- IssueApi.test.js`
+- [x] T007 - REQ-ISSUE-001 Run `npm run sdd:check`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run sdd:check` exits with status 0
+- [x] T008 - REQ-ISSUE-001 Run `npm run lint`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run lint` exits with status 0
+- [x] T009 - REQ-ISSUE-001 Run `npm run build`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run build` exits with status 0
+- [x] T010 - REQ-ISSUE-001 Run `npm run test`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run test` exits with status 0
+- [x] T011 - REQ-ISSUE-003 Run `npm run contracts:check`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run contracts:check` exits with status 0

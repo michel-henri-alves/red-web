@@ -22,8 +22,8 @@ export default function IssueDetails({ issue, isExpanded }) {
                         <div className="flex flex-wrap gap-3">
                             <InfoTag inputData={issue.internalId} label={t("issue.internalId")} />
                             <InfoTag inputData={issue.workflow} label={t("issue.workflow")} />
-                            <InfoTag inputData={issue.status} label={t("issue.status")} />
-                            <InfoTag inputData={issue.risk} label={t("issue.risk")} />
+                            <InfoTag inputData={t(issue.status)} label={t("issue.status")} />
+                            <InfoTag inputData={t(issue.risk)} label={t("issue.risk")} />
                             <InfoTag inputData={issue.sponsor} label={t("issue.sponsor")} />
                             <InfoTag inputData={issue.details} label={t("issue.details")} />
                             <InfoTag inputData={formatIssueMetadataForDisplay(issue.metadata)} label={t("issue.metadata")} />

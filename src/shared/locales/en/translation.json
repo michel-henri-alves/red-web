@@ -43,6 +43,7 @@
     "issue.risk": "risk",
     "issue.status": "status",
     "issue.sponsor": "sponsor",
+    "issue.action": "action",
     "issue.metadata": "metadata",
     "issue.noInternalId": "no internal id",
     "issues.empty": "No issues added",
@@ -76,5 +77,6 @@
     "password.confirmation.mismatch": "password confirmation does not match",
     "invalid.current.password": "invalid current password",
     "user.not.found": "user not found",
-    "unexpected.error": "Unexpected error. Try again."
+    "unexpected.error": "Unexpected error. Try again.",
+    "all": "All"
 }

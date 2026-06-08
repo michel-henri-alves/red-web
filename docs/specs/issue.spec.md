@@ -13,11 +13,11 @@ The Issue domain in `red-web` supports authenticated management of backend issue
 ## Key User Stories
 - As an authenticated user, I can open Issues from the sidebar.
 - As an authenticated user, I can view a paginated issue list.
-- As an authenticated user, I can filter issues by internal id or workflow.
+- As an authenticated user, I can filter issues by workflow, risk, or status.
 - As an authenticated user, I can create, edit, and delete issues.
 
 ## Data and API
-- Fetch issues with `GET /issues?internalId={filter}&workflow={filter}&page={page}&limit={limit}`
+- Fetch issues with `GET /issues?workflow={workflow}&risk={risk}&status={status}&page={page}&limit={limit}`
 - Fetch an issue by internal id with `GET /issues/by-internalid/{internalId}`
 - Create issue with `POST /issues`
 - Update issue with `PUT /issues/{id}`
@@ -25,7 +25,7 @@ The Issue domain in `red-web` supports authenticated management of backend issue
 
 ## Behavior
 - Issue list uses the existing infinite pagination pattern.
-- Issue rows display `internalId` and `workflow` as the primary row title.
+- Issue rows display `workflow` as the primary row title.
 - Issue details display main issue fields plus audit metadata when available.
 - Issue metadata may be returned by the backend as plain text or as a structured object. Details must format structured metadata before rendering it; raw objects must never be passed directly as React children.
 - Issue API calls are made through `IssueApi`.
@@ -40,7 +40,8 @@ The Issue domain in `red-web` supports authenticated management of backend issue
 
 ## UI Patterns
 - Use `ExpandableTable` rows with expandable details.
-- Use `FilterBar` for the internal id/workflow filter.
+- Use `FilterBar` for the workflow filter.
+- Use a risk select filter containing `All`, `INFO`, `WARN`, and `ERROR`; `All` sends no risk filter.
 - Use modal forms for create and update actions.
 - Use project-standard success/error toasts for mutations.
 
