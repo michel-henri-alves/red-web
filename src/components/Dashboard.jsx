@@ -33,10 +33,10 @@ export default function Dashboard() {
   } = useLast5DaysSales();
 
   const news = [
-    { label: "Controle de Acesso", value: "1", icon: "🔑" },
-    { label: "Vendas do dia", value: "2", icon: "📆" },
-    { label: "Vendas dos últimos 5 dias", value: "3", icon: "🗓" },
-    { label: "Cadastro de usuários", value: "4", icon: "👨‍🦱" },
+    { label: "Descontos por porcentagem", value: "1", icon: "%" },
+    { label: "Listagem de ocorrências", value: "2", icon: "📢" },
+    { label: "Vendas até o limite", value: "4", icon: "⚠️" },
+    { label: "Vendas além do limite do estoque", value: "3", icon: "🚨" },
   ];
 
   const comingSoon = [

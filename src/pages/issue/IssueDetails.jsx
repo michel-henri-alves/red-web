@@ -26,6 +26,7 @@ export default function IssueDetails({ issue, isExpanded }) {
                             <InfoTag inputData={t(issue.risk)} label={t("issue.risk")} />
                             <InfoTag inputData={issue.sponsor} label={t("issue.sponsor")} />
                             <InfoTag inputData={issue.details} label={t("issue.details")} />
+                            <InfoTag inputData={issue.action} label={t("issue.action")} />
                             <InfoTag inputData={formatIssueMetadataForDisplay(issue.metadata)} label={t("issue.metadata")} />
                             <InfoTag inputData={issue.createdBy} label={t("created.by")} />
                             <InfoTag inputData={formatDate(issue.createdAt)} label={t("created.at")} />

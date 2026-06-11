@@ -43,7 +43,7 @@ export default function MenuResponsive({ user = null, onLogout = () => { } }) {
     const navItems = useMemo(() => ([
         { name: t("sidebar.home"), icon: Home, path: "/", roles: undefined },
         { name: t("sidebar.products"), icon: Package, path: "/products", roles: ["admin", "seller"] },
-        // { name: t("sidebar.sectors"), icon: LayoutDashboard, path: "/sectors", roles: ["admin"] },
+        { name: t("sidebar.sectors"), icon: LayoutDashboard, path: "/sectors", roles: ["admin"] },
         { name: t("sidebar.sales"), icon: ShoppingCart, path: "/sales", roles: ["admin", "seller", "cashier"] },
         { name: t("sidebar.customers"), icon: Handshake, path: "/customers", roles: ["admin", "seller"] },
         { name: t("sidebar.issues"), icon: CircleAlert, path: "/issues", roles: ["admin", "seller"] },

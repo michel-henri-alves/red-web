@@ -22,8 +22,9 @@ export default function CustomerList(
     const loaderRef = useRef(null);
 
     const setRowTitle = (customer) => {
-        const nickname = `"${customer.nickname}"`
-        return customer.name + (customer.nickname ? " " + nickname : "");
+        const secondaryName = customer.fantasyName || customer.nickname;
+        const secondaryTitle = `"${secondaryName}"`;
+        return customer.name + (secondaryName ? " " + secondaryTitle : "");
     }
 
     useEffect(() => {

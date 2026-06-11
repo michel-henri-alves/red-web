@@ -15,6 +15,7 @@ The Customer domain in `red-web` supports customer listing, detail view, creatio
 - As a user, I can view a paginated list of customers
 - As a user, I can filter customers by name
 - As a user, I can create and edit customer records
+- As a user, I can choose whether a new customer is Pessoa Física (PF) or Pessoa Jurídica (PJ)
 - As a user, I can open a customer booklet to see pending accounts
 
 ## Data and API
@@ -22,6 +23,9 @@ The Customer domain in `red-web` supports customer listing, detail view, creatio
 - Create customer with `POST /customers`
 - Update customer with `PUT /customers/{id}`
 - Delete customer with `DELETE /customers/{id}`
+- Customer payloads include `customerType` with `PF` or `PJ`
+- PF customers use the default customer fields: smart code, name, nickname, phone, address, email, and birth date
+- PJ customers use enterprise fields: smart code, name, fantasy name, CNPJ, address, CEP, phone 1, phone 2, website, email, and optional nested contact `{ name, phone, email }`
 
 ## Behavior
 - Customer list uses infinite scrolling or pagination patterns
@@ -31,6 +35,8 @@ The Customer domain in `red-web` supports customer listing, detail view, creatio
 
 ## Validation
 - Forms should validate required fields: name, email, phone
+- PF creation validates the existing required default fields
+- PJ creation validates name, CNPJ, address, CEP, phone 1, and email; contact name/phone/email are optional
 - Frontend validation should align with backend rules for uniqueness and formats
 - Friendly user feedback on validation errors is required
 

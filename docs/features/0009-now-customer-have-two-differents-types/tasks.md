@@ -1,0 +1,50 @@
+# Now customer have two differents types Tasks
+
+- [x] T001 - REQ-CUSTOMER-001 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run test -- src/pages/customer/CustomerCreate.test.jsx src/pages/customer/CustomerForm.test.jsx`
+- [x] T002 - REQ-CUSTOMER-001 Implement: - User will select a type of customer Pessoa Fisica or Pessoa Juridica
+  - Agent: `implementation-engineer`
+  - Depends on: T001
+  - Verification: focused verification from T001
+- [x] T003 - REQ-CUSTOMER-002 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run test -- src/pages/customer/CustomerCreate.test.jsx src/pages/customer/CustomerForm.test.jsx`
+- [x] T004 - REQ-CUSTOMER-002 Implement: At creation form if Pessoa Fisica selected then default form will be shown
+  - Agent: `implementation-engineer`
+  - Depends on: T003
+  - Verification: focused verification from T003
+- [x] T005 - REQ-CUSTOMER-003 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run test -- src/pages/customer/CustomerCreate.test.jsx src/pages/customer/CustomerForm.test.jsx`
+- [x] T006 - REQ-CUSTOMER-003 Implement: Case Pessoa Juridica was selected then will appers a form with the following parameters: smartCode, name*, fantasy name, cnpj*, address*, cep*(brazilian postal code), phone 1*, phone 2, website, email* (parameters with * are required) and an optional subobject named contact. Contact will be a person thats wil represents the customer enterprise. Your parameters will be name, phone and email, visually separated from the enterprise fields.
+  - Agent: `implementation-engineer`
+  - Depends on: T005
+  - Verification: focused verification from T005
+- [x] T007 - REQ-CUSTOMER-004 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run test -- src/pages/customer/CustomerCreate.test.jsx src/pages/customer/CustomerForm.test.jsx`
+- [x] T008 - REQ-CUSTOMER-004 Implement: only forms will be diferent, list page will be the same where each register will shown your own data
+  - Agent: `implementation-engineer`
+  - Depends on: T007
+  - Verification: focused verification from T007
+- [x] T009 - REQ-CUSTOMER-001 Run `npm run sdd:check`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run sdd:check` exits with status 0
+- [x] T010 - REQ-CUSTOMER-001 Run `npm run lint`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run lint` exits with status 0
+- [x] T011 - REQ-CUSTOMER-001 Run `npm run build`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run build` exits with status 0
+- [x] T012 - REQ-CUSTOMER-001 Run `npm run test`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run test` exits with status 0

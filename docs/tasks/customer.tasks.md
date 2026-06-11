@@ -5,6 +5,8 @@
 ### ✅ Completed Features
 - Customer page and list view
 - Customer create/edit form
+- Customer create flow supports PF/PJ type selection
+- PJ customer form captures enterprise and nested contact data
 - Customer detail component
 - Customer booklet entry point
 - Filter and search support
