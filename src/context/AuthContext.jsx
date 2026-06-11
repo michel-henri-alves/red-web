@@ -57,6 +57,10 @@ export function AuthProvider({ children }) {
     // const tenant = input.user.tenantId;
     const userData = input.user;
 
+    if (!jwt) {
+      throw new Error("Login requires an access token");
+    }
+
     persistAuthSession({ accessToken: jwt, user: userData });
     // localStorage.setItem("tenantId", tenant);
 

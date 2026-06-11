@@ -12,6 +12,17 @@ const schema = z.object({
   password: z.string().min(8, "Mínimo 6 caracteres"),
 });
 
+export const normalizeLoginResponseData = (data) => {
+  const payload = typeof data?.body === "string"
+    ? JSON.parse(data.body)
+    : data?.body || data;
+
+  return {
+    accessToken: payload?.accessToken || payload?.token,
+    user: payload?.user,
+  };
+};
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -32,11 +43,16 @@ export default function LoginPage() {
       setError(null);
 
       const response = await executeLogin(data);
-      // login(response.data.accessToken);
-      login(response.data);
+      const loginData = normalizeLoginResponseData(response.data);
+
+      if (!loginData.accessToken) {
+        throw new Error("Login response missing access token");
+      }
+
+      login(loginData);
 
       navigate(
-        mustChangeInitialPassword(response.data?.user) ? "/change-password" : "/",
+        mustChangeInitialPassword(loginData.user) ? "/change-password" : "/",
         { replace: true }
       );
 

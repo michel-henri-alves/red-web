@@ -66,6 +66,46 @@ describe('axiosClient auth session handling', () => {
         expect(requestHeaders['x-username']).toBeUndefined();
     });
 
+    it('allows login requests without a stored token', async () => {
+        let requestHeaders;
+        axiosClient.defaults.adapter = async (config) => {
+            requestHeaders = config.headers;
+            return {
+                config,
+                data: {},
+                headers: {},
+                request: {},
+                status: 200,
+                statusText: 'OK',
+            };
+        };
+
+        await axiosClient.post('/users/login', { email: 'user@example.com', password: 'password123' });
+
+        expect(requestHeaders.Authorization).toBeUndefined();
+    });
+
+    it('cancels private requests when no stored token exists', async () => {
+        let adapterCalled = false;
+        axiosClient.defaults.adapter = async (config) => {
+            adapterCalled = true;
+            return {
+                config,
+                data: {},
+                headers: {},
+                request: {},
+                status: 200,
+                statusText: 'OK',
+            };
+        };
+
+        await expect(axiosClient.get('/dashboard/sales/total-today')).rejects.toMatchObject({
+            message: 'Authentication required',
+        });
+
+        expect(adapterCalled).toBe(false);
+    });
+
     it('uses the configured API base URL for production builds', () => {
         expect(resolveApiBaseURL({
             DEV: false,

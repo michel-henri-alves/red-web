@@ -24,6 +24,10 @@ const axiosClient = axios.create({
     }
 });
 
+const PUBLIC_PATHS = ["/users/login"];
+
+const isPublicRequest = (url = "") => PUBLIC_PATHS.some((path) => url.startsWith(path));
+
 axiosClient.interceptors.request.use((config) => {
     if (hasExpiredSession()) {
         clearAuthSession();
@@ -35,6 +39,10 @@ axiosClient.interceptors.request.use((config) => {
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+    } else if (!isPublicRequest(config.url)) {
+        clearAuthSession();
+        window.location.href = "/login";
+        return Promise.reject(new axios.CanceledError("Authentication required"));
     }
 
     return config;
