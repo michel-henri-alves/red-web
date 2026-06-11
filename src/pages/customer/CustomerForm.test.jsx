@@ -38,7 +38,38 @@ describe("CustomerForm", () => {
 
     expect(screen.getByText(/customer.type.pf/)).toBeInTheDocument();
     expect(screen.getByPlaceholderText("customer.nickname")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("customer.cpf")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("customer.cep")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("customer.phone2")).toBeInTheDocument();
     expect(screen.queryByPlaceholderText("customer.cnpj")).not.toBeInTheDocument();
+  });
+
+  it("masks CPF and CEP on PF form and submits only digits", async () => {
+    createMutation.mockResolvedValue({});
+    createCustomer.mockReturnValue({ mutateAsync: createMutation, isLoading: false });
+    updateCustomer.mockReturnValue({ mutateAsync: updateMutation });
+
+    render(<CustomerForm customer={{ customerType: "PF" }} />);
+
+    fireEvent.change(screen.getByPlaceholderText("customer.name"), { target: { value: "Jane Doe" } });
+    fireEvent.change(screen.getByPlaceholderText("customer.cpf"), { target: { value: "12345678901" } });
+    fireEvent.change(screen.getByPlaceholderText("customer.phone"), { target: { value: "11999999999" } });
+    fireEvent.change(screen.getByPlaceholderText("customer.phone2"), { target: { value: "11888888888" } });
+    fireEvent.change(screen.getByPlaceholderText("customer.address"), { target: { value: "Rua Central, 10" } });
+    fireEvent.change(screen.getByPlaceholderText("customer.cep"), { target: { value: "12345678" } });
+
+    expect(screen.getByPlaceholderText("customer.cpf")).toHaveValue("123.456.789-01");
+    expect(screen.getByPlaceholderText("customer.cep")).toHaveValue("12345-678");
+
+    fireEvent.click(screen.getByRole("button", { name: /button.save/i }));
+
+    await waitFor(() => expect(createMutation).toHaveBeenCalledWith(expect.objectContaining({
+      customerType: "PF",
+      cpf: "12345678901",
+      phone2: "11888888888",
+      cep: "12345678",
+    })));
+    expect(createMutation.mock.calls[0][0].cnpj).toBeUndefined();
   });
 
   it("submits PJ fields with a nested contact object", async () => {
@@ -60,6 +91,9 @@ describe("CustomerForm", () => {
     fireEvent.change(screen.getByPlaceholderText("customer.contact.name"), { target: { value: "Maria" } });
     fireEvent.change(screen.getByPlaceholderText("customer.contact.phone"), { target: { value: "11888888888" } });
     fireEvent.change(screen.getByPlaceholderText("customer.contact.email"), { target: { value: "maria@example.com" } });
+
+    expect(screen.getByPlaceholderText("customer.cnpj")).toHaveValue("12.345.678/0001-90");
+    expect(screen.getByPlaceholderText("customer.cep")).toHaveValue("12345-678");
 
     fireEvent.click(screen.getByRole("button", { name: /button.save/i }));
 

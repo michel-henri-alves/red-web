@@ -25,12 +25,12 @@ customer CRUD
 ## API/Data Contracts
 - Customer creation and update continue to use the existing `POST /customers` and `PUT /customers/{id}` contracts through `src/shared/api/CustomerApi.js`.
 - Submitted payloads include `customerType` with `PF` or `PJ`.
-- PF payloads preserve the existing default customer fields.
+- PF payloads preserve the existing default customer fields and may include optional `cpf`, `cep`, and `phone2`.
 - PJ payloads include `smartCode`, `name`, `fantasyName`, `cnpj`, `address`, `cep`, `phone`, `phone2`, `website`, `email`, and optional nested `contact: { name, phone, email }`.
 
 ## Requirements
 - REQ-CUSTOMER-001: - User will select a type of customer Pessoa Fisica or Pessoa Juridica
-- REQ-CUSTOMER-002: At creation form if Pessoa Fisica selected then default form will be shown
+- REQ-CUSTOMER-002: At creation form if Pessoa Fisica selected then default form will be shown with optional CPF, CEP, and phone 2 fields
 - REQ-CUSTOMER-003: Case Pessoa Juridica was selected then will appers a form with the following parameters: smartCode, name*, fantasy name, cnpj*, address*, cep*(brazilian postal code), phone 1*, phone 2, website, email* (parameters with * are required) and an optional subobject named contact. Contact will be a person thats wil represents the customer enterprise. Your parameters will be name, phone and email, visually separated from the enterprise fields.
 - REQ-CUSTOMER-004: only forms will be diferent, list page will be the same where each register will shown your own data
 

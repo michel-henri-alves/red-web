@@ -25,6 +25,7 @@ export default function CustomerDetails({ customer, isExpanded }) {
                             <InfoTag inputData={t(customerType === "PJ" ? "customer.type.pj" : "customer.type.pf")} label={t("customer.type")} />
                             <InfoTag inputData={customer.name} label={t("customer.name")} />
                             <InfoTag inputData={customer.nickname} label={t("customer.nickname")} />
+                            <InfoTag inputData={customer.cpf} label={t("customer.cpf")} />
                             <InfoTag inputData={customer.fantasyName} label={t("customer.fantasyName")} />
                             <InfoTag inputData={customer.barcode} label={t("customer.barcode")} />
                             <InfoTag inputData={customer.smartCode} label={t("customer.smartCode")} />

@@ -24,7 +24,7 @@ The Customer domain in `red-web` supports customer listing, detail view, creatio
 - Update customer with `PUT /customers/{id}`
 - Delete customer with `DELETE /customers/{id}`
 - Customer payloads include `customerType` with `PF` or `PJ`
-- PF customers use the default customer fields: smart code, name, nickname, phone, address, email, and birth date
+- PF customers use the default customer fields: smart code, name, nickname, phone, address, email, birth date, plus optional CPF, CEP, and phone 2
 - PJ customers use enterprise fields: smart code, name, fantasy name, CNPJ, address, CEP, phone 1, phone 2, website, email, and optional nested contact `{ name, phone, email }`
 
 ## Behavior
@@ -35,8 +35,8 @@ The Customer domain in `red-web` supports customer listing, detail view, creatio
 
 ## Validation
 - Forms should validate required fields: name, email, phone
-- PF creation validates the existing required default fields
-- PJ creation validates name, CNPJ, address, CEP, phone 1, and email; contact name/phone/email are optional
+- PF creation validates the existing required default fields; CPF, CEP, and phone 2 are optional and CPF/CEP use Brazilian masks in the form
+- PJ creation validates name, CNPJ, address, CEP, phone 1, and email; CNPJ/CEP use Brazilian masks in the form and contact name/phone/email are optional
 - Frontend validation should align with backend rules for uniqueness and formats
 - Friendly user feedback on validation errors is required
 

@@ -12,7 +12,7 @@
   - Agent: `test-engineer`
   - Depends on: none
   - Verification: `npm run test -- src/pages/customer/CustomerCreate.test.jsx src/pages/customer/CustomerForm.test.jsx`
-- [x] T004 - REQ-CUSTOMER-002 Implement: At creation form if Pessoa Fisica selected then default form will be shown
+- [x] T004 - REQ-CUSTOMER-002 Implement: At creation form if Pessoa Fisica selected then default form will be shown with optional CPF, CEP, and phone 2 fields
   - Agent: `implementation-engineer`
   - Depends on: T003
   - Verification: focused verification from T003

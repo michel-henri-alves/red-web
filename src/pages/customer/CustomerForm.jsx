@@ -26,6 +26,31 @@ import {
 const CUSTOMER_TYPE_PF = "PF";
 const CUSTOMER_TYPE_PJ = "PJ";
 
+const onlyDigits = (value = "") => String(value).replace(/\D/g, "");
+
+const formatCpf = (value = "") => onlyDigits(value)
+    .slice(0, 11)
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+const formatCnpj = (value = "") => onlyDigits(value)
+    .slice(0, 14)
+    .replace(/(\d{2})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1/$2")
+    .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+
+const formatCep = (value = "") => onlyDigits(value)
+    .slice(0, 8)
+    .replace(/(\d{5})(\d{1,3})$/, "$1-$2");
+
+const maskedFields = {
+    cpf: formatCpf,
+    cnpj: formatCnpj,
+    cep: formatCep,
+};
+
 const getCustomerType = (customer = {}) => (
     customer.customerType || customer.type || (customer.cnpj || customer.contact ? CUSTOMER_TYPE_PJ : CUSTOMER_TYPE_PF)
 );
@@ -33,6 +58,9 @@ const getCustomerType = (customer = {}) => (
 const getInitialCustomerData = (customer = {}) => ({
     ...customer,
     customerType: getCustomerType(customer),
+    cpf: customer.cpf ? formatCpf(customer.cpf) : "",
+    cnpj: customer.cnpj ? formatCnpj(customer.cnpj) : "",
+    cep: customer.cep ? formatCep(customer.cep) : "",
     contactName: customer.contact?.name || customer.contactName || "",
     contactPhone: customer.contact?.phone || customer.contactPhone || "",
     contactEmail: customer.contact?.email || customer.contactEmail || "",
@@ -49,8 +77,12 @@ const buildCustomerPayload = (data, customerType) => {
     } = data;
 
     payload.customerType = customerType;
+    payload.cpf = onlyDigits(payload.cpf);
+    payload.cnpj = onlyDigits(payload.cnpj);
+    payload.cep = onlyDigits(payload.cep);
 
     if (customerType === CUSTOMER_TYPE_PJ) {
+        delete payload.cpf;
         const contactPayload = {
             name: contactName,
             phone: contactPhone,
@@ -61,8 +93,6 @@ const buildCustomerPayload = (data, customerType) => {
         }
     } else {
         delete payload.cnpj;
-        delete payload.cep;
-        delete payload.phone2;
         delete payload.website;
         delete payload.fantasyName;
         delete payload.contact;
@@ -87,8 +117,11 @@ export default function CustomerForm({ onClose, customer = {} }) {
         { name: "smartCode", label: t("customer.barcode"), type: "text", icon: ScanBarcode, maxLength: 50 },
         { name: "name", label: t("customer.name"), type: "text", icon: User, required: true, maxLength: 80 },
         { name: "nickname", label: t("customer.nickname"), type: "text", icon: User, maxLength: 100 },
+        { name: "cpf", label: t("customer.cpf"), type: "text", icon: Hash, minLength: 14, maxLength: 14 },
         { name: "phone", label: t("customer.phone"), type: "text", icon: Phone, required: true, maxLength: 11 },
+        { name: "phone2", label: t("customer.phone2"), type: "text", icon: Phone, maxLength: 11 },
         { name: "address", label: t("customer.address"), type: "text", icon: MapPinHouse, required: true, maxLength: 200 },
+        { name: "cep", label: t("customer.cep"), type: "text", icon: MapPinHouse, minLength: 9, maxLength: 9 },
         { name: "email", label: t("customer.email"), type: "text", icon: AtSign, maxLength: 60 },
         { name: "birth", label: t("customer.birth"), type: "date", icon: Cake },
     ];
@@ -97,9 +130,9 @@ export default function CustomerForm({ onClose, customer = {} }) {
         { name: "smartCode", label: t("customer.smartCode"), type: "text", icon: ScanBarcode, maxLength: 50 },
         { name: "name", label: t("customer.name"), type: "text", icon: Building2, required: true, maxLength: 80 },
         { name: "fantasyName", label: t("customer.fantasyName"), type: "text", icon: Building2, maxLength: 100 },
-        { name: "cnpj", label: t("customer.cnpj"), type: "text", icon: Hash, required: true, maxLength: 14 },
+        { name: "cnpj", label: t("customer.cnpj"), type: "text", icon: Hash, required: true, minLength: 18, maxLength: 18 },
         { name: "address", label: t("customer.address"), type: "text", icon: MapPinHouse, required: true, maxLength: 200 },
-        { name: "cep", label: t("customer.cep"), type: "text", icon: MapPinHouse, required: true, maxLength: 8 },
+        { name: "cep", label: t("customer.cep"), type: "text", icon: MapPinHouse, required: true, minLength: 9, maxLength: 9 },
         { name: "phone", label: t("customer.phone1"), type: "text", icon: Phone, required: true, maxLength: 11 },
         { name: "phone2", label: t("customer.phone2"), type: "text", icon: Phone, maxLength: 11 },
         { name: "website", label: t("customer.website"), type: "text", icon: Globe, maxLength: 120 },
@@ -140,6 +173,24 @@ export default function CustomerForm({ onClose, customer = {} }) {
 
     useEffect(() => inputRef.current?.focus(), []);
     const fieldsFilled = Object.values(form).filter(Boolean).length;
+    const handleFieldChange = (event) => {
+        const formatter = maskedFields[event.target.name];
+        if (!formatter) {
+            handleChange(event);
+            return;
+        }
+
+        handleChange({
+            ...event,
+            target: {
+                name: event.target.name,
+                type: event.target.type,
+                checked: event.target.checked,
+                value: formatter(event.target.value),
+            },
+        });
+    };
+
     const renderField = (field, idx) => (
         <FormInput
             key={field.name}
@@ -147,7 +198,7 @@ export default function CustomerForm({ onClose, customer = {} }) {
             name={field.name}
             value={form[field.name] || ""}
             placeholder={field.label}
-            onChange={handleChange}
+            onChange={handleFieldChange}
             onBlur={handleBlur}
             errors={touched[field.name] && errors[field.name]}
             icon={field.icon}
