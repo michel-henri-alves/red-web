@@ -12,7 +12,7 @@ proximo disso.
 Fluxo recomendado para producao:
 
 ```text
-merge/push main
+merge/push master
   -> red-database: migrations no MongoDB Atlas
   -> red-backend: CI + deploy da Lambda
   -> red-web: CI + build + upload S3 + invalidacao CloudFront
@@ -56,7 +56,7 @@ GitHub repo -> Settings -> Environments -> New environment -> production
 Recomendado:
 
 - habilitar aprovacao manual para deploy;
-- restringir deployment branch para `main`;
+- restringir deployment branch para `master`;
 - cadastrar os secrets dentro do environment `production`.
 
 ## 4. MongoDB Atlas
@@ -130,7 +130,7 @@ Crie uma role propria:
 github-actions-red-backend-deploy
 ```
 
-Trust policy por branch `main`:
+Trust policy por branch `master`:
 
 ```json
 {
@@ -145,7 +145,7 @@ Trust policy por branch `main`:
       "Condition": {
         "StringEquals": {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:sub": "repo:GITHUB_OWNER/red-backend:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub": "repo:GITHUB_OWNER/red-backend:ref:refs/heads/master"
         }
       }
     }
@@ -179,7 +179,7 @@ Crie outra role:
 github-actions-red-web-deploy
 ```
 
-Trust policy por branch `main`:
+Trust policy por branch `master`:
 
 ```json
 {
@@ -194,7 +194,7 @@ Trust policy por branch `main`:
       "Condition": {
         "StringEquals": {
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:sub": "repo:GITHUB_OWNER/red-web:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub": "repo:GITHUB_OWNER/red-web:ref:refs/heads/master"
         }
       }
     }
@@ -322,7 +322,7 @@ name: Deploy Database
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
@@ -353,7 +353,7 @@ O workflow `red-backend/.github/workflows/ci.yml` deve:
 - rodar `npm run openapi:check`;
 - rodar `npm run lint`;
 - rodar `npm run test:coverage`;
-- em `push` para `main`, assumir a role AWS via OIDC;
+- em `push` para `master`, assumir a role AWS via OIDC;
 - empacotar a Lambda;
 - executar `aws lambda update-function-code`.
 
@@ -365,12 +365,16 @@ O workflow `red-web/.github/workflows/sdd-ci.yml` deve:
 - rodar `npm run contracts:check`;
 - rodar `npm run test`;
 - rodar `npm run build`;
-- em `push` para `main`, publicar `dist/` no S3;
+- no job de deploy, reconstruir o bundle com as variables/secrets do environment
+  `production`;
+- em `push` para `master`, publicar `dist/` no S3;
+- enviar HTML e arquivos de entrada com `Cache-Control: no-cache,no-store,must-revalidate`;
+- enviar assets versionados de `dist/assets/` com `Cache-Control: public,max-age=31536000,immutable`;
 - invalidar o cache do CloudFront.
 
 ## 8. Como Ativar o Deploy
 
-O deploy e ativado quando o workflow esta commitado na branch `main`.
+O deploy e ativado quando o workflow esta commitado na branch `master`.
 
 Backend:
 
@@ -378,7 +382,7 @@ Backend:
 cd /home/michel/git/michel/red/red-backend
 git add .github/workflows/ci.yml
 git commit -m "ci: add production backend deploy pipeline"
-git push origin main
+git push origin master
 ```
 
 Frontend:
@@ -387,7 +391,7 @@ Frontend:
 cd /home/michel/git/michel/red/red-web
 git add .github/workflows/sdd-ci.yml
 git commit -m "ci: add production frontend deploy pipeline"
-git push origin main
+git push origin master
 ```
 
 Database:
@@ -396,7 +400,7 @@ Database:
 cd /home/michel/git/michel/red/red-database
 git add .github/workflows/deploy-database.yml scripts/run-migrations.js
 git commit -m "ci: add production database migration pipeline"
-git push origin main
+git push origin master
 ```
 
 ## 9. Primeiro Deploy
@@ -406,7 +410,7 @@ Recomendado para o primeiro deploy:
 1. Confirme que todos os secrets existem.
 2. Confirme que o environment `production` existe.
 3. Confirme que as trust policies apontam para o owner/repo corretos.
-4. Faca um push pequeno para `main`.
+4. Faca um push pequeno para `master`.
 5. Abra `GitHub -> Actions`.
 6. Acompanhe o workflow.
 7. Se houver aprovacao manual, clique em `Review deployments` e aprove.
@@ -441,7 +445,7 @@ Verifique:
 - trust policy da role;
 - `GITHUB_OWNER`;
 - nome do repositorio;
-- branch `main`;
+- branch `master`;
 - se o workflow usa `environment: production`.
 
 ### S3 AccessDenied
@@ -459,6 +463,20 @@ Verifique:
 - `CLOUDFRONT_DISTRIBUTION_ID`;
 - ARN da distribution na inline policy;
 - permissao `cloudfront:CreateInvalidation`.
+
+### 401 apos login no dashboard
+
+Se a aba anonima funciona, mas o navegador normal recebe 401 em
+`/dashboard/sales/total-today` ou `/dashboard/sales/last-5-days`, verifique:
+
+- se `localStorage.token` existe apos login;
+- se a request do dashboard no DevTools envia `Authorization: Bearer ...`;
+- se o bundle carregado e o mais recente apos invalidacao do CloudFront;
+- se `VITE_API_BASE_URL` aponta direto para o API Gateway ou para um CloudFront
+  de API que encaminha o header `Authorization`;
+- se o CloudWatch mostra `Authorization header missing` ou `Invalid or expired
+  token`. Header ausente indica problema antes da Lambda; token invalido indica
+  problema de segredo/expiracao/formato do JWT.
 
 ### MongoDB timeout ou network error
 

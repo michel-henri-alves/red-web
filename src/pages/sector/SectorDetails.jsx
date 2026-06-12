@@ -7,6 +7,7 @@ import InfoTag from '../../components/InfoTag';
 
 export default function SectorDetails({ sector, isExpanded }) {
     const { t } = useTranslation();
+    const contact = sector.contact || {};
 
     return (
         <AnimatePresence>
@@ -24,6 +25,12 @@ export default function SectorDetails({ sector, isExpanded }) {
                             <InfoTag inputData={sector.updatedBy} label={t("updated.by")} />
                             <InfoTag inputData={formatDate(sector.updatedAt)} label={t("updated.at")} />
                             <InfoTag inputData={sector.smartCode} label={t("sector.barcode")} />
+                            <InfoTag inputData={sector.type} label={t("sector.type")} />
+                            <InfoTag inputData={sector.address} label={t("sector.address")} />
+                            <InfoTag inputData={sector.cep} label={t("sector.cep")} />
+                            <InfoTag inputData={contact.name} label={t("sector.contact.name")} />
+                            <InfoTag inputData={contact.phone} label={t("sector.contact.phone")} />
+                            <InfoTag inputData={contact.email} label={t("sector.contact.email")} />
                         </div>
                         <SectorButtons sector={sector} />
                     </div>

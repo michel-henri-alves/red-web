@@ -7,6 +7,7 @@
 - Sector creation form
 - Sector detail component
 - Name filtering support
+- Optional additional sector fields in create/edit forms and details
 
 ### 🔄 In Progress Features
 - None currently

@@ -1,0 +1,42 @@
+# Additional fields in Sector domain Tasks
+
+- [x] T001 - REQ-SECTOR-001 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run sdd:check`
+- [x] T002 - REQ-SECTOR-001 Implement: add this parameters to sector domain{"type": "string", "address": "string", "cep": "string", "contact": {"name": "string", "phone": "", "email": "string"}}
+  - Agent: `implementation-engineer`
+  - Depends on: T001
+  - Verification: focused verification from T001
+- [x] T003 - REQ-SECTOR-002 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run sdd:check`
+- [x] T004 - REQ-SECTOR-002 Implement: at forms this parameters input must be positioned inside a dropdown panel with title named "Additional data"
+  - Agent: `implementation-engineer`
+  - Depends on: T003
+  - Verification: focused verification from T003
+- [x] T005 - REQ-SECTOR-003 Add or update focused verification before implementation.
+  - Agent: `test-engineer`
+  - Depends on: none
+  - Verification: `npm run sdd:check`
+- [x] T006 - REQ-SECTOR-003 Implement: for each sector list items this new parameters only will be visible if not empty/not null
+  - Agent: `implementation-engineer`
+  - Depends on: T005
+  - Verification: focused verification from T005
+- [x] T007 - REQ-SECTOR-001 Run `npm run sdd:check`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run sdd:check` exits with status 0
+- [x] T008 - REQ-SECTOR-001 Run `npm run lint`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run lint` exits with status 0
+- [x] T009 - REQ-SECTOR-001 Run `npm run build`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run build` exits with status 0
+- [x] T010 - REQ-SECTOR-001 Run `npm run test`.
+  - Agent: `implementation-engineer`
+  - Depends on: previous implementation tasks
+  - Verification: `npm run test` exits with status 0

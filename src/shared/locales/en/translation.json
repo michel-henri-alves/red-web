@@ -78,5 +78,12 @@
     "invalid.current.password": "invalid current password",
     "user.not.found": "user not found",
     "unexpected.error": "Unexpected error. Try again.",
-    "all": "All"
+    "all": "All",
+    "sector.type": "type",
+    "sector.address": "address",
+    "sector.cep": "CEP",
+    "sector.contact.name": "contact name",
+    "sector.contact.phone": "contact phone",
+    "sector.contact.email": "contact email",
+    "sector.additionalData": "Additional data"
 }
