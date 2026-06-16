@@ -281,6 +281,9 @@
     "username.at.least.8.characters": "nome de usuário deve ter pelo menos 8 caracteres",
     "dashboard.sales.today": "Vendas do dia",
     "sponsor.must.be.same.company.user": "O responsável deve ser um usuário dessa empresa",
+    "email.must.be.valid": "email deve ser válido",
+    "cnpj.only.allowed.for.PJ": "CNPJ só é permitido para clientes do tipo Pessoa Jurídica",
+    "cpf.only.allowed.for.PF": "CPF só é permitido para clientes do tipo Pessoa Física",
 
     "name": "nome",
     "smartCode": "código de barras",

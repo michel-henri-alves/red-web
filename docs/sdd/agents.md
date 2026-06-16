@@ -157,6 +157,26 @@ Cost guidance:
 - Prefer reducing context before changing model/provider.
 - Record meaningful token changes in `docs/sdd/evaluation.md`.
 
+### Cross Project Integrator
+Purpose: coordinate changes between `red-web` and `red-backend` so API contracts, OpenAPI, wrappers, hooks, tests, and docs remain aligned.
+
+Use for any feature that changes backend behavior consumed by frontend.
+
+### Frontend UX Regression Reviewer
+Purpose: find regressions in layout, accessibility, async states, forms, navigation, keyboard behavior, and workflow continuity.
+
+Use for critical UI workflows, POS/payment changes, auth/session screens, and page-level responsive changes.
+
+### Security Tenant Isolation Reviewer
+Purpose: find frontend changes that could expose tenant data, weaken auth/session behavior, or misrepresent backend authorization.
+
+Use for auth, role, route guard, tenant/company context, token storage, and authorization-sensitive UI.
+
+### Release Gate Reviewer
+Purpose: decide whether a completed frontend change is ready to merge or deploy based on evidence.
+
+Use after code review when verification evidence, contract checks, and SDD closure need a final gate.
+
 ## Skill Use
 
 Skills are reusable capability guides, not role replacements. Agents keep their role and load skills only when the task matches the skill description.
@@ -167,6 +187,9 @@ Common combinations:
 - Async UI or form work: any relevant agent + `red-web-ui-state-accessibility`.
 - Regression test work: `test-engineer` + `red-web-react-query-testing`.
 - Production API/build config: any relevant agent + `red-web-build-deploy-config`.
+- Cross-project contract change: `cross-project-integrator` + `red-cross-project-contract-change` + `red-openapi-frontend-sync`.
+- POS/payment workflow: `frontend-ux-regression-reviewer` + `red-pos-payment-workflow` + `red-inventory-sales-consistency`.
+- Release closure: `release-gate-reviewer` + `red-sdd-feature-closure`.
 
 ## Recommended Workflow
 
@@ -175,8 +198,12 @@ Common combinations:
 2. SDD Planner reviews or creates `plan.md` and `tasks.md`.
 3. Implementation Engineer changes code.
 4. Test Engineer adds focused tests.
-5. Code Reviewer reviews the diff.
-6. Performance And Cost Reviewer is used when bundle size, render cost, API cost, or token cost is material.
+5. Cross Project Integrator is used when backend contracts are involved.
+6. Frontend UX Regression Reviewer is used for critical UI workflows.
+7. Security Tenant Isolation Reviewer is used for auth, role, tenant, or token changes.
+8. Code Reviewer reviews the diff.
+9. Performance And Cost Reviewer is used when bundle size, render cost, API cost, or token cost is material.
+10. Release Gate Reviewer performs the final merge/deploy evidence check when needed.
 
 ### Small Change
 Use only:

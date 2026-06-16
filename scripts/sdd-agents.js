@@ -10,8 +10,12 @@ const recommendedOrder = [
   'sdd-planner.md',
   'implementation-engineer.md',
   'test-engineer.md',
+  'cross-project-integrator.md',
+  'frontend-ux-regression-reviewer.md',
+  'security-tenant-isolation-reviewer.md',
   'code-reviewer.md',
-  'performance-cost-reviewer.md'
+  'performance-cost-reviewer.md',
+  'release-gate-reviewer.md'
 ];
 
 function readAgentTitle(fileName) {

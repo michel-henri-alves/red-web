@@ -267,8 +267,12 @@ function checkAgentDocs() {
     'ai/agents/sdd-planner.md',
     'ai/agents/implementation-engineer.md',
     'ai/agents/test-engineer.md',
+    'ai/agents/cross-project-integrator.md',
+    'ai/agents/frontend-ux-regression-reviewer.md',
+    'ai/agents/security-tenant-isolation-reviewer.md',
     'ai/agents/code-reviewer.md',
-    'ai/agents/performance-cost-reviewer.md'
+    'ai/agents/performance-cost-reviewer.md',
+    'ai/agents/release-gate-reviewer.md'
   ];
 
   requiredAgents.forEach((agentPath) => {
@@ -288,7 +292,14 @@ function checkSkillDocs() {
     'ai/skills/red-web-ui-state-accessibility/SKILL.md',
     'ai/skills/red-web-react-query-testing/SKILL.md',
     'ai/skills/red-web-build-deploy-config/SKILL.md',
-    'ai/skills/red-web-sdd-documentation-gate/SKILL.md'
+    'ai/skills/red-web-sdd-documentation-gate/SKILL.md',
+    'ai/skills/red-cross-project-contract-change/SKILL.md',
+    'ai/skills/red-inventory-sales-consistency/SKILL.md',
+    'ai/skills/red-error-handling-observability/SKILL.md',
+    'ai/skills/red-openapi-frontend-sync/SKILL.md',
+    'ai/skills/red-deployment-runtime-config/SKILL.md',
+    'ai/skills/red-pos-payment-workflow/SKILL.md',
+    'ai/skills/red-sdd-feature-closure/SKILL.md'
   ];
 
   requiredSkills.forEach((skillPath) => {

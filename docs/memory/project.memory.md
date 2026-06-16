@@ -135,3 +135,6 @@ Current skills:
 - The frontend should keep API integration code centralized in shared API modules.
 - SDD feature folders are the preferred unit for non-trivial frontend changes.
 - AI-generated implementation output should stay concise; long verification evidence belongs in feature `runs/`.
+- Future architecture and product evolution ideas should be stored in `docs/evolutions/`.
+  Each evolution should be modular and actionable, with an index entry plus
+  `spec.md`, `plan.md`, and `tasks.md` files when it is mature enough to execute.

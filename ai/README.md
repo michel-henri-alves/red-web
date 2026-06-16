@@ -15,8 +15,12 @@ This directory contains tools and prompts for AI-assisted development in the `re
   - `sdd-planner.md` — Converts specs into focused plans and tasks
   - `implementation-engineer.md` — Implements approved SDD plans
   - `test-engineer.md` — Adds focused automated tests
+  - `cross-project-integrator.md` — Aligns backend/frontend contracts, wrappers, hooks, tests, and docs
+  - `frontend-ux-regression-reviewer.md` — Reviews user-facing UI, accessibility, and workflow regressions
+  - `security-tenant-isolation-reviewer.md` — Reviews auth/session/tenant-sensitive frontend changes
   - `code-reviewer.md` — Reviews correctness and maintainability
   - `performance-cost-reviewer.md` — Reviews runtime cost and AI context cost
+  - `release-gate-reviewer.md` — Performs final merge/deploy evidence checks
 - `skills/` — Project-specific capability guides loaded only when the task matches
 - `adapters/` — Scripts to invoke specific AI assistants
   - `copilot.sh` — For GitHub Copilot CLI
@@ -33,6 +37,7 @@ Each adapter script takes a feature name and optional action:
 # Implement a feature from SDD
 ./ai/adapters/copilot.sh product
 ./ai/adapters/claude.sh product implement
+./ai/adapters/codex.sh product implement
 
 # Generate tests
 ./ai/adapters/copilot.sh product test
@@ -40,6 +45,12 @@ Each adapter script takes a feature name and optional action:
 # Refactor code
 ./ai/adapters/copilot.sh product refactor
 ```
+
+Codex runs are executed with `codex exec --json`. The adapter captures the
+local `turn.completed.usage` event and records real token usage in
+`docs/features/{feature}/runs/*-execution-log.md`. Use
+`npm run sdd:usage` to summarize recorded Codex usage by feature, action, and
+task.
 
 ### Requirements
 
@@ -68,8 +79,12 @@ npm run sdd:agents
 # 2. sdd-planner
 # 3. implementation-engineer
 # 4. test-engineer
-# 5. code-reviewer
-# 6. performance-cost-reviewer when needed
+# 5. cross-project-integrator when backend contracts are involved
+# 6. frontend-ux-regression-reviewer for critical UI workflows
+# 7. security-tenant-isolation-reviewer for auth/tenant-sensitive UI
+# 8. code-reviewer
+# 9. performance-cost-reviewer when needed
+# 10. release-gate-reviewer before merge/deploy when evidence matters
 ```
 
 Each agent should receive only:
@@ -92,6 +107,27 @@ Examples:
 - React Query/testing work: `ai/skills/red-web-react-query-testing/SKILL.md`
 - production build/deploy config: `ai/skills/red-web-build-deploy-config/SKILL.md`
 - high-impact documentation closure: `ai/skills/red-web-sdd-documentation-gate/SKILL.md`
+- backend/frontend contract coordination: `ai/skills/red-cross-project-contract-change/SKILL.md`
+- OpenAPI/frontend sync: `ai/skills/red-openapi-frontend-sync/SKILL.md`
+- inventory/sales consistency: `ai/skills/red-inventory-sales-consistency/SKILL.md`
+- POS/payment workflows: `ai/skills/red-pos-payment-workflow/SKILL.md`
+- error handling/observability: `ai/skills/red-error-handling-observability/SKILL.md`
+- deployment/runtime config across projects: `ai/skills/red-deployment-runtime-config/SKILL.md`
+- cross-project SDD closure: `ai/skills/red-sdd-feature-closure/SKILL.md`
+
+### Git Hooks
+
+Install local hooks for secret checks and pre-push verification:
+
+```bash
+npm run hooks:install
+```
+
+The installed hooks run:
+- `pre-commit`: blocks staged env files and common secret patterns
+- `pre-push`: runs `npm run sdd:check`, `npm run contracts:check`, `npm run test`, and `npm run build`
+
+Set `RED_SKIP_HOOKS=1` only for intentional local bypasses.
 
 ## Contributing
 

@@ -215,6 +215,7 @@ EOF
 
 run_sdd_logged "codex" \
   codex exec \
+  --json \
   -C "$(pwd)" \
   -s workspace-write \
   "$INPUT"

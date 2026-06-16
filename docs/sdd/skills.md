@@ -39,6 +39,41 @@ Skills are reusable project-specific capability guides. Agents define the role; 
 - Use for SDD planning, review, closure, high-impact documentation, canonical specs/tasks, project memory, context map, workflow, and evaluation updates.
 - Common agents: `sdd-planner`, `code-reviewer`, `performance-cost-reviewer`.
 
+### `red-cross-project-contract-change`
+- File: `ai/skills/red-cross-project-contract-change/SKILL.md`
+- Use for coordinated `red-backend` + `red-web` changes involving routes, OpenAPI, payloads, API wrappers, React Query hooks, screens, tests, and SDD docs.
+- Common agents: `cross-project-integrator`, `sdd-planner`, `implementation-engineer`, `code-reviewer`, `release-gate-reviewer`.
+
+### `red-inventory-sales-consistency`
+- File: `ai/skills/red-inventory-sales-consistency/SKILL.md`
+- Use for POS, cart, barcode scanning, sales, payments, discounts, booklet/pending accounts, stock display, and inventory-affecting user workflows.
+- Common agents: `implementation-engineer`, `test-engineer`, `frontend-ux-regression-reviewer`, `cross-project-integrator`.
+
+### `red-error-handling-observability`
+- File: `ai/skills/red-error-handling-observability/SKILL.md`
+- Use for API error formatting, toast/error UI, failed async states, frontend diagnostics, and backend validation/auth/server errors surfaced in the UI.
+- Common agents: `implementation-engineer`, `test-engineer`, `code-reviewer`, `security-tenant-isolation-reviewer`.
+
+### `red-openapi-frontend-sync`
+- File: `ai/skills/red-openapi-frontend-sync/SKILL.md`
+- Use for OpenAPI output, frontend contract checks, endpoint paths, schemas, filters, pagination, and frontend/backend contract synchronization.
+- Common agents: `cross-project-integrator`, `code-reviewer`, `release-gate-reviewer`.
+
+### `red-deployment-runtime-config`
+- File: `ai/skills/red-deployment-runtime-config/SKILL.md`
+- Use for environment variables, Vite build-time config, production API hosts, Docker/serverless/deploy wiring, CORS, and runtime config docs.
+- Common agents: `sdd-planner`, `implementation-engineer`, `release-gate-reviewer`, `performance-cost-reviewer`.
+
+### `red-pos-payment-workflow`
+- File: `ai/skills/red-pos-payment-workflow/SKILL.md`
+- Use for POS, customer selection, cart, barcode input, payment finalization, booklet/pending flows, summaries, and cashier shortcuts.
+- Common agents: `implementation-engineer`, `test-engineer`, `frontend-ux-regression-reviewer`.
+
+### `red-sdd-feature-closure`
+- File: `ai/skills/red-sdd-feature-closure/SKILL.md`
+- Use for closing, reviewing, or repairing SDD features across projects, including spec/plan/tasks status, run evidence, canonical docs, project memory, contracts, and release readiness.
+- Common agents: `code-reviewer`, `release-gate-reviewer`, `cross-project-integrator`.
+
 ## Selection Rule
 Load only the smallest skill set that matches the task. Prefer one skill for narrow work and combine skills only when the task crosses concerns.
 
@@ -48,6 +83,9 @@ Examples:
 - Async page rendering bug: `red-web-ui-state-accessibility` + `red-web-react-query-testing`.
 - Production API host bug: `red-web-build-deploy-config`.
 - Contract drift with backend: `red-web-api-contract`.
+- Backend + frontend contract change: `red-cross-project-contract-change` + `red-openapi-frontend-sync`.
+- POS/payment regression: `red-pos-payment-workflow` + `red-inventory-sales-consistency`.
+- Feature closure before release: `red-sdd-feature-closure`.
 
 ## Agent Handoff
 Agent outputs should include a short `Skills used` line when a skill influenced the result. If an obvious skill was not used, record why it was not applicable.
