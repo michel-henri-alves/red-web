@@ -136,7 +136,7 @@ export default function CustomerForm({ onClose, customer = {} }) {
         { name: "phone", label: t("customer.phone1"), type: "text", icon: Phone, required: true, maxLength: 11 },
         { name: "phone2", label: t("customer.phone2"), type: "text", icon: Phone, maxLength: 11 },
         { name: "website", label: t("customer.website"), type: "text", icon: Globe, maxLength: 120 },
-        { name: "email", label: t("customer.email"), type: "email", icon: Mail, required: true, maxLength: 60 },
+        { name: "email", label: t("customer.email"), type: "email", icon: Mail, maxLength: 60 },
     ];
 
     const pjContactFieldsConfig = [
