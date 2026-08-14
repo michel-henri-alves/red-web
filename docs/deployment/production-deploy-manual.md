@@ -99,7 +99,7 @@ MONGO_URI
 Exemplo de valor:
 
 ```text
-mongodb+srv://red_migrations_ci:SENHA_FORTE@SEU_CLUSTER.mongodb.net/reddb?retryWrites=true&w=majority
+mongodb://REDACTED
 ```
 
 O script de migrations deve ler a URI por variavel de ambiente:
@@ -278,7 +278,7 @@ AWS_DEPLOY_ROLE_ARN=arn:aws:iam::ACCOUNT_ID:role/github-actions-red-backend-depl
 AWS_REGION=us-east-1
 LAMBDA_FUNCTION_NAME=red-backend
 Lambda environment variable:
-MONGO_URI=mongodb+srv://USER:PASSWORD@HOST/red_db?retryWrites=true&w=majority
+MONGO_URI=mongodb://REDACTED
 ```
 
 ### 6.3 red-web

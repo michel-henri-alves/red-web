@@ -49,7 +49,9 @@
     "sdd:run": "node scripts/sdd-run.js",
     "hooks:install": "node scripts/install-git-hooks.js",
     "preview": "vite preview",
-    "sdd:usage": "node scripts/sdd-usage-report.js"
+    "sdd:usage": "node scripts/sdd-usage-report.js",
+    "sdd:new:interactive": "node scripts/sdd-new-interactive.js",
+    "security:scan": "node scripts/security-scan.js"
   },
   "eslintConfig": {
     "extends": [

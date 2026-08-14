@@ -1,0 +1,65 @@
+{
+  "projectName": "RED Web",
+  "defaultVerification": ["npm run sdd:check", "npm run lint", "npm run build"],
+  "impactOptions": [
+    { "id": "ui", "label": "Changes user-facing UI or workflow" },
+    { "id": "api", "label": "Consumes or changes API contract" },
+    { "id": "state", "label": "Changes state, cache, form, or validation behavior" },
+    { "id": "auth", "label": "Changes auth, role, or tenant behavior" },
+    { "id": "docs", "label": "Updates canonical specs or durable memory" },
+    { "id": "cross_project", "label": "Requires backend or mobile coordination" }
+  ],
+  "featureTypes": [
+    {
+      "id": "screen_change",
+      "label": "Screen/workflow change",
+      "description": "User-facing page, route, dashboard, filter, or flow.",
+      "defaultImpacts": ["ui"],
+      "prompts": [
+        { "id": "uiStates", "question": "Loading, error, empty, success, and permission states", "kind": "text", "required": true },
+        { "id": "apiContracts", "question": "API endpoints/data shape used by the UI", "kind": "text", "default": "No API contract assumptions identified yet." }
+      ]
+    },
+    {
+      "id": "form_component",
+      "label": "Form/component change",
+      "description": "Reusable component, form validation, or interaction behavior.",
+      "defaultImpacts": ["ui", "state"],
+      "prompts": [
+        { "id": "uiStates", "question": "Component states, validation feedback, and disabled/loading behavior", "kind": "text", "required": true },
+        { "id": "apiContracts", "question": "Submit/load contract and error mapping", "kind": "text", "default": "No API contract assumptions identified yet." }
+      ]
+    },
+    {
+      "id": "api_contract_ui",
+      "label": "API contract UI integration",
+      "description": "Frontend integration around changed backend contracts.",
+      "defaultImpacts": ["api", "state", "cross_project"],
+      "prompts": [
+        { "id": "apiContracts", "question": "Backend contract, request/response, and compatibility expectations", "kind": "text", "required": true },
+        { "id": "uiStates", "question": "UI states and fallback behavior for this contract", "kind": "text", "required": true }
+      ]
+    },
+    {
+      "id": "bugfix_refactor",
+      "label": "Bugfix/refactor",
+      "description": "Behavior fix or internal UI change with focused verification.",
+      "defaultImpacts": [],
+      "prompts": [
+        { "id": "uiStates", "question": "User-visible behavior that must remain or be fixed", "kind": "text", "default": "No visible UI state change expected." },
+        { "id": "apiContracts", "question": "API behavior that must not change", "kind": "text", "default": "No API contract change expected." }
+      ]
+    }
+  ],
+  "commonPrompts": [
+    { "id": "problem", "question": "Problem this solves", "kind": "text", "required": true },
+    { "id": "scope", "question": "Scope/change summary", "kind": "text", "required": true },
+    { "id": "workflow", "question": "User workflow impacted", "kind": "text", "default": "No user workflow change described yet." },
+    { "id": "requirements", "question": "Requirements, separated by semicolon", "kind": "list", "required": true },
+    { "id": "acceptance", "question": "Acceptance criteria, separated by semicolon", "kind": "list", "required": true },
+    { "id": "files", "question": "Expected files, comma-separated", "kind": "files" },
+    { "id": "outOfScope", "question": "Out of scope, separated by semicolon", "kind": "list", "default": "No explicit out-of-scope items yet." },
+    { "id": "risks", "question": "Risks, separated by semicolon", "kind": "list", "default": "No known risks yet." },
+    { "id": "verificationCommands", "question": "Verification commands, separated by semicolon", "kind": "list", "default": "npm run sdd:check; npm run lint; npm run build" }
+  ]
+}

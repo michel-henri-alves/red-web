@@ -1,6 +1,6 @@
 # SDD Wizards README
 
-This project has three feature-planning wizards. All of them create a feature folder under `docs/features/`.
+This project has four feature-planning wizards. All of them create a feature folder under `docs/features/`.
 
 For the full operation and best-practices manual in English and Portuguese BR, see `docs/sdd/operation-manual.md`.
 
@@ -17,7 +17,27 @@ The AI-assisted wizard also creates:
 ai-report.md
 ```
 
-## 1. Local Wizard
+## 1. Interactive Wizard
+
+```bash
+npm run sdd:new:interactive
+```
+
+Use this when you want a guided, schema-driven flow with feature-type presets.
+
+Properties:
+- fully local and deterministic;
+- asks different follow-up questions for screen/workflow, form/component, API contract UI, and bugfix/refactor work;
+- lets you choose known domains and impact classifications;
+- previews `spec.md`, `plan.md`, and `tasks.md` before writing files;
+- lets you edit answers before the final create step.
+
+Recommended when:
+- you want stronger drafts than the basic local wizard;
+- you want to avoid manually remembering all SDD sections;
+- the feature is not ambiguous enough to need the AI-assisted wizard.
+
+## 2. Local Wizard
 
 ```bash
 npm run sdd:new
@@ -37,7 +57,7 @@ Recommended when:
 - you want the lowest possible cost;
 - you do not need translation or AI follow-up questions.
 
-## 2. Translate Wizard
+## 3. Translate Wizard
 
 ```bash
 npm run sdd:new:translate
@@ -74,7 +94,7 @@ Recommended when:
 - the feature is not complex enough to need AI-generated follow-up questions;
 - you want cleaner English docs before implementation.
 
-## 3. AI-Assisted Wizard
+## 4. AI-Assisted Wizard
 
 ```bash
 npm run sdd:new:ai
@@ -153,9 +173,10 @@ ai/agents/performance-cost-reviewer.md when performance or token cost matters
 Prefer the cheapest wizard that gives enough clarity:
 
 ```text
-clear task      -> sdd:new
-Portuguese docs -> sdd:new:translate
-unclear feature -> sdd:new:ai
+guided local draft -> sdd:new:interactive
+clear task         -> sdd:new
+Portuguese docs    -> sdd:new:translate
+unclear feature    -> sdd:new:ai
 ```
 
 Prefer the cheapest agent sequence that gives enough safety:
