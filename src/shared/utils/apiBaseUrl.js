@@ -24,11 +24,15 @@ const axiosClient = axios.create({
     }
 });
 
-const PUBLIC_PATHS = ["/users/login"];
+const PUBLIC_PATHS = ["/users/login", "/users/password-recovery"];
 
-const isPublicRequest = (url = "") => PUBLIC_PATHS.some((path) => url.startsWith(path));
+const isPublicRequest = (url = "") => PUBLIC_PATHS.includes(url.split("?")[0]);
 
 axiosClient.interceptors.request.use((config) => {
+    if (isPublicRequest(config.url)) {
+        delete config.headers.Authorization;
+        return config;
+    }
     if (hasExpiredSession()) {
         clearAuthSession();
         window.location.href = "/login";

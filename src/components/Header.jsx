@@ -18,6 +18,9 @@ export default function Header() {
             <div className="relative">
 
                 <button
+                    type="button"
+                    aria-label="Opções da conta"
+                    aria-expanded={open}
                     onClick={() => setOpen(!open)}
                     className="flex items-center gap-2 hover:text-gray-200 cursor-pointer"
                 >

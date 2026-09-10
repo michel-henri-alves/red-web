@@ -5,6 +5,7 @@ import {
     remove,
     fetchPaginated,
     login,
+    requestPasswordRecovery,
     changeInitialPassword,
 } from '../api/UsersApi';
 
@@ -19,6 +20,10 @@ export const loginUser = () => {
         },
     });
 }
+
+export const recoverUserPassword = () => useMutation({
+    mutationFn: requestPasswordRecovery,
+});
 
 export const changeInitialPasswordUser = () => {
     const queryClient = useQueryClient();

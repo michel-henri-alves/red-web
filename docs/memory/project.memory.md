@@ -49,6 +49,11 @@ The frontend is coupled to the RED backend API contracts and must preserve tenan
 
 ### Internationalization
 - User-facing copy should be represented in locale files when the surrounding feature already uses i18next.
+- Login and recovery require `companyId` plus email. Recovery feedback must remain generic
+  for accepted and account-mismatch outcomes. A session whose user projection has
+  `requiresInitialPasswordChange=true` is redirected to `/change-password`; private
+  content remains unavailable until the backend confirms replacement and the refreshed
+  session is persisted.
 - Preserve existing translation key style and avoid one-off hardcoded copy in translated flows.
 
 ## Key Patterns
@@ -138,3 +143,29 @@ Current skills:
 - Future architecture and product evolution ideas should be stored in `docs/evolutions/`.
   Each evolution should be modular and actionable, with an index entry plus
   `spec.md`, `plan.md`, and `tasks.md` files when it is mature enough to execute.
+
+
+## 2026-09-07 — ADR-0001 review and pause
+
+- Recovery login/public API calls now omit bearer tokens and are not blocked by
+  expired stored sessions; public path matching is exact. Recovery validates email
+  syntax and trims/lowercases input. Login email normalization is aligned.
+- Verified 16 files / 57 tests, production build, backend contract and SDD checks.
+  Existing bundle-size/SDD warnings remain. No commit or deployment was made.
+- T008 stays open for manual accessibility/responsive and full browser-to-backend
+  verification. Backend review still has concurrency and timing findings.
+- User requested a pause. Resume from workspace
+  `docs/features/ECO-0001-password-recovery/PAUSE.md` and local
+  `docs/features/0011-password-recovery/runs/2026-09-07-review.md`.
+
+## Password recovery follow-up — 2026-09-08
+
+- Resumed ECO-0001. R1/R2 are resolved locally: conditional credential writes and
+  durable asynchronous request acceptance with migration 0005 and a scheduled worker.
+- Real MongoDB/Mailpit, Chromium and Android device journeys passed. Web mandatory
+  layout now hides business navigation; axe/keyboard/360px/1280px checks passed.
+- Evidence: local feature `runs/2026-09-08-follow-up.md` and ecosystem
+  `docs/features/ECO-0001-password-recovery/review-2026-09-08.md`.
+- Production SMTP/scheduler/capacity and manual screen-reader/TalkBack/Android
+  large-font/landscape review remain. ECO-T007 is open; no release approval implied.
+- No commits, PRs or deployment. Preserve unrelated workspace changes.
