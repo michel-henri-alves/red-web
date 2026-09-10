@@ -4,12 +4,13 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import axiosClient from "../services/axiosClient";
-import { loginUser } from "../shared/hooks/useUsers";
+import { loginUser, recoverUserPassword } from "../shared/hooks/useUsers";
 import { mustChangeInitialPassword, useAuth } from "../context/AuthContext";
 
 const schema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(8, "Mínimo 6 caracteres"),
+  companyId: z.string().trim().min(1, "Identificador da empresa é obrigatório"),
+  email: z.string().trim().toLowerCase().email("Email inválido"),
+  password: z.string().min(8, "Mínimo 8 caracteres"),
 });
 
 export const normalizeLoginResponseData = (data) => {
@@ -27,12 +28,16 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [error, setError] = useState(null);
+  const [recoveryOpen, setRecoveryOpen] = useState(false);
+  const [recoveryMessage, setRecoveryMessage] = useState(null);
   const { mutateAsync: executeLogin } = loginUser();
+  const { mutateAsync: executeRecovery, isPending: recoveryPending } = recoverUserPassword();
 
 
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(schema),
@@ -61,6 +66,36 @@ export default function LoginPage() {
     }
   };
 
+  const requestRecovery = async () => {
+    const companyId = getValues("companyId")?.trim();
+    const email = getValues("email")?.trim().toLowerCase();
+    if (!companyId || !email) {
+      setRecoveryMessage({ type: "error", text: "Informe o identificador da empresa e o email." });
+      return;
+    }
+    if (!z.string().email().safeParse(email).success) {
+      setRecoveryMessage({ type: "error", text: "Informe um email válido." });
+      return;
+    }
+
+    try {
+      setRecoveryMessage(null);
+      await executeRecovery({ companyId, email });
+      setRecoveryMessage({
+        type: "success",
+        text: "Se os dados corresponderem a uma conta ativa, enviaremos uma senha temporária por email.",
+      });
+    } catch (requestError) {
+      const throttled = requestError?.response?.status === 429;
+      setRecoveryMessage({
+        type: "error",
+        text: throttled
+          ? "Muitas tentativas. Aguarde um pouco antes de tentar novamente."
+          : "Não foi possível solicitar a recuperação agora. Tente novamente.",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
@@ -71,8 +106,21 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <input
+              type="text"
+              placeholder="Identificador da empresa"
+              aria-label="Identificador da empresa"
+              autoComplete="organization"
+              {...register("companyId")}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.companyId && <p className="text-sm text-red-500 mt-1">{errors.companyId.message}</p>}
+          </div>
+          <div>
+            <input
               type="email"
               placeholder="Email"
+              aria-label="Email"
+              autoComplete="email"
               {...register("email")}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -87,6 +135,8 @@ export default function LoginPage() {
             <input
               type="password"
               placeholder="Senha"
+              aria-label="Senha"
+              autoComplete="current-password"
               {...register("password")}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -108,6 +158,39 @@ export default function LoginPage() {
           >
             {isSubmitting ? "Entrando..." : "Entrar"}
           </button>
+
+          <button
+            type="button"
+            className="w-full text-blue-700 underline underline-offset-2"
+            onClick={() => {
+              setRecoveryOpen((current) => !current);
+              setRecoveryMessage(null);
+            }}
+            aria-expanded={recoveryOpen}
+          >
+            Esqueci minha senha
+          </button>
+
+          {recoveryOpen && (
+            <section aria-label="Recuperação de senha" className="space-y-3 border-t pt-4">
+              <p className="text-sm text-gray-700">
+                Use o identificador da empresa e o email informados acima.
+              </p>
+              <button
+                type="button"
+                disabled={recoveryPending}
+                onClick={requestRecovery}
+                className="w-full border border-blue-600 text-blue-700 py-2 rounded-lg disabled:opacity-50"
+              >
+                {recoveryPending ? "Solicitando..." : "Enviar senha temporária"}
+              </button>
+              {recoveryMessage && (
+                <p role={recoveryMessage.type === "error" ? "alert" : "status"} className="text-sm text-center">
+                  {recoveryMessage.text}
+                </p>
+              )}
+            </section>
+          )}
         </form>
       </div>
     </div>

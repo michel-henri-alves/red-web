@@ -1,0 +1,36 @@
+# Password Recovery Web Tasks
+
+- [x] T001 - REQ-WEB-RECOVERY-001, REQ-WEB-RECOVERY-004, REQ-ECO-001, REQ-ECO-008 Confirm the approved required `companyId` login/recovery fields and backend OpenAPI contract.
+  - Agent: `sdd-planner`, `api-contract-reviewer`
+  - Depends on: backend contract task T007
+  - Verification: `npm run sdd:check`; `npm run contracts:check`
+- [x] T002 - REQ-WEB-RECOVERY-001, REQ-WEB-RECOVERY-002, REQ-WEB-RECOVERY-003 Add focused login recovery UI/state/accessibility tests.
+  - Agent: `test-engineer`
+  - Depends on: T001
+  - Verification: focused `LoginPage` tests fail only for unimplemented recovery behavior
+- [x] T003 - REQ-WEB-RECOVERY-001, REQ-WEB-RECOVERY-002, REQ-WEB-RECOVERY-003, REQ-WEB-RECOVERY-004 Implement the API wrapper/hook, accessible recovery form, generic states and translations.
+  - Agent: `implementation-engineer`
+  - Depends on: T002
+  - Verification: focused `LoginPage` tests and `npm run contracts:check` pass
+- [x] T004 - REQ-WEB-RECOVERY-005, REQ-WEB-RECOVERY-006, REQ-ECO-005, REQ-ECO-006 Add tests for temporary-login signaling, mandatory redirect/guard, successful change and expired session.
+  - Agent: `test-engineer`
+  - Depends on: T001
+  - Verification: focused `AuthContext`, `PrivateRoute` and `ChangeInitialPassword` tests fail only for unimplemented behavior
+- [x] T005 - REQ-WEB-RECOVERY-005, REQ-WEB-RECOVERY-006 Align auth/session, private routing and password-change behavior with the backend contract.
+  - Agent: `implementation-engineer`
+  - Depends on: T003, T004
+  - Verification: focused auth/route/change tests pass; manual bypass attempt cannot render a normal private page
+- [x] T006 - REQ-WEB-RECOVERY-001, REQ-WEB-RECOVERY-006 Update canonical User workflow docs/tasks and project memory.
+  - Agent: `sdd-planner`
+  - Depends on: T005
+  - Verification: affected canonical documents describe recovery and mandatory change
+- [x] T007 - REQ-WEB-RECOVERY-001, REQ-WEB-RECOVERY-002, REQ-WEB-RECOVERY-003, REQ-WEB-RECOVERY-004, REQ-WEB-RECOVERY-005, REQ-WEB-RECOVERY-006, REQ-ECO-001, REQ-ECO-005, REQ-ECO-006, REQ-ECO-008 Run verification and record all web gates.
+  - Agent: `implementation-engineer`
+  - Depends on: T006
+  - Verification: `npm run sdd:check`, `npm run contracts:check`, focused tests, `npm run lint`, `npm run build`, and a `runs/` report
+- [ ] T008 - REQ-WEB-RECOVERY-001, REQ-WEB-RECOVERY-002, REQ-WEB-RECOVERY-003, REQ-WEB-RECOVERY-004, REQ-WEB-RECOVERY-005, REQ-WEB-RECOVERY-006 Review accessibility, responsive behavior, auth regressions and secret exposure.
+  - Review 2026-09-08: real local backend/Mailpit journey passed; see `runs/2026-09-08-follow-up.md`. Manual screen-reader/TalkBack review remains open.
+  - Review 2026-09-07: public-request/session and email validation regressions corrected; superseded by 2026-09-08 evidence; manual screen-reader review remains. Evidence: `runs/2026-09-07-review.md`.
+  - Agent: `frontend-ux-regression-reviewer`, `security-tenant-isolation-reviewer`, `code-reviewer`
+  - Depends on: T007
+  - Verification: review findings resolved or recorded as owned residual risks

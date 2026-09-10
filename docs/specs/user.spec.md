@@ -21,6 +21,7 @@ The User domain in `red-web` manages user login, role-based access, and user adm
 
 ## Data and API
 - Login endpoint: `POST /users/login`
+- Password recovery endpoint: `POST /users/password-recovery`
 - Initial password change endpoint: `POST /users/change-initial-password`
 - User fetch paginated: `GET /users?name={filter}&page={page}&limit={limit}`
 - Create user: `POST /users`
@@ -29,6 +30,8 @@ The User domain in `red-web` manages user login, role-based access, and user adm
 
 ## Behavior
 - Login page stores JWT token and user data in `localStorage`
+- Login requires company ID, email and password and exposes a signed-out recovery
+  action using company ID and email with non-enumerating accepted feedback.
 - Users with `requiresInitialPasswordChange: true` are redirected to `/change-password`
 - Successful initial password changes update local session user data to `requiresInitialPasswordChange: false`
 - Axios attaches JWT token and tenant headers automatically
@@ -53,3 +56,11 @@ The User domain in `red-web` manages user login, role-based access, and user adm
 - User login drives the tenant and token headers used by API requests
 - User administration is integrated with backend authorization rules
 - The app should maintain session state across refreshes
+
+## Password recovery verification refinement — 2026-09-08
+
+Recovery acceptance is asynchronous: email may arrive after the generic `202`.
+Restricted sessions omit the business sidebar and floating cashier so the mandatory
+form has usable width on small screens. The account control has an accessible name.
+Chromium/MongoDB/Mailpit verified recovery through replacement and session invalidation;
+360px/1280px visual/keyboard and axe checks passed. Manual screen-reader review remains.

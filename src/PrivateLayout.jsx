@@ -4,9 +4,12 @@ import FloatingCashierButton from "./components/FloatingCashierButton";
 import { ToastContainer } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import Header from "./components/Header";
+import { mustChangeInitialPassword, useAuth } from "./context/AuthContext";
 
 export default function PrivateLayout() {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const passwordChangeRequired = mustChangeInitialPassword(user);
 
   return (
     <div className="bg-gray-200 h-screen flex flex-col">
@@ -17,14 +20,14 @@ export default function PrivateLayout() {
 
 
       <div className="flex flex-1 overflow-hidden">
-        <MenuResponsive />
+        {!passwordChangeRequired && <MenuResponsive />}
 
-        <main className="bg-[rgba(255,255,254)] flex-1 p-6 overflow-y-auto">
+        <main className="bg-[rgba(255,255,254)] flex-1 min-w-0 p-6 overflow-y-auto">
           <Outlet />
         </main>
       </div>
 
-      <FloatingCashierButton />
+      {!passwordChangeRequired && <FloatingCashierButton />}
       <ToastContainer />
 
       <footer className="bg-[rgba(98,70,234)] text-white p-4 text-center text-sm">

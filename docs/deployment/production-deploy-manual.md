@@ -298,7 +298,7 @@ AWS_DEPLOY_ROLE_ARN=arn:aws:iam::ACCOUNT_ID:role/github-actions-red-web-deploy
 AWS_REGION=us-east-1
 S3_BUCKET=red-web-dev
 CLOUDFRONT_DISTRIBUTION_ID=E2XHRVYUHIIIIZ
-VITE_API_BASE_URL=https://1biotj4t46.execute-api.us-east-1.amazonaws.com
+VITE_API_BASE_URL=https://7700ezljb5.execute-api.us-east-1.amazonaws.com
 ```
 
 Importante: `S3_BUCKET` deve receber apenas o nome do bucket, nao a ARN.
@@ -309,7 +309,7 @@ environment `production`; ela nao precisa ser secret porque fica embutida no
 JavaScript publico do frontend.
 Para execucao local via `red-infra/.vscode/launch.json`, o `make start` usa
 `VITE_API_BASE_URL=http://192.168.1.167:3001`. Em producao, use
-`VITE_API_BASE_URL=https://1biotj4t46.execute-api.us-east-1.amazonaws.com`.
+`VITE_API_BASE_URL=https://7700ezljb5.execute-api.us-east-1.amazonaws.com`.
 
 ## 7. Workflows
 

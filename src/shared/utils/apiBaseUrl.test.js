@@ -85,6 +85,18 @@ describe('axiosClient auth session handling', () => {
         expect(requestHeaders.Authorization).toBeUndefined();
     });
 
+    it.each(['/users/login', '/users/password-recovery'])('allows %s with an expired stored session and sends no token', async (path) => {
+        localStorage.setItem('token', 'expired-token');
+        localStorage.setItem('authLastActivityAt', '1');
+        let requestHeaders;
+        axiosClient.defaults.adapter = async (config) => {
+            requestHeaders = config.headers;
+            return { config, data: {}, headers: {}, status: 202, statusText: 'Accepted' };
+        };
+        await axiosClient.post(path, { companyId: 'company-1', email: 'user@example.com' });
+        expect(requestHeaders.Authorization).toBeUndefined();
+    });
+
     it('cancels private requests when no stored token exists', async () => {
         let adapterCalled = false;
         axiosClient.defaults.adapter = async (config) => {

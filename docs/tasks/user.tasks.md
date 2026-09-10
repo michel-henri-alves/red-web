@@ -5,6 +5,8 @@
 ### ✅ Completed Features
 - Login page and authentication flow
 - Initial password change page and authenticated API integration
+- Tenant-aware login and generic password-recovery action
+- Mandatory password-change route guard for temporary sessions
 - User management page and list view
 - User creation and edit forms
 - Role-based route authorization
@@ -16,14 +18,14 @@
 ### 📋 Backlog Features
 
 #### User & Auth Management
-- [ ] Add password reset flow
+- [x] Add password recovery flow
 - [ ] Add profile and preferences page
 - [ ] Add multi-factor authentication (MFA)
 - [ ] Add account lockout and security notifications
 - [ ] Add user role management UI
 
 #### UX Improvements
-- [ ] Improve login error feedback
+- [x] Improve login and recovery error feedback
 - [ ] Add remember-me functionality
 - [ ] Add session timeout notice
 - [ ] Add profile avatar support
@@ -31,9 +33,9 @@
 ## Technical Debt
 
 ### Code Quality
-- [ ] Add tests for login flow
-- [ ] Add tests for role-based route access
-- [ ] Refactor private route logic
+- [x] Add tests for login and recovery flows
+- [x] Add mandatory password-change route tests
+- [x] Guard private routes during mandatory password replacement
 - [ ] Clean up localStorage user handling
 
 ### Performance
