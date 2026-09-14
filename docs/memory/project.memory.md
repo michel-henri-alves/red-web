@@ -169,3 +169,30 @@ Current skills:
 - Production SMTP/scheduler/capacity and manual screen-reader/TalkBack/Android
   large-font/landscape review remain. ECO-T007 is open; no release approval implied.
 - No commits, PRs or deployment. Preserve unrelated workspace changes.
+
+## ECO-0002 company-address bootstrap
+
+Company context comes from TenantProvider and the exact configured hostname boundary, before AuthProvider/application mounting. useTenant exposes companyId/accessName/name. UI never asks for companyId. VITE_COMPANY_BASE_DOMAIN is required for tenant host rollout; VITE_DEV_COMPANY_ACCESS_NAME is development-only. Resolver requests are public and never carry a session token.
+
+
+## Definitive domain — 2026-09-11
+
+ECO-T009 selects `tipo.click` (AWS-registered) and `<accessName>.tipo.click`. The API URL remains unchanged. The existing DNS zone is associated with CloudFront FREE/ACTIVE. The user accepted the small variable deployment/verification charges and authorized continuation while preserving the existing infrastructure and avoiding any new paid plan or fixed monthly resource. Local web production builds use the new base domain; DNS/TLS/application activation remains pending. Resume with the reviewed `live/dev` infrastructure plan after ACM and company mappings are ready.
+
+## Pause checkpoint — 2026-09-11
+
+Web tests (19 files/73 tests), contract check, SDD check and production build passed. CI uses `VITE_COMPANY_BASE_DOMAIN=tipo.click`, the current API fallback, and a `COMPANY_DOMAIN_RELEASE_READY` gate. No web artifact was published under tipo.click. Continue with DOM-T005/T006 after the infrastructure certificate and backend runtime settings are reviewed.
+
+## ECO-0002 pausado — 2026-09-13
+
+Usuário pediu pausa. Registro canônico de retomada: [RESUME.md](../../../docs/features/ECO-0002-company-access-login/RESUME.md). Mapeamento restrito a m4 e ramon-lopes, regra de 2–63 caracteres. Backend 477 testes, web 73 testes/build, banco 3 testes e Android unitários/assembleDebug passaram. Rollout externo não confirmado; reconciliar chamada interrompida antes de nova execução. Sem celular físico no momento.
+
+
+## ECO-0002 publicado — 2026-09-14
+
+Backend versão 3, mapeamentos m4/ramon-lopes, certificado, DNS e web publicados na infraestrutura existente CloudFront Free/Active. Testes reais de navegador e Android de seleção/troca de empresa passaram. Relatório canônico: [release-2026-09-14.md](../../../docs/features/ECO-0002-company-access-login/release-2026-09-14.md). Esse registro prevalece sobre a pausa de 2026-09-13. Plano completo da API depende de leitura IAM; código segue local sem commit/push. Teste adicional de recuperação no aparelho aguarda reconexão.
+
+
+## ECO-0002 — teste de recuperação concluído e envio autorizado
+
+Em 2026-09-14, a jornada de recuperação no Moto G35 passou após reconexão, com fixture local/Mailpit. APK de produção reinstalado. Usuário autorizou commit/push; branch feat/company-access-login. Evidência versionável: [verification-2026-09-14.md](../features/0012-company-access-login/runs/verification-2026-09-14.md). Este registro substitui a pendência de reconexão anterior.

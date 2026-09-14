@@ -64,3 +64,12 @@ Restricted sessions omit the business sidebar and floating cashier so the mandat
 form has usable width on small screens. The account control has an accessible name.
 Chromium/MongoDB/Mailpit verified recovery through replacement and session invalidation;
 360px/1280px visual/keyboard and axe checks passed. Manual screen-reader review remains.
+
+## ECO-0002 company-address login
+
+TenantProvider resolves exactly one company label beneath VITE_COMPANY_BASE_DOMAIN before mounting the application. LoginPage shows the resolved display name and asks only email/password; recovery shares the resolved internal companyId. Unknown hosts/apex show instructions, lookup failures have retry states. Company resolver/login/recovery are public HTTP calls without Authorization. A mismatched login response or restored session cannot establish the tenant session.
+
+
+## Definitive domain — 2026-09-11
+
+ECO-T009 selects `tipo.click` (AWS-registered) and `<accessName>.tipo.click`. The API URL remains unchanged. The existing DNS zone is now associated with CloudFront FREE/ACTIVE. Local web production builds use the new base domain; DNS/TLS/application activation remains pending. No additional charges beyond registration/renewal are authorized for this task. See the ECO-0002 domain-migration subtask and the infrastructure run `docs/features/0002-company-access-login/runs/domain-cost-2026-09-11.md` for the actual billing verification and remaining limits.

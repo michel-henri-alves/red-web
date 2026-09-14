@@ -46,3 +46,9 @@
 - [ ] Login endpoint integration tests
 - [ ] User management page tests
 - [ ] Unauthorized route tests
+
+## ECO-0002 company access login
+
+- [x] Implement local company access-name behavior and coordinated compatibility changes.
+- [ ] Complete environment-specific rollout checks and close ECO-0002 after integrated evidence and production inputs are recorded.
+- Evidence and exact local verification results: docs/features/0012-company-access-login/runs/implementation-2026-09-10.md.

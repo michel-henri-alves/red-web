@@ -8,12 +8,15 @@ import {
   readStoredUser,
 } from "../shared/utils/authSession";
 
+import { useCompanyContext } from '../components/TenantProvider';
+
 const AuthContext = createContext(null);
 
 export const mustChangeInitialPassword = (user) =>
   user?.requiresInitialPasswordChange === true;
 
 export function AuthProvider({ children }) {
+  const company = useCompanyContext();
 
   const [token, setToken] = useState(readStoredToken);
   // const [tenantId, setTenantId] = useState(localStorage.getItem("tenantId"));
@@ -21,6 +24,7 @@ export function AuthProvider({ children }) {
   const [sessionVersion, setSessionVersion] = useState(0);
 
   const syncSession = () => {
+    if (company && readStoredUser()?.companyId !== company.companyId) clearAuthSession({ notify: false });
     setToken(readStoredToken());
     setUser(readStoredUser());
     setSessionVersion((currentVersion) => currentVersion + 1);
@@ -57,6 +61,9 @@ export function AuthProvider({ children }) {
     // const tenant = input.user.tenantId;
     const userData = input.user;
 
+    if (company && userData?.companyId !== company.companyId) {
+      throw new Error("Login company does not match address");
+    }
     if (!jwt) {
       throw new Error("Login requires an access token");
     }

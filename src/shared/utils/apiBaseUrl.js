@@ -24,7 +24,7 @@ const axiosClient = axios.create({
     }
 });
 
-const PUBLIC_PATHS = ["/users/login", "/users/password-recovery"];
+const PUBLIC_PATHS = ["/users/login", "/users/password-recovery", "/companies/resolve-access"];
 
 const isPublicRequest = (url = "") => PUBLIC_PATHS.includes(url.split("?")[0]);
 
@@ -65,7 +65,7 @@ axiosClient.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 && !isPublicRequest(error.config?.url)) {
             clearAuthSession();
             window.location.href = "/login";
         }
