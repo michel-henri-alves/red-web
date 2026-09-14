@@ -3,10 +3,10 @@
 **Release evidence (2026-09-14):** deployed and verified; see [verification](runs/verification-2026-09-14.md). Broad acceptance items below remain open where real-account, accessibility/backup or complete IAM-plan evidence is still required.
 
 
-- [ ] T007 - REQ-ECO-003, REQ-ECO-009, REQ-ECO-011, REQ-ECO-012 Prepare and publish tipo.click production entry (ECO-T009).
-  - Done locally: VITE_COMPANY_BASE_DOMAIN=tipo.click, current API fallback in CI, two-company hostname boundary tests and explicit release-readiness gate.
-  - Remaining: DNS/TLS/backend/mapping readiness and verified zero additional deployment cost before enabling COMPANY_DOMAIN_RELEASE_READY.
-  - Verification: 73 web tests, contract, SDD and production build passed on 2026-09-11; actual two-host browser rollout pending.
+- [x] T007 - REQ-ECO-003, REQ-ECO-009, REQ-ECO-011, REQ-ECO-012 Run domain verification and publish tipo.click production entry (ECO-T009).
+  - Completed: VITE_COMPANY_BASE_DOMAIN=tipo.click, DNS/TLS, resolver, both approved mappings and production publication. Existing CloudFront Free/Active preserved; residual variable costs were authorized.
+  - Verification: 73 web tests and production build passed; real Chromium checks passed for both company hosts, SPA refresh, apex, unknown company and foreign-session rejection. Eight live CORS checks passed. See [release evidence](runs/verification-2026-09-14.md).
+  - CI follow-up: set COMPANY_DOMAIN_RELEASE_READY after reviewing release evidence before the next merge/deployment; the current feature-branch push does not publish production.
 
 - [ ] T001 - REQ-ECO-002, REQ-ECO-003, REQ-ECO-007, REQ-ECO-009, REQ-ECO-010, REQ-ECO-011 Add hostname parsing and login component tests: exact base-domain boundary, nested/unknown hosts, uppercase host, development override, slow resolution and retry.
   - Agent: `test-engineer`
