@@ -87,3 +87,9 @@
 - [ ] Sync backend domain updates with frontend specs
 - [ ] Add audit log views for users and sales
 - [ ] Add reporting dashboards for revenue and performance
+
+## ECO-0002 company access login
+
+- [x] Implement local company access-name behavior and coordinated compatibility changes.
+- [ ] Complete environment-specific rollout checks and close ECO-0002 after integrated evidence and production inputs are recorded.
+- Evidence and exact local verification results: docs/features/0012-company-access-login/runs/implementation-2026-09-10.md.

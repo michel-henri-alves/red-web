@@ -5,6 +5,10 @@ import { AuthProvider } from "../context/AuthContext";
 import LoginPage, { normalizeLoginResponseData } from "./LoginPage";
 import { loginUser, recoverUserPassword } from "../shared/hooks/useUsers";
 
+vi.mock('../components/TenantProvider', () => ({
+  useCompanyContext: () => ({ companyId: 'company-1', accessName: 'loja-a', name: 'Loja A' }),
+  useTenant: () => ({ companyId: 'company-1', accessName: 'loja-a', name: 'Loja A' }),
+}));
 const executeLogin = vi.fn();
 const executeRecovery = vi.fn();
 
@@ -70,9 +74,6 @@ describe("LoginPage", () => {
     fireEvent.change(screen.getByPlaceholderText("Email"), {
       target: { value: "michel@example.com" },
     });
-    fireEvent.change(screen.getByPlaceholderText("Identificador da empresa"), {
-      target: { value: "company-1" },
-    });
     fireEvent.change(screen.getByPlaceholderText("Senha"), {
       target: { value: "password123" },
     });
@@ -98,9 +99,6 @@ describe("LoginPage", () => {
     fireEvent.change(screen.getByPlaceholderText("Email"), {
       target: { value: "michel@example.com" },
     });
-    fireEvent.change(screen.getByPlaceholderText("Identificador da empresa"), {
-      target: { value: "company-1" },
-    });
     fireEvent.change(screen.getByPlaceholderText("Senha"), {
       target: { value: "password123" },
     });
@@ -114,7 +112,6 @@ describe("LoginPage", () => {
     executeRecovery.mockResolvedValue({ data: { message: "password.recovery.request.accepted" } });
     renderLoginPage();
 
-    fireEvent.change(screen.getByLabelText("Identificador da empresa"), { target: { value: "company-1" } });
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "michel@example.com" } });
     fireEvent.click(screen.getByRole("button", { name: "Esqueci minha senha" }));
     fireEvent.click(screen.getByRole("button", { name: "Enviar senha temporária" }));
@@ -128,7 +125,6 @@ describe("LoginPage", () => {
 
   it("rejects malformed recovery email before sending a request", () => {
     renderLoginPage();
-    fireEvent.change(screen.getByLabelText("Identificador da empresa"), { target: { value: "company-1" } });
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "invalid" } });
     fireEvent.click(screen.getByRole("button", { name: "Esqueci minha senha" }));
     fireEvent.click(screen.getByRole("button", { name: "Enviar senha temporária" }));
@@ -141,7 +137,7 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByRole("button", { name: "Esqueci minha senha" }));
     fireEvent.click(screen.getByRole("button", { name: "Enviar senha temporária" }));
 
-    expect(screen.getByRole("alert")).toHaveTextContent("Informe o identificador da empresa e o email");
+    expect(screen.getByRole("alert")).toHaveTextContent("Informe o email");
     expect(executeRecovery).not.toHaveBeenCalled();
   });
 });

@@ -79,3 +79,12 @@
 - The frontend relies on backend domain behavior defined in `red-backend` SDD
 - Backend endpoints are expected to support authentication and company scoping
 - Frontend route permissions should reflect backend authorization rules
+
+## ECO-0002 tenant bootstrap
+
+TenantProvider replaces the former placeholder tenant lookup. It gates application mounting until a no-store public resolution succeeds and clears a mismatched stored session before rendering protected children. AuthProvider also checks company identity on login/storage sync. Localhost needs VITE_DEV_COMPANY_ACCESS_NAME in development; production only uses hostname and VITE_COMPANY_BASE_DOMAIN. No arbitrary default tenant or parent-domain token cookie is introduced.
+
+
+## Definitive domain — 2026-09-11
+
+ECO-T009 selects `tipo.click` (AWS-registered) and `<accessName>.tipo.click`. The API URL remains unchanged. The existing DNS zone is now associated with CloudFront FREE/ACTIVE. Local web production builds use the new base domain; DNS/TLS/application activation remains pending. No additional charges beyond registration/renewal are authorized for this task. See the ECO-0002 domain-migration subtask and the infrastructure run `docs/features/0002-company-access-login/runs/domain-cost-2026-09-11.md` for the actual billing verification and remaining limits.

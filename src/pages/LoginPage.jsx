@@ -7,8 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { loginUser, recoverUserPassword } from "../shared/hooks/useUsers";
 import { mustChangeInitialPassword, useAuth } from "../context/AuthContext";
 
+import { useTenant } from '../components/TenantProvider';
+
 const schema = z.object({
-  companyId: z.string().trim().min(1, "Identificador da empresa é obrigatório"),
   email: z.string().trim().toLowerCase().email("Email inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres"),
 });
@@ -26,6 +27,7 @@ export const normalizeLoginResponseData = (data) => {
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const company = useTenant();
   const { login } = useAuth();
   const [error, setError] = useState(null);
   const [recoveryOpen, setRecoveryOpen] = useState(false);
@@ -47,10 +49,10 @@ export default function LoginPage() {
     try {
       setError(null);
 
-      const response = await executeLogin(data);
+      const response = await executeLogin({ ...data, companyId: company.companyId });
       const loginData = normalizeLoginResponseData(response.data);
 
-      if (!loginData.accessToken) {
+      if (!loginData.accessToken || loginData.user?.companyId !== company.companyId) {
         throw new Error("Login response missing access token");
       }
 
@@ -67,10 +69,10 @@ export default function LoginPage() {
   };
 
   const requestRecovery = async () => {
-    const companyId = getValues("companyId")?.trim();
+    const companyId = company.companyId;
     const email = getValues("email")?.trim().toLowerCase();
     if (!companyId || !email) {
-      setRecoveryMessage({ type: "error", text: "Informe o identificador da empresa e o email." });
+      setRecoveryMessage({ type: "error", text: "Informe o email." });
       return;
     }
     if (!z.string().email().safeParse(email).success) {
@@ -100,21 +102,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <h1 className="text-2xl font-semibold text-center mb-6">
-          Entrar no sistema
+          Entrar em {company.name}
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <input
-              type="text"
-              placeholder="Identificador da empresa"
-              aria-label="Identificador da empresa"
-              autoComplete="organization"
-              {...register("companyId")}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.companyId && <p className="text-sm text-red-500 mt-1">{errors.companyId.message}</p>}
-          </div>
           <div>
             <input
               type="email"
@@ -174,7 +165,7 @@ export default function LoginPage() {
           {recoveryOpen && (
             <section aria-label="Recuperação de senha" className="space-y-3 border-t pt-4">
               <p className="text-sm text-gray-700">
-                Use o identificador da empresa e o email informados acima.
+                Use o email cadastrado nesta empresa.
               </p>
               <button
                 type="button"
